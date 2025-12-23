@@ -1,0 +1,38 @@
+<section class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title m-0">
+      <span class="animated-word">Smart</span>
+      <span class="animated-word outline">Media:</span>
+      <span class="animated-word highlight">Capture,</span>
+      <span class="animated-word outline">Create,</span>
+      <span class="animated-word">&amp;</span>
+      <span class="animated-word highlight">Craft.</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      From high-end camera rentals to stunning album designs, we are your
+      complete photography solution.
+    </p>
+
+    <div class="cta-group">
+      <a routerLink="/rental" class="hero-cta primary-cta">Rent Gear Now</a>
+      <button (click)="scrollToStudio()" class="hero-cta secondary-cta">
+        Show Studio Work
+      </button>
+    </div>
+  </div>
+
+  <div class="hero-animation-container">
+    <div class="image-column column-one">
+      @for (img of columnOneImages(); track $index) {
+      <img [src]="img.url" [alt]="img.alt" loading="lazy" />
+      }
+    </div>
+
+    <div class="image-column column-two">
+      @for (img of columnTwoImages(); track $index) {
+      <img [src]="img.url" [alt]="img.alt" loading="lazy" />
+      }
+    </div>
+  </div>
+</section>

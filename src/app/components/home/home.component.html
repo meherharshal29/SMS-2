@@ -1,0 +1,95 @@
+<app-hero></app-hero>
+
+<app-product></app-product>
+<app-promo-banner></app-promo-banner>
+<app-rental></app-rental>
+
+<section class="studio-section py-5">
+  <div class="container-fluid px-4 px-lg-5">
+    <header class="gallery-header text-center mb-5">
+      <span class="label">Featured Portfolio</span>
+      <h2 class="title">STUDIO <span class="outline">GALLERY</span></h2>
+    </header>
+
+    <div class="gallery-grid">
+      @for (item of previewItems(); track item.id) {
+      <div class="grid-card" [ngClass]="item.size" (click)="openLightbox(item)">
+        <div class="card-inner">
+          <img
+            [src]="item.url"
+            [alt]="item.category + ' ' + item.title + ' Portfolio'"
+            loading="lazy"
+          />
+
+          @if (item.type !== 'photo') {
+          <div class="type-icon">
+            <i
+              [class]="
+                item.type === 'video' ? 'bi bi-play-circle' : 'bi bi-stack'
+              "
+            ></i>
+          </div>
+          }
+
+          <div class="card-overlay">
+            <div class="info">
+              <p class="cat">{{ item.category }}</p>
+              <h3 class="name">{{ item.title }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="btn-wrap text-center mt-5">
+      <button class="see-more-btn" (click)="viewAll()">
+        SEE MORE WORK
+        <i class="bi bi-arrow-right ms-2"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="lightbox" *ngIf="selectedItem()" (click)="closeLightbox()">
+    <button class="close-x" (click)="closeLightbox()">✕</button>
+    <div class="lightbox-content" (click)="$event.stopPropagation()">
+      <ng-container [ngSwitch]="selectedItem()?.type">
+        <video
+          *ngSwitchCase="'video'"
+          controls
+          autoplay
+          [src]="selectedItem()?.videoUrl"
+        ></video>
+        <img
+          *ngSwitchDefault
+          [src]="selectedItem()?.url"
+          [alt]="selectedItem()?.title"
+        />
+      </ng-container>
+    </div>
+  </div>
+</section>
+
+<app-course-grid></app-course-grid>
+<app-reviews></app-reviews>
+<app-footer></app-footer>
+
+<div class="floating-actions">
+  <a
+    href="https://wa.me/911234567890"
+    target="_blank"
+    class="whatsapp-btn"
+    aria-label="Contact us on WhatsApp"
+  >
+    <i class="bi bi-whatsapp"></i>
+  </a>
+
+  <button
+    class="scroll-top-btn"
+    [class.visible]="showScroll()"
+    (click)="scrollToTop()"
+    aria-label="Scroll to top"
+  >
+    <i class="bi bi-arrow-up"></i>
+  </button>
+</div>

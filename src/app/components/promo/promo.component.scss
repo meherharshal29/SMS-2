@@ -1,0 +1,77 @@
+$brown-accent: #a78bfa;
+$text-dark: #1a1a1a;
+$border-color: #efefef;
+
+.promo-section {
+    .container {
+        background-color: #ffffff;
+        border-color: $border-color !important;
+    }
+}
+
+.promo-card {
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: #fafafa;
+    }
+}
+
+.image-wrapper {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .promo-img {
+        max-height: 100%;
+        object-fit: contain;
+        // Floating effect for gear
+        filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.08));
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+}
+
+.promo-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: $text-dark;
+    text-transform: capitalize;
+}
+
+.promo-subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    color: $text-dark;
+}
+
+.promo-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 260px;
+    margin: 0 auto;
+}
+
+.save-tag {
+    color: $brown-accent;
+    font-size: 18px;
+    cursor: pointer;
+    display: inline-block;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+// Mobile Divider Logic
+@media (max-width: 767px) {
+    .promo-card {
+        border-end: 0 !important;
+        border-bottom: 1px solid $border-color;
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}

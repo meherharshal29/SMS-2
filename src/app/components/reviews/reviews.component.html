@@ -1,0 +1,54 @@
+<section class="reviews-section py-5">
+  <div class="container position-relative">
+    <div class="text-center mb-5">
+      <span class="sub-title">Customers Review</span>
+      <h2 class="main-title fw-bold">What our Clients say</h2>
+    </div>
+
+    <div class="slider-wrapper">
+      <button class="nav-btn prev" (click)="prev()" aria-label="Previous">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button class="nav-btn next" (click)="next()" aria-label="Next">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+
+      <div class="row g-4 justify-content-center">
+        @for (review of visibleReviews(); track review.id) {
+        <div [class]="isMobile() ? 'col-12' : 'col-lg-6'" class="slide-anim">
+          <div class="review-card">
+            <div class="stars mb-3">
+              @for (star of [1,2,3,4,5]; track star) {
+              <i class="bi bi-star-fill"></i>
+              }
+            </div>
+
+            <p class="content">{{ review.text }}</p>
+
+            <div class="footer-info">
+              <div class="d-flex align-items-center">
+                <img [src]="review.avatar" class="avatar" alt="client avatar" />
+                <div class="ms-3">
+                  <h6 class="m-0 fw-bold">{{ review.author }}</h6>
+                  <small class="text-muted">/ {{ review.role }}</small>
+                </div>
+              </div>
+              <i class="bi bi-quote quote-icon"></i>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="dots-nav mt-5">
+      @for (dot of reviews(); track $index) {
+      <button
+        (click)="setSlide($index)"
+        [class.active]="currentIndex() === $index"
+        class="dot-trigger"
+      ></button>
+      }
+    </div>
+  </div>
+</section>

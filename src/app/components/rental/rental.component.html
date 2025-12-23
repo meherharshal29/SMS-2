@@ -1,0 +1,59 @@
+<section class="rental-section py-5 bg-light">
+  <div class="container">
+    <div class="row mb-5 align-items-end">
+      <div class="col-8">
+        <span class="sub-title text-uppercase">Camera & Instruments</span>
+        <h2 class="main-title fw-bold">Explore Our Rentals</h2>
+      </div>
+      <div class="col-4 text-end">
+        <a href="#" class="view-all-btn">View All →</a>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      @for (item of rentals(); track item.id) {
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="product-card">
+          <div
+            class="img-wrapper rounded-2 bg-white position-relative overflow-hidden"
+          >
+            <span class="discount-badge">{{ item.discount }}%</span>
+
+            <div class="action-icons">
+              <button class="icon-btn" title="Add to Cart">
+                <i class="bi bi-cart3"></i>
+              </button>
+              <button class="icon-btn" title="Quick View">
+                <i class="bi bi-eye"></i>
+              </button>
+              <button class="icon-btn" title="Add to Wishlist">
+                <i class="bi bi-heart"></i>
+              </button>
+            </div>
+
+            <div class="image-box">
+              <img [src]="item.image" [alt]="item.name" class="img-fluid" />
+            </div>
+
+            <div class="hover-bar">
+              <button class="btn-add-cart w-100">Add To Cart</button>
+            </div>
+          </div>
+
+          <div class="details pt-3">
+            <p class="category mb-1">{{ item.category }}</p>
+            <h5 class="item-name fw-bold mb-2">{{ item.name }}</h5>
+            <div class="price-box d-flex align-items-center">
+              <span class="price-new fw-bold">₹{{ item.price | number }}</span>
+              <span
+                class="price-old text-muted text-decoration-line-through ms-2"
+                >₹{{ item.oldPrice | number }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</section>

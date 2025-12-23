@@ -1,0 +1,60 @@
+<section class="product-scroll-section py-5">
+  <div class="container">
+    <div class="row mb-5 align-items-center">
+      <div class="col-8">
+        <span class="sub-title text-uppercase">Trending This Week's</span>
+        <h2 class="main-title fw-bold">Special products</h2>
+      </div>
+      <div class="col-4 text-end">
+        <div class="scroll-controls">
+          <button class="ctrl-btn me-2">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button class="ctrl-btn"><i class="bi bi-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-wrapper d-flex gap-4 overflow-auto pb-4">
+      @for (item of trendingProducts(); track item.id) {
+      <div class="product-card-flex">
+        <div class="product-card shadow-sm">
+          <div
+            class="img-container rounded-3 position-relative overflow-hidden bg-light"
+          >
+            <span class="discount-tag">-{{ item.discount }}%</span>
+
+            <div class="side-actions">
+              <button class="action-btn"><i class="bi bi-cart3"></i></button>
+              <button class="action-btn"><i class="bi bi-eye"></i></button>
+              <button class="action-btn"><i class="bi bi-heart"></i></button>
+            </div>
+
+            <div
+              class="image-box h-100 d-flex align-items-center justify-content-center p-4"
+            >
+              <img [src]="item.image" [alt]="item.name" class="img-main" />
+            </div>
+
+            <div class="hover-cta">
+              <button class="btn-add-cart w-100">Add To Cart</button>
+            </div>
+          </div>
+
+          <div class="content-area pt-3 text-start">
+            <p class="category-label mb-1">{{ item.category }}</p>
+            <h5 class="product-title fw-bold mb-2">{{ item.name }}</h5>
+            <div class="price-line d-flex align-items-center">
+              <span class="new-price fw-bold">₹{{ item.price | number }}</span>
+              <span
+                class="old-price text-muted text-decoration-line-through ms-2"
+                >₹{{ item.oldPrice | number }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</section>

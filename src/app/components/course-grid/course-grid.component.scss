@@ -1,0 +1,225 @@
+// 1. Import the Sass color module at the absolute top
+@use "sass:color";
+
+// Variables
+$primary-dark: #010f1c;
+$accent-gold: #a78bfa;
+$text-gray: #55585b;
+$bg-light: #f8f8f8;
+$transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+.courses-section {
+    background-color: #ffffff;
+    padding: 80px 0;
+    font-family: 'Inter', sans-serif;
+
+    .section-header {
+        margin-bottom: 50px;
+
+        .sub-title {
+            color: $accent-gold;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .main-title {
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            color: $primary-dark;
+            font-weight: 800;
+
+            .highlight {
+                font-weight: 300;
+                font-style: initial;
+                // 2. FIXED: Replaced lighten() with color.adjust()
+                color: color.adjust($primary-dark, $lightness: 15%);
+            }
+        }
+    }
+}
+
+.course-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: $transition;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+
+    &:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+
+        .image-box img {
+            transform: scale(1.1);
+        }
+    }
+
+    .image-box {
+        position: relative;
+        height: 180px;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .category-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: $primary-dark;
+            color: #fff;
+            padding: 5px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 4px;
+            z-index: 2;
+        }
+    }
+
+    .content-box {
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .meta-row {
+            font-size: 13px;
+            color: $text-gray;
+            margin-bottom: 12px;
+
+            span i {
+                color: $accent-gold;
+                margin-right: 5px;
+            }
+        }
+
+        .course-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: $primary-dark;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 50px;
+        }
+
+        .rating-row {
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: #ffb400; // Star color
+        }
+
+        .footer-row {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .price {
+                font-size: 20px;
+                font-weight: 800;
+                color: $primary-dark;
+            }
+
+            .enroll-btn {
+                background: transparent;
+                border: none;
+                color: $accent-gold;
+                font-weight: 700;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                padding: 0;
+                transition: color 0.3s;
+                cursor: pointer;
+
+                &:hover {
+                    color: $primary-dark;
+                }
+            }
+        }
+    }
+}
+
+.action-btn {
+    padding: 14px 35px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+
+    &.primary {
+        background: $primary-dark;
+        color: white;
+
+        &:hover {
+            background: color.adjust($primary-dark, $lightness: 10%);
+        }
+    }
+
+    &.outline {
+        background: transparent;
+        border-color: $accent-gold;
+        color: $primary-dark;
+
+        &:hover {
+            background: $accent-gold;
+            color: white;
+        }
+    }
+}
+
+// Animations
+.slide-in {
+    opacity: 0;
+    animation: fadeUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Media Queries
+@media (max-width: 991px) {
+    .courses-section {
+        padding: 60px 0;
+
+        .main-title {
+            font-size: 30px;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .course-card .content-box {
+        padding: 20px;
+    }
+}

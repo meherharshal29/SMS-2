@@ -1,0 +1,34 @@
+<section class="promo-section py-5 bg-white">
+  <div class="container border rounded-3 overflow-hidden shadow-sm">
+    <div class="row g-0">
+      @for (item of promoList(); track item.title; let last = $last) {
+      <div class="col-12 col-md-4 promo-card" [class.border-end]="!last">
+        <div
+          class="p-5 text-center h-100 d-flex flex-column align-items-center"
+        >
+          <div class="image-wrapper mb-4">
+            <img
+              [src]="item.image"
+              [alt]="item.title"
+              class="img-fluid promo-img"
+            />
+          </div>
+
+          <div class="promo-content">
+            <h4 class="promo-title mb-1">{{ item.title }}</h4>
+            <p class="promo-subtitle mb-3">{{ item.subtitle }}</p>
+
+            <p class="promo-desc text-muted mb-4">
+              {{ item.desc }}
+            </p>
+
+            <div class="save-tag fw-bold">
+              {{ item.saveAmount }}
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</section>

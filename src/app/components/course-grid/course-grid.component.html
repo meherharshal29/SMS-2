@@ -1,0 +1,59 @@
+<section class="courses-section py-5">
+  <div class="container">
+    <header class="section-header text-center mb-5">
+      <span class="sub-title">LEVEL UP YOUR SKILLS</span>
+      <h2 class="main-title">
+        Professional <span class="highlight">Studio Courses</span>
+      </h2>
+    </header>
+
+    <div class="row g-4">
+      @for (course of displayCourses(); track course.id) {
+      <div class="col-12 col-sm-6 col-lg-3 slide-in">
+        <div class="course-card h-100 shadow-sm border-0">
+          <div class="image-box">
+            <img [src]="course.image" [alt]="course.title" loading="lazy" />
+            <div class="category-tag">{{ course.category }}</div>
+          </div>
+
+          <div class="content-box p-3">
+            <div class="meta-row d-flex justify-content-between mb-2">
+              <span
+                ><i class="bi bi-clock-history"></i> {{ course.duration }}</span
+              >
+              <span
+                ><i class="bi bi-book"></i> {{ course.lessons }} Lessons</span
+              >
+            </div>
+            <h3 class="course-title">{{ course.title }}</h3>
+
+            <div class="rating-row mb-3">
+              <i class="bi bi-star-fill text-warning"></i>
+              <span class="ms-1 fw-bold">{{ course.rating }}</span>
+            </div>
+
+            <div
+              class="footer-row d-flex justify-content-between align-items-center"
+            >
+              <span class="price">₹{{ course.price | number : "1.0-0" }}</span>
+              <button class="enroll-btn">Join Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="text-center mt-5 d-flex justify-content-center gap-3">
+      @if (hasMore()) {
+      <button class="action-btn primary" (click)="loadMore()">
+        SEE MORE COURSES <i class="bi bi-plus-lg ms-2"></i>
+      </button>
+      } @if (canShowLess()) {
+      <button class="action-btn outline" (click)="showLess()">
+        SHOW LESS <i class="bi bi-dash-lg ms-2"></i>
+      </button>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,120 @@
+$accent: #a78bfa; // Keeping the Shofy brown for consistency
+$dark: #0a0a0a;
+
+.product-collection {
+    background-color: #ffffff;
+
+    .sub-title {
+        color: $accent;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .main-title {
+        font-size: 36px;
+        color: $dark;
+        letter-spacing: -0.5px;
+    }
+
+    .shop-all-link {
+        color: $dark;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        border: 1.5px solid #eee;
+        padding: 10px 22px;
+        border-radius: 6px;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover {
+            background-color: $dark;
+            color: #fff;
+            border-color: $dark;
+            transform: translateY(-2px);
+        }
+    }
+}
+
+.collection-card {
+    height: 480px;
+    cursor: pointer;
+    background: #f8f9fa;
+
+    .card-img-wrapper {
+        width: 100%;
+        height: 100%;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1.2s cubic-bezier(0.2, 0, 0.2, 1);
+        }
+    }
+
+    .gradient-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        // Smooth cinematic gradient for text readability
+        background: linear-gradient(to bottom,
+                rgba(0, 0, 0, 0) 40%,
+                rgba(0, 0, 0, 0.4) 70%,
+                rgba(0, 0, 0, 0.85) 100%);
+        z-index: 1;
+    }
+
+    .card-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 2;
+        padding-bottom: 35px !important;
+        transition: all 0.4s ease;
+
+        h4 {
+            font-size: 22px;
+            letter-spacing: -0.2px;
+        }
+
+        p {
+            opacity: 0.9;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+
+    &:hover {
+        img {
+            transform: scale(1.15);
+        }
+
+        .card-content {
+            transform: translateY(-8px);
+        }
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 991px) {
+    .collection-card {
+        height: 400px;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-title {
+        font-size: 28px;
+    }
+
+    .collection-card {
+        height: 350px;
+    }
+}

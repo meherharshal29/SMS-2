@@ -1,0 +1,76 @@
+<section class="studio-wrapper">
+  <div class="container-fluid px-3 px-md-5 mt-5">
+    <header class="gallery-header">
+      <h1 class="title">STUDIO <span class="outline">GALLERY</span></h1>
+    </header>
+
+    <nav class="filter-nav">
+      @for (cat of ['all', 'photo', 'video', 'album']; track cat) {
+      <button [class.active]="activeFilter() === cat" (click)="setFilter(cat)">
+        {{ cat | uppercase }}
+      </button>
+      }
+    </nav>
+
+    <div class="gallery-grid">
+      @for (item of filteredItems(); track item.id) {
+      <div
+        class="grid-card"
+        #itemRef
+        [ngClass]="item.size"
+        (click)="openLightbox(item)"
+      >
+        <div class="card-inner">
+          <img [src]="item.url" [alt]="item.title" loading="lazy" />
+          @if (item.type !== 'photo') {
+          <div class="media-icon">
+            <i
+              [class]="
+                item.type === 'video'
+                  ? 'bi bi-play-circle-fill'
+                  : 'bi bi-journal-album'
+              "
+            ></i>
+          </div>
+          }
+          <div class="card-overlay">
+            <div class="info">
+              <span class="category">{{ item.category }}</span>
+              <h3 class="name">{{ item.title }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    @if (hasMore()) {
+    <div class="extend-container text-center mt-5">
+      <button class="extend-btn" (click)="loadMore()">
+        <i class="bi bi-plus-circle-dotted"></i>
+        <span>EXTEND GALLERY</span>
+      </button>
+    </div>
+    }
+  </div>
+
+  <div class="lightbox" *ngIf="selectedItem()" (click)="closeLightbox()">
+    <button class="close-btn">✕</button>
+    <div class="lightbox-content" (click)="$event.stopPropagation()">
+      <ng-container [ngSwitch]="selectedItem()?.type">
+        <video
+          *ngSwitchCase="'video'"
+          controls
+          autoplay
+          [src]="selectedItem()?.videoUrl"
+        ></video>
+        <img
+          *ngSwitchDefault
+          [src]="selectedItem()?.url"
+          alt="Fullscreen view"
+        />
+      </ng-container>
+    </div>
+  </div>
+</section>
+<app-footer></app-footer>
