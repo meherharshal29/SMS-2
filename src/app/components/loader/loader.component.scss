@@ -1,0 +1,123 @@
+/* Overlay */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.95);
+    /* Dark Blue/Black */
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.loader-content {
+    text-align: center;
+    color: white;
+    width: 100%;
+    max-width: 400px;
+}
+
+.brand-text {
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 3rem;
+
+    span {
+        color: #667eea;
+    }
+}
+
+/* --- STATE 1: PROGRESS BAR --- */
+.counter-text {
+    font-size: 5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 30px rgba(102, 126, 234, 0.4);
+
+    .percent {
+        font-size: 2rem;
+        color: #64748b;
+    }
+}
+
+.progress-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.1s linear;
+    box-shadow: 0 0 15px #667eea;
+}
+
+/* --- STATE 2: SUCCESS CHECKMARK --- */
+.success-state {
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.checkmark-circle {
+    width: 100px;
+    height: 100px;
+    background: #2ecc71;
+    /* Success Green */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+    box-shadow: 0 0 30px rgba(46, 204, 113, 0.6);
+
+    i {
+        font-size: 50px;
+        color: white;
+    }
+}
+
+.success-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.status-text {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

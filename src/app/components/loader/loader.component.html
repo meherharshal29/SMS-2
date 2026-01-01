@@ -1,0 +1,28 @@
+<div class="loader-overlay" *ngIf="loaderService.isLoading()">
+  <div class="loader-content">
+    <h2 class="brand-text">Smart Media <span>Solution</span></h2>
+
+    <div class="loading-state" *ngIf="!loaderService.isSuccess()">
+      <div class="progress-container">
+        <div class="counter-text">
+          {{ displayProgress() }}<span class="percent">%</span>
+        </div>
+        <div class="progress-track">
+          <div
+            class="progress-fill"
+            [style.width.%]="loaderService.progress()"
+          ></div>
+        </div>
+      </div>
+      <p class="status-text">Authenticating credentials...</p>
+    </div>
+
+    <div class="success-state" *ngIf="loaderService.isSuccess()">
+      <div class="checkmark-circle">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <h3 class="success-title">Login Successful!</h3>
+      <p class="status-text">Redirecting to Dashboard...</p>
+    </div>
+  </div>
+</div>

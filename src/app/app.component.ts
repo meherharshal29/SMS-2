@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './common/navbar/navbar.component';
+import { NgxUiLoaderModule } from "ngx-ui-loader";
 
 @Component({
   selector: 'app-root',
@@ -9,8 +10,9 @@ import { NavbarComponent } from './common/navbar/navbar.component';
   imports: [
     FormsModule,
     RouterOutlet,
-    NavbarComponent
-  ],
+    NavbarComponent,
+    NgxUiLoaderModule
+],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

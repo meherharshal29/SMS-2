@@ -1,0 +1,155 @@
+<div class="cart-page-wrapper">
+  <div class="container mt-5 py-3">
+    <div class="cart-header">
+      <h2 class="page-title">Rental Cart</h2>
+      <a routerLink="/rental-all-item" class="btn-continue-shopping">
+        <i class="bi bi-arrow-left"></i>
+        <span>Continue Shopping</span>
+      </a>
+    </div>
+
+    @if (cartService.cartItems().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon"><i class="bi bi-cart-x"></i></div>
+      <h3>Your cart is empty</h3>
+      <p>Start adding equipment to your rental project</p>
+      <a routerLink="/rental-all-item" class="btn-browse">Browse Equipment</a>
+    </div>
+    } @else {
+    <div class="cart-content">
+      <div class="cart-items-section">
+        <div class="items-container">
+          @for (item of cartService.cartItems(); track item.cart_id) {
+          <div class="cart-item">
+            <div class="item-image">
+              <img
+                [src]="item.thumbnail"
+                [alt]="item.model_name"
+                (error)="$any($event.target).src = 'assets/placeholder.png'"
+              />
+            </div>
+
+            <div class="item-details">
+              <span class="item-brand">{{ item.brand }}</span>
+              <h3 class="item-name">{{ item.model_name }}</h3>
+              <div class="item-price-mobile">
+                <span class="price-label">Daily Rate:</span>
+                <span class="price-value"
+                  >₹{{ item.price_per_day | number }}</span
+                >
+              </div>
+            </div>
+
+            <div class="item-rate">
+              <span class="rate-label">Daily Rate</span>
+              <span class="rate-value">₹{{ item.price_per_day | number }}</span>
+            </div>
+
+            <div class="item-quantity">
+              <div class="quantity-stepper">
+                <button class="qty-btn" (click)="changeQuantity(item, -1)">
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input
+                  type="text"
+                  class="qty-input"
+                  [value]="item.quantity"
+                  readonly
+                />
+                <button class="qty-btn" (click)="changeQuantity(item, 1)">
+                  <i class="bi bi-plus"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="item-actions">
+              <span class="item-total"
+                >₹{{ item.price_per_day * item.quantity | number }}</span
+              >
+              <button
+                class="btn-remove"
+                (click)="removeItem(item.cart_id, item.model_name)"
+              >
+                <i class="bi bi-trash3"></i>
+                <span>Remove</span>
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+
+        <div class="suggested-section">
+          <h2 class="suggested-title">Complete Your Setup</h2>
+          <div class="suggested-grid">
+            @for (suggest of suggestedGears(); track suggest.id) {
+            <div class="suggested-card">
+              <div class="suggested-image">
+                <img
+                  [src]="suggest.images[0]?.image_url"
+                  [alt]="suggest.model_name"
+                />
+              </div>
+              <div class="suggested-info">
+                <h4 class="suggested-name">{{ suggest.model_name }}</h4>
+                <span class="suggested-price"
+                  >₹{{ suggest.price_per_day | number }}/day</span
+                >
+              </div>
+              <button class="btn-quick-add" (click)="quickAdd(suggest)">
+                <i class="bi bi-plus-lg"></i>
+                <span>Add to Cart</span>
+              </button>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-card">
+          <h2 class="summary-title">Order Summary</h2>
+          <div class="summary-items-count">
+            <i class="bi bi-box-seam"></i>
+            <span>{{ cartService.cartItems().length }} Items in cart</span>
+          </div>
+
+          <div class="summary-details mt-4">
+            <div class="summary-row">
+              <span class="summary-label">Rental Subtotal</span>
+              <span class="summary-value"
+                >₹{{ cartService.cartSubtotal() | number }}</span
+              >
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Security Deposit (20%)</span>
+              <span class="summary-value deposit"
+                >₹{{ securityDeposit() | number }}</span
+              >
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Delivery</span>
+              <span class="summary-value free">FREE</span>
+            </div>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-total">
+            <div class="total-row">
+              <span class="total-label">Total Amount Due</span>
+              <span class="total-value">₹{{ finalTotalDue() | number }}</span>
+            </div>
+          </div>
+
+          <button class="btn-checkout" (click)="onProceedToPayment()">
+            <span>Proceed to Checkout</span>
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+
+<app-footer></app-footer>

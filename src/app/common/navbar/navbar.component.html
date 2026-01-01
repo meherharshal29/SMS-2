@@ -1,46 +1,44 @@
-<header class="main-header fixed-top" [class.scrolled]="isScrolled()">
+<header class="main-header" [class.scrolled]="isScrolled()">
   <div class="container-fluid px-lg-5">
-    <div class="row align-items-center height-80">
-      <div class="col-2 d-lg-none">
-        <button class="btn-menu" (click)="toggleMobile()">
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </button>
-      </div>
-
-      <div class="col-6 col-md-5 col-lg-2 text-center text-lg-start">
-        <h2
-          class="m-0 fw-bold logo-text"
-          routerLink="/"
-          style="cursor: pointer"
+    <div class="navbar-wrapper">
+      <div class="nav-left">
+        <button
+          class="btn-mobile-toggle d-lg-none border-0 bg-transparent"
+          (click)="toggleMobile()"
         >
-          SMART<span class="text-brown">MEDIA</span>
+          <i class="bi bi-list"></i>
+        </button>
+        <h2 class="logo-text m-0" routerLink="/">
+          SMART<span class="text-brand">MEDIA</span>
         </h2>
       </div>
 
-      <nav class="col-lg-7 d-none d-lg-block">
-        <ul class="nav justify-content-center">
-          @for (menu of navData; track menu.label) {
-          <li
-            class="nav-item position-static"
-            (mouseenter)="activeHover.set(menu.label)"
-            (mouseleave)="activeHover.set(null)"
-          >
-            <a class="nav-link main-link">{{ menu.label }}</a>
+      <nav class="nav-center d-none d-lg-block">
+        <ul class="nav-links-list">
+          <li>
+            <a class="nav-item-link" routerLink="/" routerLinkActive="active"
+              >Home</a
+            >
+          </li>
 
-            @if (activeHover() === menu.label) {
-            <div class="mega-menu shadow-sm">
+          @for (menu of navData; track menu.label) {
+          <li class="nav-item-static">
+            <a class="nav-item-link" [routerLink]="menu.allLink">{{
+              menu.label
+            }}</a>
+
+            <div class="mega-menu-panel">
               <div class="container py-4">
                 <div class="row">
                   @for (col of menu.columns; track col.title) {
                   <div class="col-md-3">
-                    <h6 class="fw-bold text-uppercase small mb-3 text-dark">
-                      {{ col.title }}
-                    </h6>
+                    <h6 class="mega-title">{{ col.title }}</h6>
                     <ul class="list-unstyled">
-                      @for (item of col.items; track item) {
-                      <li class="mb-2">
-                        <a href="#" class="sub-link">{{ item }}</a>
+                      @for (item of col.items; track item.name) {
+                      <li>
+                        <a [routerLink]="item.link" class="sub-link">{{
+                          item.name
+                        }}</a>
                       </li>
                       }
                     </ul>
@@ -48,59 +46,146 @@
                   }
                   <div class="col-md-4 ms-auto">
                     <div
-                      class="featured-box rounded overflow-hidden position-relative"
+                      class="mega-featured-card"
+                      [routerLink]="menu.featured.link"
                     >
                       <img
-                        [src]="menu.featured.img"
-                        class="img-fluid"
-                        alt="Promo"
+                        [ngSrc]="menu.featured.img"
+                        fill
+                        [alt]="menu.featured.title"
                       />
-                      <div class="featured-tag">{{ menu.featured.title }}</div>
+                      <div class="overlay">
+                        <span>{{ menu.featured.title }}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            }
           </li>
           }
-          <li class="nav-item" routerLink="/gallary">
-            <a class="nav-link main-link">Studio</a>
-          </li>
-          <li class="nav-item"><a class="nav-link main-link">Courses</a></li>
-          <li class="nav-item"><a class="nav-link main-link">Contact</a></li>
+          <li><a class="nav-item-link" routerLink="/courses">Courses</a></li>
+          <li><a class="nav-item-link" routerLink="/gallery">Studio</a></li>
         </ul>
       </nav>
 
-      <div
-        class="col-4 col-lg-3 text-end d-flex align-items-center justify-content-end gap-3"
-      >
-        <i class="bi bi-search icon-btn"></i>
-        <i class="bi bi-person icon-btn d-none d-md-block"></i>
-        <div class="cart-wrapper">
-          <i class="bi bi-bag icon-btn"></i>
-          <span class="cart-badge">0</span>
+      <div class="nav-right">
+        <div class="user-dropdown-container d-none d-lg-block">
+          <div class="user-trigger">
+            <div class="avatar-placeholder">
+              {{ isLoggedIn() ? userName()?.charAt(0) : "" }}
+              @if (!isLoggedIn()) { <i class="bi bi-person"></i> }
+            </div>
+            <span
+              class="status-dot"
+              [class.online]="isLoggedIn()"
+              [class.offline]="!isLoggedIn()"
+            ></span>
+          </div>
+
+          <div class="auth-dropdown-card shadow-xl">
+            @if (!isLoggedIn()) {
+            <div class="p-3">
+              <button
+                class="btn btn-primary-sm w-100 mb-2"
+                routerLink="/auth/login"
+              >
+                Sign In
+              </button>
+              <button
+                class="btn btn-outline-sm w-100"
+                routerLink="/auth/register"
+              >
+                Join
+              </button>
+            </div>
+            } @else {
+            <div class="p-3 border-bottom bg-light">
+              <p class="fw-bold m-0 small">{{ userName() }}</p>
+            </div>
+            <ul class="auth-links">
+              <li>
+                <a routerLink="/auth/profile"
+                  ><i class="bi bi-person me-2"></i> Profile</a
+                >
+              </li>
+              <li>
+                <a
+                  (click)="logout()"
+                  class="text-danger pointer"
+                  style="cursor: pointer"
+                  ><i class="bi bi-power me-2"></i> Logout</a
+                >
+              </li>
+            </ul>
+            }
+          </div>
+        </div>
+
+        <div
+          class="cart-btn-wrapper"
+          routerLink="/cart"
+          aria-label="View Shopping Cart"
+        >
+          <i class="bi bi-bag"></i>
+
+          @if (cartService.cartItems().length > 0) {
+          <span class="badge-count" aria-hidden="false">
+            {{ cartService.cartItems().length }}
+          </span>
+          }
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="mobile-sidebar" [class.active]="isMobileOpen()">
-    <div class="p-4">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold text-dark">Menu</h4>
-        <button class="btn-close" (click)="toggleMobile()"></button>
-      </div>
-      <ul class="list-unstyled mobile-nav">
-        @for (item of navData; track item.label) {
-        <li class="py-3 border-bottom fw-medium text-dark">{{ item.label }}</li>
-        }
-        <li class="py-3 border-bottom fw-medium text-dark">Contact</li>
-      </ul>
     </div>
   </div>
 
   @if (isMobileOpen()) {
   <div class="sidebar-backdrop" (click)="toggleMobile()"></div>
   }
+  <div class="mobile-drawer" [class.active]="isMobileOpen()">
+    <div class="mobile-user-section">
+      <div class="avatar-placeholder">{{ userName()?.charAt(0) }}</div>
+      <div class="user-info">
+        <p class="user-name">{{ userName() }}</p>
+        <p class="user-status">Online</p>
+      </div>
+      <button class="btn-close-drawer" (click)="toggleMobile()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="drawer-content">
+      <p class="menu-label">Main Menu</p>
+      <ul class="mobile-nav-list">
+        <li><a routerLink="/" (click)="toggleMobile()">Home</a></li>
+        @for (item of navData; track item.label) {
+        <li>
+          <a [routerLink]="item.allLink" (click)="toggleMobile()">{{
+            item.label
+          }}</a>
+        </li>
+        }
+        <li><a routerLink="/gallery" (click)="toggleMobile()">Studio</a></li>
+      </ul>
+
+      <p class="menu-label">Settings</p>
+      <ul class="mobile-nav-list">
+        @if (isLoggedIn()) {
+        <li>
+          <a routerLink="/auth/profile" (click)="toggleMobile()"
+            ><i class="bi bi-person"></i> Profile</a
+          >
+        </li>
+        <li>
+          <a routerLink="/orders" (click)="toggleMobile()"
+            ><i class="bi bi-bag"></i> My Orders</a
+          >
+        </li>
+        <li class="logout-item">
+          <a (click)="logout()"><i class="bi bi-power"></i> Logout</a>
+        </li>
+        }
+      </ul>
+    </div>
+  </div>
 </header>

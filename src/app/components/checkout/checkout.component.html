@@ -1,0 +1,117 @@
+<app-loader></app-loader>
+
+<div class="checkout-page py-5 mt-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card checkout-card p-4 shadow-sm border-0">
+          <h2 class="section-title mb-4">
+            <i class="bi bi-shield-check"></i> Verification & Shipping
+          </h2>
+
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label">Aadhaar Card Number (12 Digits)</label>
+              <input
+                type="text"
+                class="form-control shadow-none"
+                maxlength="12"
+                [ngModel]="adharNo()"
+                (ngModelChange)="adharNo.set($event)"
+                placeholder="0000 0000 0000"
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">City</label>
+              <input
+                type="text"
+                class="form-control shadow-none"
+                [ngModel]="city()"
+                (ngModelChange)="city.set($event)"
+                placeholder="Enter City"
+              />
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label">Full Address</label>
+              <textarea
+                class="form-control shadow-none"
+                rows="3"
+                [ngModel]="address()"
+                (ngModelChange)="address.set($event)"
+                placeholder="House no, Street, Landmark..."
+              ></textarea>
+            </div>
+          </div>
+
+          <h2 class="section-title mt-5 mb-4">
+            <i class="bi bi-credit-card"></i> Payment Method
+          </h2>
+          <div class="payment-grid">
+            <div
+              class="payment-option"
+              [class.active]="paymentMethod() === 'upi'"
+              (click)="paymentMethod.set('upi')"
+            >
+              <i class="bi bi-qr-code-scan"></i>
+              <span>UPI / QR</span>
+            </div>
+            <div
+              class="payment-option"
+              [class.active]="paymentMethod() === 'card'"
+              (click)="paymentMethod.set('card')"
+            >
+              <i class="bi bi-credit-card-2-front"></i>
+              <span>Credit/Debit Card</span>
+            </div>
+            <div
+              class="payment-option"
+              [class.active]="paymentMethod() === 'netbanking'"
+              (click)="paymentMethod.set('netbanking')"
+            >
+              <i class="bi bi-bank"></i>
+              <span>Net Banking</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div
+          class="card summary-card p-4 shadow-sm border-0 sticky-top"
+          style="top: 100px"
+        >
+          <h4 class="mb-4">Order Summary</h4>
+
+          <div class="summary-details">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Rental Subtotal</span>
+              <span>₹{{ subtotal() | number }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">GST (18%)</span>
+              <span>₹{{ tax() | number }}</span>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between mb-4">
+              <span class="fw-bold">Total Amount</span>
+              <span class="fw-bold text-primary h5"
+                >₹{{ totalAmount() | number }}</span
+              >
+            </div>
+          </div>
+          <button
+            class="btn btn-primary w-100 py-3 rounded-pill fw-bold"
+            (click)="confirmAndPay()"
+          >
+            CONFIRM & PAY NOW
+          </button>
+          <p class="text-center text-muted small mt-3">
+            <i class="bi bi-lock-fill"></i> Secure 256-bit SSL Encrypted Payment
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

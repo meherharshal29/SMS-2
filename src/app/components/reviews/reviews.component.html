@@ -1,39 +1,45 @@
 <section class="reviews-section py-5">
   <div class="container position-relative">
     <div class="text-center mb-5">
-      <span class="sub-title">Customers Review</span>
+      <span class="sub-title text-uppercase">Customers Review</span>
       <h2 class="main-title fw-bold">What our Clients say</h2>
     </div>
 
     <div class="slider-wrapper">
       <button class="nav-btn prev" (click)="prev()" aria-label="Previous">
-        <i class="bi bi-chevron-left"></i>
+        <i class="bi bi-arrow-left"></i>
       </button>
       <button class="nav-btn next" (click)="next()" aria-label="Next">
-        <i class="bi bi-chevron-right"></i>
+        <i class="bi bi-arrow-right"></i>
       </button>
 
       <div class="row g-4 justify-content-center">
         @for (review of visibleReviews(); track review.id) {
         <div [class]="isMobile() ? 'col-12' : 'col-lg-6'" class="slide-anim">
-          <div class="review-card">
+          <div class="review-card shadow-sm rounded-4 p-4">
             <div class="stars mb-3">
               @for (star of [1,2,3,4,5]; track star) {
-              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill text-warning me-1 small"></i>
               }
             </div>
 
-            <p class="content">{{ review.text }}</p>
+            <p class="content italic">"{{ review.text }}"</p>
 
-            <div class="footer-info">
+            <div
+              class="footer-info d-flex justify-content-between align-items-center"
+            >
               <div class="d-flex align-items-center">
-                <img [src]="review.avatar" class="avatar" alt="client avatar" />
+                <img
+                  [src]="review.avatar"
+                  class="avatar rounded-circle border"
+                  alt="client avatar"
+                />
                 <div class="ms-3">
                   <h6 class="m-0 fw-bold">{{ review.author }}</h6>
-                  <small class="text-muted">/ {{ review.role }}</small>
+                  <small class="text-muted">{{ review.role }}</small>
                 </div>
               </div>
-              <i class="bi bi-quote quote-icon"></i>
+              <i class="bi bi-quote quote-icon opacity-25"></i>
             </div>
           </div>
         </div>

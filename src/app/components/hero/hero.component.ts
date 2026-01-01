@@ -26,6 +26,14 @@ export class HeroComponent implements OnInit, AfterViewInit {
     { url: 'https://plus.unsplash.com/premium_photo-1673757121102-0ca51260861f?q=80&w=687&auto=format&fit=crop', alt: 'Model 4' },
     { url: 'https://images.unsplash.com/photo-1564485377539-4af72d1f6a2f?q=80&w=687&auto=format&fit=crop', alt: 'Model 5' },
     { url: 'https://images.unsplash.com/photo-1571513722275-4b41940f54b8?q=80&w=687&auto=format&fit=crop', alt: 'Model 6' },
+    { url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1', alt: 'Model 10' },
+    { url: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df', alt: 'Model 11' },
+    { url: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04', alt: 'Model 12' },
+    { url: 'https://images.unsplash.com/photo-1492106087820-71f1a00d2b11', alt: 'Model 13' },
+    { url: 'https://images.unsplash.com/photo-1529139513477-4238ad1ad00c', alt: 'Model 14' },
+    { url: 'https://images.unsplash.com/photo-1516756587022-7891ad56a8cd', alt: 'Model 15' },
+    { url: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6', alt: 'Model 16' },
+
   ];
 
   columnOneImages = signal<ImageItem[]>([]);

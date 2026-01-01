@@ -1,0 +1,45 @@
+<div class="package-container">
+  <header class="list-header mt-4">
+    <h1>Our Collections</h1>
+    <div class="filter-tabs">
+      <button
+        *ngFor="let cat of categories"
+        [class.active]="activeCategory === cat"
+        (click)="filterPackages(cat)"
+      >
+        {{ cat }}
+      </button>
+    </div>
+  </header>
+
+  <div class="package-grid">
+    <div
+      class="minimal-card"
+      *ngFor="let pkg of packages"
+      [routerLink]="['/package', pkg.id]"
+    >
+      <div class="card-img-wrapper">
+        <div
+          class="card-img"
+          [style.background-image]="
+            'url(' + (pkg.image || 'assets/placeholder.jpg') + ')'
+          "
+        >
+          <div class="overlay">
+            <span>Explore Package</span>
+          </div>
+        </div>
+        <div class="category-tag">{{ pkg.category }}</div>
+      </div>
+
+      <div class="card-info">
+        <h3>{{ pkg.title }}</h3>
+        <div class="card-footer">
+          <span class="price-label">Starting from</span>
+          <span class="price-value">₹{{ pkg.price | number }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

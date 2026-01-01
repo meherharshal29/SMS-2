@@ -1,0 +1,156 @@
+<div class="main-wrapper">
+  @if (isLoading()) {
+  <div class="loader-viewport">
+    <div class="spinner"></div>
+    <p>Fetching Technical Data...</p>
+  </div>
+  } @else if (camera()) {
+  <div class="container">
+    <nav class="breadcrumb-nav">
+      <a routerLink="/">Home</a> <i class="bi bi-chevron-right"></i>
+      <a routerLink="/rentals">Rentals</a> <i class="bi bi-chevron-right"></i>
+      <span class="active">{{ camera().model_name }}</span>
+    </nav>
+
+    <div class="product-grid">
+      <div class="gallery-column">
+        <div class="main-image-card">
+          <img [src]="selectedImage()" alt="Product View" />
+        </div>
+
+        <div class="thumbnail-row">
+          @for (img of camera().images; track img) {
+          <div
+            class="thumb-box"
+            [class.active]="selectedImage() === img"
+            (click)="updatePreview(img)"
+          >
+            <img [src]="img" alt="Thumbnail" />
+          </div>
+          }
+        </div>
+
+        <div class="product-info-grid">
+          <div class="info-section">
+            <h3>Description</h3>
+            <p class="description-text">
+              {{
+                camera().description ||
+                  "Experience professional-grade results with the " +
+                    camera().brand +
+                    " " +
+                    camera().model_name +
+                    ". This high-performance gear is maintained to the highest industry standards, ensuring reliability for your most demanding projects."
+              }}
+            </p>
+          </div>
+
+          <div class="info-section">
+            <h3>Key Features</h3>
+            <ul class="feature-list">
+              <li>
+                <i class="bi bi-check2-circle"></i> Professional Grade
+                maintenance
+              </li>
+              <li>
+                <i class="bi bi-check2-circle"></i> Includes 2 High capacity
+                batteries
+              </li>
+              <li>
+                <i class="bi bi-check2-circle"></i> Sanitized before every
+                dispatch
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <aside class="sidebar-column">
+        <div class="booking-card">
+          <span class="brand-tag">{{ camera().brand }}</span>
+          <h1 class="product-name">{{ camera().model_name }}</h1>
+
+          <div class="price-display">
+            <span class="currency">₹</span>
+            <span class="amount">{{
+              camera().price_per_day | number : "1.0-0"
+            }}</span>
+            <span class="per-day">/ day</span>
+          </div>
+
+          <div class="booking-form">
+            <div class="qty-field">
+              <label>Units Needed</label>
+              <div class="stepper">
+                <button (click)="decrementQuantity()">-</button>
+                <span class="qty-val">{{ quantity() }}</span>
+                <button (click)="incrementQuantity()">+</button>
+              </div>
+            </div>
+
+            <div class="summary-details">
+              <div class="row-info">
+                <span>Base Price (1 Day)</span>
+                <span>₹{{ camera().price_per_day | number : "1.0-0" }}</span>
+              </div>
+              <div class="row-info total">
+                <span>Total Payable</span>
+                <span>₹{{ getTotalPrice() | number : "1.0-0" }}</span>
+              </div>
+            </div>
+
+            <button class="btn-book-now" (click)="addToCart()">
+              <i class="bi bi-lightning-charge-fill me-2"></i>
+              Book This Gear
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="related-section">
+      <div class="section-header">
+        <h2>Similar Gear for You</h2>
+        <a routerLink="/rentals" class="view-collection">
+          View Collection <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="rental-grid">
+        @for (item of rentals(); track item.id) {
+        <div class="rental-card">
+          <div class="card-image" [routerLink]="['/rental', item.id]">
+            <img
+              [src]="item.displayImage"
+              [alt]="item.model_name"
+              loading="lazy"
+            />
+            <span class="category-tag">{{ item.brand || "Professional" }}</span>
+          </div>
+
+          <div class="card-content">
+            <p class="brand">{{ item.brand }}</p>
+            <h4 class="model">{{ item.model_name }}</h4>
+            <div class="card-footer">
+              <div class="price">
+                <span class="unit">₹</span
+                >{{ item.price_per_day | number : "1.0-0" }}<small>/day</small>
+              </div>
+              <button
+                class="btn-quick-add"
+                (click)="addToCart(item); $event.stopPropagation()"
+              >
+                <i class="bi bi-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </section>
+  </div>
+  }
+</div>
+
+<div class="footer-separator"></div>
+<app-footer></app-footer>

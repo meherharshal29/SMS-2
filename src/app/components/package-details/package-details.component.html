@@ -1,0 +1,72 @@
+<div class="page-wrapper p-0 m-0" *ngIf="package">
+  <section
+    class="hero-banner"
+    [style.background-image]="'url(' + (package.gallery?.[0]?.image_url || package.image || 'assets/placeholder.jpg') + ')'"
+  >
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <button routerLink="/packages" class="btn-back">
+          ← Back to Collections
+        </button>
+        <span class="badge">{{ package.category }}</span>
+        <h1>{{ package.title }}</h1>
+      </div>
+    </div>
+  </section>
+
+  <div class="container main-layout">
+    <aside class="booking-card">
+      <div class="card-inner">
+        <p class="label">Total Investment</p>
+        <h2 class="price">₹{{ package.price | number }}</h2>
+        <hr />
+        <p class="description">
+          Secure your date for a premium cinematic experience.
+        </p>
+        <button class="btn-primary">Reserve This Package</button>
+        <div class="trust-footer">Available for 2024 - 2025 Bookings</div>
+      </div>
+    </aside>
+
+    <main class="content-area">
+      <section class="details-text" *ngIf="package.inclusions">
+        <h3 class="section-title">The Package Details</h3>
+        <div class="inclusions-grid">
+          <div
+            class="inclusion-item"
+            *ngFor="let item of package.inclusions.split(',')"
+          >
+            <span class="check">✦</span> {{ item.trim() }}
+          </div>
+        </div>
+      </section>
+
+      <section class="gallery-magazine" *ngIf="package.gallery?.length > 0">
+        <h3 class="section-title">Captured Moments</h3>
+        <div class="magazine-grid">
+          <div
+            class="mag-item"
+            *ngFor="let img of package.gallery; let i = index"
+            [class.wide]="i % 3 === 0"
+          >
+            <img [src]="img.image_url" [alt]="package.title" loading="lazy" />
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="gallery-magazine"
+        *ngIf="package.gallery?.length === 0 && package.image"
+      >
+        <h3 class="section-title">Package Preview</h3>
+        <div class="magazine-grid">
+          <div class="mag-item wide">
+            <img [src]="package.image" alt="Main Preview" />
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<app-footer *ngIf="!loading"></app-footer>

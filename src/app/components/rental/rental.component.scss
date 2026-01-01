@@ -1,201 +1,216 @@
-@use "sass:color";
-
-$accent: #a78bfa;
-$dark-text: #010f1c;
-$bg-card: #f6f7f9;
-
 .rental-section {
+    background-color: #fff;
+
     .sub-title {
-        color: $accent;
-        font-size: 14px;
-        font-weight: 600;
-        letter-spacing: 1px;
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        color: #888;
+        font-weight: 700;
     }
 
     .main-title {
-        color: $dark-text;
-        font-size: 32px;
-        margin-top: 5px;
+        font-weight: 800;
+        color: #000;
+        font-size: 1.75rem;
     }
 
     .view-all-btn {
-        color: $dark-text;
         text-decoration: none;
-        font-weight: 600;
-        font-size: 14px;
-        border: 1px solid #ddd;
-        padding: 6px 15px;
-        border-radius: 4px;
-        transition: .3s;
+        color: #000;
+        border-bottom: 2px solid #000;
+        font-weight: 700;
+        padding-bottom: 2px;
+        transition: 0.3s;
 
         &:hover {
-            background: $dark-text;
-            color: white;
+            color: #555;
+            border-color: #555;
         }
     }
-}
 
-.product-card {
-    transition: transform 0.3s ease;
-
-    .img-wrapper {
-        height: 320px;
-        background: $bg-card;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-
-        .image-box img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1);
-        }
-
-        .discount-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: $dark-text;
-            color: white;
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 4px;
-            z-index: 5;
-        }
-
-        // Shofy Action Icons (Side)
-        .action-icons {
-            position: absolute;
-            top: 15px;
-            right: -50px; // Hidden Desktop
+    .price-box {
+        .btn-cart-icon {
+            width: 35px;
+            height: 35px;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            transition: all 0.3s ease-in-out;
-            z-index: 10;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border-color: #dee2e6;
+            color: #495057;
 
-            .icon-btn {
-                width: 38px;
-                height: 38px;
-                border-radius: 4px;
-                background: white;
-                border: none;
-                font-size: 16px;
-                color: $dark-text;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            &:hover {
+                background-color: #000;
+                border-color: #000;
+                color: #fff;
+                transform: translateY(-2px);
+            }
 
-                &:hover {
-                    background: $accent;
-                    color: white;
-                }
+            i {
+                font-size: 1.1rem;
             }
         }
+    }
 
-        // Shofy Add to Cart Bar (Bottom)
-        .hover-bar {
-            position: absolute;
-            bottom: -60px; // Hidden Desktop
-            left: 0;
-            width: 100%;
-            transition: bottom 0.3s ease;
-            z-index: 10;
+    // Ensure the brand text and model name don't wrap weirdly
+    .model-text {
+        font-size: 1rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-            .btn-add-cart {
-                background: $dark-text;
-                color: white;
-                border: none;
-                padding: 12px 0;
-                font-weight: 700;
-                font-size: 14px;
-                text-transform: uppercase;
+    .product-card {
+        transition: transform 0.3s ease;
+        margin-bottom: 10px;
 
-                &:hover {
-                    background: color.adjust($dark-text, $lightness: 10%);
-                }
-            }
-        }
-
-        // HOVER STATE
         &:hover {
-            .image-box img {
-                // transform: scale(1.1);
-            }
 
-            .action-icons {
-                right: 15px;
-            }
-
-            .hover-bar {
+            .cart-overlay {
+                opacity: 1;
                 bottom: 0;
             }
         }
     }
 
-    .details {
-        .category {
-            font-size: 11px;
-            color: #8a8a8a;
-            font-weight: 600;
+    .image-wrapper {
+        background: #f4f4f4;
+        aspect-ratio: 1 / 1;
+        border-radius: 0; // Square look for full-size feel
+
+        .img-container {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+
+            .main-product-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover; // Fills the entire square
+                transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            }
+        }
+    }
+
+    .wishlist-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 5;
+        background: white;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        color: #ccc;
+        transition: 0.3s;
+
+        i {
+            font-size: 1.1rem;
         }
 
-        .item-name {
-            font-size: 17px;
-            color: $dark-text;
+        &:hover,
+        &.active {
+            color: #ff3b30;
+            transform: scale(1.1);
+        }
+    }
+
+    .promo-badge {
+        position: absolute;
+        top: 15px;
+        left: 0;
+        background: #000;
+        color: #fff;
+        padding: 4px 12px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        z-index: 2;
+    }
+
+    .cart-overlay {
+        position: absolute;
+        bottom: -50px;
+        left: 0;
+        width: 100%;
+        opacity: 0;
+        transition: 0.3s ease;
+        z-index: 4;
+
+        .btn-add {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+    }
+
+    .product-info {
+        .brand-text {
+            font-size: 0.7rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .model-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 2px 0;
             cursor: pointer;
-            transition: .2s;
+            color: #111;
 
             &:hover {
-                color: $accent;
+                color: #444;
             }
         }
 
-        .price-new {
-            font-size: 18px;
-            color: $dark-text;
+        .current-price {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #000;
         }
 
-        .price-old {
-            font-size: 14px;
-        }
-    }
-}
-
-// FULLY RESPONSIVE FIX
-@media (max-width: 991px) {
-    .img-wrapper {
-        height: 280px !important;
-
-        .action-icons {
-            right: 12px !important;
+        .price-label {
+            font-size: 0.8rem;
+            color: #666;
         }
 
-        // Force icons visible
-        .hover-bar {
-            bottom: 0 !important;
-        }
-
-        // Force add to cart visible
-        .image-box img {
-            transform: none !important;
+        .old-price {
+            color: #bbb;
+            text-decoration: line-through;
+            font-size: 0.9rem;
         }
     }
 
-    .item-name {
-        font-size: 15px !important;
-    }
-}
+    // Mobile: 1 Card per Line logic
+    @media (max-width: 575.98px) {
+        .col-12 {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
 
-@media (max-width: 576px) {
-    .img-wrapper {
-        height: 240px !important;
-    }
+        .product-card {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 30px;
+        }
 
-    .main-title {
-        font-size: 24px;
+        .cart-overlay {
+            opacity: 1;
+            bottom: 0; // Always visible for mobile users
+        }
+
+        .main-title {
+            font-size: 1.5rem;
+        }
     }
 }

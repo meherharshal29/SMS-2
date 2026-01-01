@@ -1,0 +1,261 @@
+$primary-blue: #a78bfa;
+$primary-blue-dark: #9333ea;
+$purple: #7c3aed;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-400: #9ca3af;
+$gray-600: #4b5563;
+$gray-900: #111827;
+$white: #ffffff;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ============================================
+// COMPONENT HOST & PAGE WRAPPER
+// ============================================
+:host {
+    display: block;
+    min-height: 100vh;
+    background: linear-gradient(135deg, $gray-50 0%, $white 100%);
+    color: $gray-900;
+}
+
+.checkout-page {
+    padding-bottom: 80px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ============================================
+// CHECKOUT CARDS
+// ============================================
+.checkout-card,
+.summary-card {
+    border-radius: 24px;
+    background: $white;
+    border: 1px solid $gray-200;
+    transition: $transition;
+    overflow: hidden;
+}
+
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: $gray-900;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    i {
+        color: $primary-blue;
+        font-size: 1.6rem;
+    }
+}
+
+// ============================================
+// FORM STYLING
+// ============================================
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $gray-600;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control {
+    border-radius: 14px;
+    padding: 14px 18px;
+    border: 1.5px solid $gray-200;
+    background-color: $gray-50;
+    font-size: 1rem;
+    transition: $transition;
+
+    &::placeholder {
+        color: $gray-400;
+    }
+
+    &:focus {
+        border-color: $primary-blue;
+        background-color: $white;
+        box-shadow: 0 0 0 4px rgba($primary-blue, 0.15);
+        outline: none;
+    }
+}
+
+// ============================================
+// PAYMENT SELECTION GRID
+// ============================================
+.payment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.payment-option {
+    padding: 28px 20px;
+    border: 2px solid $gray-100;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    background: $white;
+    transition: $transition;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+
+    i {
+        font-size: 2.5rem;
+        color: $gray-400;
+        transition: $transition;
+    }
+
+    span {
+        font-size: 1rem;
+        font-weight: 700;
+        color: $gray-600;
+    }
+
+    &:hover {
+        border-color: rgba($primary-blue, 0.4);
+        background: rgba($primary-blue, 0.02);
+
+        i {
+            color: $primary-blue;
+        }
+    }
+
+    &.active {
+        border-color: $primary-blue;
+        background: rgba($primary-blue, 0.08);
+        box-shadow: 0 8px 20px rgba($primary-blue, 0.15);
+        transform: scale(1.02);
+
+        i {
+            color: $primary-blue;
+            transform: scale(1.1);
+        }
+
+        span {
+            color: $primary-blue-dark;
+        }
+    }
+}
+
+// ============================================
+// ORDER SUMMARY
+// ============================================
+.summary-card {
+    border-top: 6px solid $primary-blue;
+    position: sticky;
+    top: 100px;
+
+    h4 {
+        font-weight: 800;
+        color: $gray-900;
+    }
+}
+
+.summary-row {
+    margin-bottom: 12px;
+    font-size: 1rem;
+
+    .summary-label {
+        color: $gray-600;
+    }
+
+    .summary-value {
+        font-weight: 700;
+        color: $gray-900;
+
+        &.deposit {
+            color: #f59e0b;
+        }
+
+        // Amber for security deposit
+        &.free {
+            color: #10b981;
+        }
+
+        // Green for free delivery
+    }
+}
+
+.summary-divider {
+    height: 1px;
+    background: $gray-200;
+    margin: 20px 0;
+}
+
+.total-row {
+    .total-label {
+        font-weight: 700;
+        color: $gray-900;
+        font-size: 1.1rem;
+    }
+
+    .total-value {
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: $purple;
+        letter-spacing: -0.03em;
+    }
+}
+
+// ============================================
+// BUTTONS & ACTIONS
+// ============================================
+.btn-primary {
+    background: linear-gradient(135deg, $primary-blue 0%, $purple 100%);
+    border: none;
+    padding: 18px;
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    box-shadow: 0 10px 25px rgba($purple, 0.3);
+    transition: $transition;
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// ============================================
+// RESPONSIVENESS
+// ============================================
+@media (max-width: 991px) {
+    .summary-card {
+        position: static !important;
+        margin-top: 30px;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .payment-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-card {
+        padding: 1.5rem !important;
+    }
+}

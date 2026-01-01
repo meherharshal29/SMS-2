@@ -1,0 +1,206 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap');
+
+$gold: #a78bfa;
+$dark: #0f0f0f;
+$bg: #ffffff;
+$standard-ease: 0.3s ease;
+
+.page-wrapper {
+    background: $bg;
+    font-family: 'Montserrat', sans-serif;
+    color: $dark;
+}
+
+// HERO HEADER
+.hero-banner {
+    height: 60vh; // Reduced slightly for better initial view
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    // Removed background-attachment: fixed for better performance
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+        display: flex;
+        align-items: flex-end;
+        padding: 40px 60px;
+    }
+
+    .hero-content {
+        color: white;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: $standard-ease;
+
+            &:hover {
+                background: white;
+                color: $dark;
+            }
+        }
+
+        .badge {
+            color: $gold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            margin: 10px 0;
+            line-height: 1.1;
+        }
+    }
+}
+
+// MAIN LAYOUT
+.main-layout {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 40px auto 0; // Removed negative overlap for cleaner look
+    padding: 0 20px 80px;
+
+    @media (max-width: 992px) {
+        flex-direction: column;
+    }
+}
+
+// FLOATING BOOKING CARD
+.booking-card {
+    width: 350px;
+    flex-shrink: 0;
+
+    @media (max-width: 992px) {
+        width: 100%;
+    }
+
+    .card-inner {
+        background: white;
+        padding: 35px;
+        border-radius: 12px;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 20px;
+        text-align: center;
+
+        .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 1px;
+        }
+
+        .price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: $dark;
+            margin: 10px 0;
+        }
+
+        .description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: $dark;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: $standard-ease;
+
+            &:hover {
+                background: $gold;
+            }
+        }
+
+        .trust-footer {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #bbb;
+        }
+    }
+}
+
+// CONTENT AREA
+.content-area {
+    flex-grow: 1;
+
+    .section-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        margin-bottom: 25px;
+        color: $dark;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 12px;
+    }
+
+    .inclusions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        margin-bottom: 50px;
+
+        .inclusion-item {
+            font-size: 0.95rem;
+            color: #444;
+            display: flex;
+            align-items: center;
+
+            .check {
+                color: $gold;
+                margin-right: 10px;
+                font-size: 1.1rem;
+            }
+        }
+    }
+}
+
+// MAGAZINE GALLERY
+.magazine-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+
+    .mag-item {
+        overflow: hidden;
+        height: 280px;
+        border-radius: 4px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform $standard-ease;
+        }
+        &.wide {
+            grid-column: span 2;
+            height: 400px;
+        }
+    }
+}

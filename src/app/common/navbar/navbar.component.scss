@@ -1,206 +1,552 @@
-$brown: #a78bfa;
-$dark: #111111;
+@use "sass:color";
 
+// ============================================
+// 1. DESIGN TOKENS & VARIABLES
+// ============================================
+$brand-color: #a78bfa;
+$text-main: #111827;
+$text-muted: #6b7280;
+$white: #ffffff;
+$bg-light: #f8fafc;
+$border-light: #f1f5f9;
+$success: #10b981;
+$danger: #ef4444;
+
+$header-height: 65px;
+$drawer-width: 320px;
+$transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$shadow-premium: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+
+// ============================================
+// 2. HEADER CORE (DESKTOP)
+// ============================================
 .main-header {
+  height: $header-height;
+  background-color: rgba($white, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid $border-light;
+  display: flex;
+  align-items: center;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1050;
-  background: transparent;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border-bottom: 1px solid transparent;
+  transition: $transition-base;
 
-  // Initial state: White elements for dark hero backgrounds
-  .logo-text,
-  .main-link,
-  .icon-btn,
-  .bar {
-    color: #ffffff !important;
-    background-color: transparent;
-  }
-
-  .bar {
-    background-color: #ffffff !important;
-  }
-
-  // SCROLLED STATE
   &.scrolled {
-    background-color: #ffffff;
-    border-bottom: 1px solid #eeeeee;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background-color: $white;
+    box-shadow: $shadow-premium;
+  }
+}
 
-    .logo-text,
-    .icon-btn {
-      color: $dark !important;
+.navbar-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+// ============================================
+// 3. LOGO & TOGGLE
+// ============================================
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  .btn-mobile-toggle {
+    font-size: 1.5rem;
+    color: $text-main;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      color: $brand-color;
+    }
+  }
+
+  .logo-text {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: $text-main;
+    text-decoration: none;
+    margin: 0;
+    cursor: pointer;
+
+    .text-brand {
+      color: $brand-color;
+    }
+  }
+}
+
+// ============================================
+// 4. DESKTOP NAVIGATION & MEGA MENU
+// ============================================
+.nav-center {
+  .nav-links-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    .nav-item-static {
+      position: static; // Essential for full-width mega menu
     }
 
-    .main-link {
-      color: $dark !important;
+    .nav-item-link {
+      padding: 0 20px;
+      line-height: $header-height;
+      font-size: 13px;
+      font-weight: 700;
+      color: $text-main;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      transition: color 0.2s;
 
-      &:hover {
-        color: $brown !important;
+      &:hover,
+      &.active {
+        color: $brand-color;
       }
     }
-
-    .bar {
-      background-color: $dark !important;
-    }
   }
 }
 
-.height-80 {
-  height: 80px;
-}
-
-.text-brown {
-  color: $brown !important;
-}
-
-.main-link {
-  font-weight: 600;
-  padding: 30px 18px !important;
-  font-size: 15px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.mega-menu {
+.mega-menu-panel {
   position: absolute;
-  top: 80px;
+  top: 100%;
   left: 0;
   width: 100%;
-  background: #ffffff;
-  border-top: 1px solid #eee;
-  animation: slideUp 0.3s ease-out;
+  background: $white;
+  border-top: 1px solid $border-light;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: $transition-base;
+
+  .nav-item-static:hover & {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mega-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
 
   .sub-link {
-    text-decoration: none;
-    color: #666 !important;
     font-size: 14px;
-    display: inline-block;
+    color: #4b5563;
+    text-decoration: none;
+    padding: 8px 0;
+    display: block;
     transition: 0.2s;
 
     &:hover {
-      color: $brown !important;
+      color: $brand-color;
       padding-left: 5px;
+    }
+  }
+
+  .mega-featured-card {
+    height: 200px;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+
+    img {
+      object-fit: cover;
+      transition: 0.5s;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+      display: flex;
+      align-items: flex-end;
+      padding: 20px;
+      color: $white;
+      font-weight: 700;
+      font-size: 14px;
     }
   }
 }
 
-.featured-box {
-  height: 200px;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: 0.8s;
-  }
-
-  &:hover img {
-    transform: scale(1.1);
-  }
-
-  .featured-tag {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: $brown;
-    color: white;
-    padding: 4px 12px;
-    font-size: 11px;
-    font-weight: 700;
-    border-radius: 2px;
-  }
+// ============================================
+// 5. USER PROFILE & AUTH (DESKTOP)
+// ============================================
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-.icon-btn {
-  font-size: 20px;
-  cursor: pointer;
-  transition: 0.2s;
-
-  &:hover {
-    color: $brown !important;
-  }
-}
-
-.cart-wrapper {
+.user-dropdown-container {
   position: relative;
 
-  .cart-badge {
-    position: absolute;
-    top: -8px;
-    right: -10px;
-    background: $brown;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 10px;
-    font-weight: 700;
-  }
-}
+  .user-trigger {
+    position: relative;
+    cursor: pointer;
 
-// Mobile Elements
-.mobile-sidebar {
-  position: fixed;
-  top: 0;
-  left: -300px;
-  width: 300px;
-  height: 100%;
-  background: white;
-  z-index: 1100;
-  transition: 0.3s ease-in-out;
+    .avatar-placeholder {
+      width: 38px;
+      height: 38px;
+      background: $bg-light;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: $brand-color;
+      border: 1px solid $border-light;
+    }
 
-  &.active {
-    left: 0;
-  }
-}
+    .status-dot {
+      position: absolute;
+      bottom: 1px;
+      right: 1px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid $white;
 
-.sidebar-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 1090;
-}
+      &.online {
+        background: $success;
+      }
 
-.btn-menu {
-  border: none;
-  background: none;
-
-  .bar {
-    display: block;
-    width: 25px;
-    height: 2px;
-    margin: 5px 0;
-    transition: 0.3s;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+      &.offline {
+        background: $danger;
+      }
+    }
   }
 
-  to {
+  &:hover .auth-dropdown-card {
+    visibility: visible;
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 991px) {
-  .mega-menu {
-    display: none !important;
+.auth-dropdown-card {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 260px;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid $border-light;
+  margin-top: 10px;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: $transition-base;
+  overflow: hidden;
+
+  .auth-links {
+    list-style: none;
+    padding: 8px;
+    margin: 0;
+
+    a {
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: $text-main;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.2s;
+
+      &:hover {
+        background: $bg-light;
+        color: $brand-color;
+      }
+    }
+  }
+}
+
+// ============================================
+// 6. MOBILE DRAWER (PIXEL PERFECT)
+// ============================================
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: -$drawer-width;
+  width: $drawer-width;
+  height: 100vh;
+  background: $white;
+  z-index: 2100;
+  transition: $transition-base;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  &.active {
+    left: 0;
   }
 
-  .height-80 {
-    height: 70px;
+  .mobile-user-section {
+    padding: 10px 10px;
+    background: $bg-light;
+    border-bottom: 1px solid $border-light;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+
+    .avatar-placeholder {
+      width: 52px;
+      height: 52px;
+      background: $white;
+      border-radius: 12px; // Modern Squircle
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: $brand-color;
+      border: 1px solid $border-light;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .user-info {
+      .user-name {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 800;
+        color: $text-main;
+        letter-spacing: -0.5px;
+      }
+
+      .user-status {
+        margin: 2px 0 0;
+        font-size: 11px;
+        font-weight: 900;
+        color: $success;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+    }
+
+    .btn-close-drawer {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      color: $text-muted;
+      font-size: 1.5rem;
+      cursor: pointer;
+
+      &:hover {
+        color: $danger;
+      }
+    }
   }
+
+  .drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+  }
+
+  .menu-label {
+    padding: 20px 28px 8px;
+    font-size: 11px;
+    font-weight: 800;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .mobile-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+
+      a,
+      .nav-item-link {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 16px 28px;
+        font-size: 16px;
+        font-weight: 700;
+        color: $text-main;
+        text-decoration: none;
+        transition: $transition-base;
+        position: relative;
+
+        i {
+          font-size: 1.25rem;
+          color: $text-muted;
+          width: 24px;
+          display: flex;
+          justify-content: center;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          height: 0;
+          width: 4px;
+          background: $brand-color;
+          border-radius: 0 4px 4px 0;
+          transition: 0.2s;
+        }
+
+        &:hover {
+          background-color: rgba($brand-color, 0.06);
+          color: $brand-color;
+
+          i {
+            color: $brand-color;
+          }
+
+          &::after {
+            height: 60%;
+          }
+        }
+      }
+
+      &.logout-item a {
+        color: $danger;
+        border-top: 1px solid rgba($border-light, 0.8);
+        margin-top: 10px;
+
+        i {
+          color: $danger;
+        }
+
+        &:hover {
+          background-color: rgba($danger, 0.05);
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// 7. UTILITIES & CART
+// ============================================
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.cart-btn-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: $transition-base;
+  color: $text-main;
+
+  i {
+    font-size: 1.4rem;
+    transition: transform 0.2s ease;
+  }
+
+  .badge-count {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: $brand-color;
+    color: $white;
+    font-size: 10px;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid $white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &:hover {
+    background-color: rgba($brand-color, 0.08);
+    color: $brand-color;
+
+    i {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.btn-primary-sm,
+.btn-outline-sm {
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary-sm {
+  background: $brand-color;
+  color: $white;
+
+  &:hover {
+    background: color.adjust($brand-color, $lightness: -10%);
+  }
+}
+
+.btn-outline-sm {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  color: $text-muted;
+
+  &:hover {
+    background: $bg-light;
+  }
+}
+
+// Scroll Lock Utility (Apply to body via TS effect)
+body.no-scroll {
+  overflow: hidden !important;
 }

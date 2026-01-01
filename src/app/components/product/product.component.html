@@ -2,19 +2,22 @@
   <div class="container">
     <div class="row align-items-end mb-5">
       <div class="col-md-8">
-        <span class="sub-title">Service Categories</span>
+        <span class="sub-title text-uppercase text-muted small fw-bold"
+          >Service Categories</span
+        >
         <h2 class="main-title fw-bold">Professional Media Solutions</h2>
       </div>
       <div class="col-md-4 text-md-end d-none d-md-block">
-        <a href="#" class="shop-all-link">View All Services →</a>
+        <a routerLink="/rentals" class="shop-all-link">View All Services →</a>
       </div>
     </div>
 
     <div class="row g-4">
       @for (item of collections(); track item.title) {
       <div class="col-12 col-sm-6 col-lg-3">
-        <div
-          class="collection-card rounded-4 overflow-hidden position-relative shadow-sm"
+        <a
+          [routerLink]="item.link"
+          class="collection-card d-block rounded-4 overflow-hidden position-relative shadow-sm text-decoration-none"
         >
           <div class="card-img-wrapper">
             <img [src]="item.image" [alt]="item.title" class="img-fluid" />
@@ -23,15 +26,16 @@
 
           <div class="card-content text-center text-white p-4">
             <h4 class="fw-bold mb-1">{{ item.title }}</h4>
-            <p class="small mb-0">{{ item.count }} Listings</p>
           </div>
-        </div>
+        </a>
       </div>
       }
     </div>
 
     <div class="col-12 text-center mt-5 d-md-none">
-      <a href="#" class="shop-all-link">Explore Everything →</a>
+      <a routerLink="/rentals" class="shop-all-link">Explore Everything →</a>
     </div>
   </div>
 </section>
+
+<router-outlet></router-outlet>

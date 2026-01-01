@@ -1,0 +1,167 @@
+// Colors
+$gold: #a78bfa;
+$dark: #1a1a1a;
+$light-bg: #f8f9fa;
+$standard-ease: 0.3s ease; // Simplified timing function
+
+.package-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.list-header {
+    text-align: center;
+    margin-bottom: 50px;
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: $dark;
+        margin-bottom: 25px;
+    }
+
+    .filter-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+
+        button {
+            padding: 8px 20px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: $standard-ease; // Snappy transition
+            font-weight: 500;
+
+            &.active,
+            &:hover {
+                background: $dark;
+                color: white;
+                border-color: $dark;
+            }
+        }
+    }
+}
+
+.package-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+
+    // Responsive adjustments
+    @media (max-width: 1100px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 850px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 550px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.minimal-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: box-shadow $standard-ease; // Removed cubic-bezier
+    border: 1px solid #f0f0f0;
+
+    &:hover {
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12); // Lift effect via shadow only
+
+        .overlay {
+            opacity: 1;
+        }
+
+        .card-img {
+            transform: scale(1.05); // Subtle zoom focus
+        }
+    }
+
+    .card-img-wrapper {
+        height: 220px;
+        overflow: hidden;
+        position: relative;
+
+        .card-img {
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform $standard-ease; // Consistent timing
+        }
+
+        .category-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: $dark;
+            z-index: 2;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4); // Cleaned overlay
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity $standard-ease;
+            z-index: 1;
+
+            span {
+                color: white;
+                border: 1px solid white;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 0.9rem;
+            }
+        }
+    }
+
+    .card-info {
+        padding: 20px;
+        // Removed translateY to keep text stable
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: $dark;
+            margin-bottom: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-footer {
+            display: flex;
+            flex-direction: column;
+
+            .price-label {
+                font-size: 0.75rem;
+                color: #888;
+                text-transform: uppercase;
+            }
+
+            .price-value {
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: $gold;
+            }
+        }
+    }
+}

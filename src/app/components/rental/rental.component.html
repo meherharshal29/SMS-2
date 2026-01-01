@@ -1,59 +1,100 @@
-<section class="rental-section py-5 bg-light">
+<section class="rental-section py-5">
   <div class="container">
-    <div class="row mb-5 align-items-end">
-      <div class="col-8">
-        <span class="sub-title text-uppercase">Camera & Instruments</span>
-        <h2 class="main-title fw-bold">Explore Our Rentals</h2>
+    <div class="row mb-5 align-items-center">
+      <div class="col-sm-8 col-12 text-center text-sm-start">
+        <p class="sub-title mb-1">PREMIUM COLLECTION</p>
+        <h2 class="main-title">Popular Rentals</h2>
       </div>
-      <div class="col-4 text-end">
-        <a href="#" class="view-all-btn">View All →</a>
+      <div class="col-sm-4 col-12 text-center text-sm-end mt-3 mt-sm-0">
+        <a routerLink="/rental-all-item" class="view-all-btn"
+          >Browse All Gear</a
+        >
       </div>
     </div>
 
     <div class="row g-4">
-      @for (item of rentals(); track item.id) {
+      @if (error()) {
+      <div class="col-12 text-center py-5">
+        <p class="text-danger">{{ error() }}</p>
+        <button class="btn btn-outline-dark" (click)="fetchData()">
+          Retry
+        </button>
+      </div>
+      } @else { @for (item of rentals(); track item.id) {
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="product-card">
-          <div
-            class="img-wrapper rounded-2 bg-white position-relative overflow-hidden"
-          >
-            <span class="discount-badge">{{ item.discount }}%</span>
+          <div class="image-wrapper position-relative overflow-hidden">
+            <button class="wishlist-btn" (click)="onWishlist($event, item)">
+              <i class="bi bi-heart-fill"></i>
+            </button>
 
-            <div class="action-icons">
-              <button class="icon-btn" title="Add to Cart">
-                <i class="bi bi-cart3"></i>
-              </button>
-              <button class="icon-btn" title="Quick View">
-                <i class="bi bi-eye"></i>
-              </button>
-              <button class="icon-btn" title="Add to Wishlist">
-                <i class="bi bi-heart"></i>
-              </button>
+            @if (item.discount) {
+            <span class="promo-badge">-{{ item.discount }}%</span>
+            }
+
+            <div
+              class="img-container"
+              [routerLink]="['/rental', item.id]"
+              style="cursor: pointer"
+            >
+              <img
+                [src]="
+                  item.images[0] || 'https://placehold.co/600x600?text=No+Image'
+                "
+                [alt]="item.model_name"
+                class="main-product-img"
+              />
             </div>
 
-            <div class="image-box">
-              <img [src]="item.image" [alt]="item.name" class="img-fluid" />
-            </div>
-
-            <div class="hover-bar">
-              <button class="btn-add-cart w-100">Add To Cart</button>
+            <div class="cart-overlay">
+              <button class="btn-add" (click)="onAddToCart($event, item)">
+                ADD TO CART
+              </button>
             </div>
           </div>
 
-          <div class="details pt-3">
-            <p class="category mb-1">{{ item.category }}</p>
-            <h5 class="item-name fw-bold mb-2">{{ item.name }}</h5>
-            <div class="price-box d-flex align-items-center">
-              <span class="price-new fw-bold">₹{{ item.price | number }}</span>
-              <span
-                class="price-old text-muted text-decoration-line-through ms-2"
-                >₹{{ item.oldPrice | number }}</span
+          <div class="product-info pt-3">
+            <span class="brand-text text-uppercase small text-muted">{{
+              item.brand
+            }}</span>
+            <h3
+              class="model-text mt-1"
+              [routerLink]="['/rental', item.id]"
+              style="cursor: pointer"
+            >
+              {{ item.model_name }}
+            </h3>
+
+            <div
+              class="price-box mt-2 d-flex align-items-center justify-content-between"
+            >
+              <div class="price-details">
+                <span class="current-price fw-bold"
+                  >₹{{ item.price_per_day | number : "1.0-0" }}</span
+                >
+                <span class="price-label text-muted small"> / Day</span>
+
+                @if (item.original_price) {
+                <span
+                  class="old-price ms-2 text-decoration-line-through text-muted small"
+                >
+                  ₹{{ item.original_price | number : "1.0-0" }}
+                </span>
+                }
+              </div>
+
+              <button
+                class="btn-cart-icon btn btn-sm btn-outline-dark rounded-circle"
+                (click)="onAddToCart($event, item)"
+                title="Add to Cart"
               >
+                <i class="bi bi-cart-plus"></i>
+              </button>
             </div>
           </div>
         </div>
       </div>
-      }
+      } }
     </div>
   </div>
 </section>
