@@ -5,6 +5,7 @@
         <button
           class="btn-mobile-toggle d-lg-none border-0 bg-transparent"
           (click)="toggleMobile()"
+          aria-label="Toggle Menu"
         >
           <i class="bi bi-list"></i>
         </button>
@@ -16,56 +17,66 @@
       <nav class="nav-center d-none d-lg-block">
         <ul class="nav-links-list">
           <li>
-            <a class="nav-item-link" routerLink="/" routerLinkActive="active"
+            <a
+              class="nav-item-link"
+              routerLink="/"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
               >Home</a
             >
           </li>
 
           @for (menu of navData; track menu.label) {
-          <li class="nav-item-static">
-            <a class="nav-item-link" [routerLink]="menu.allLink">{{
-              menu.label
-            }}</a>
+            <li [class.nav-item-static]="menu.isMega">
+              <a
+                class="nav-item-link"
+                [routerLink]="menu.link"
+                routerLinkActive="active"
+              >
+                {{ menu.label }}
+              </a>
 
-            <div class="mega-menu-panel">
-              <div class="container py-4">
-                <div class="row">
-                  @for (col of menu.columns; track col.title) {
-                  <div class="col-md-3">
-                    <h6 class="mega-title">{{ col.title }}</h6>
-                    <ul class="list-unstyled">
-                      @for (item of col.items; track item.name) {
-                      <li>
-                        <a [routerLink]="item.link" class="sub-link">{{
-                          item.name
-                        }}</a>
-                      </li>
+              @if (menu.isMega && menu.columns && menu.featured) {
+                <div class="mega-menu-panel">
+                  <div class="container py-4">
+                    <div class="row">
+                      @for (col of menu.columns; track col.title) {
+                        <div class="col-md-3">
+                          <h6 class="mega-title">{{ col.title }}</h6>
+                          <ul class="list-unstyled">
+                            @for (item of col.items; track item.name) {
+                              <li>
+                                <a [routerLink]="item.link" class="sub-link">{{
+                                  item.name
+                                }}</a>
+                              </li>
+                            }
+                          </ul>
+                        </div>
                       }
-                    </ul>
-                  </div>
-                  }
-                  <div class="col-md-4 ms-auto">
-                    <div
-                      class="mega-featured-card"
-                      [routerLink]="menu.featured.link"
-                    >
-                      <img
-                        [ngSrc]="menu.featured.img"
-                        fill
-                        [alt]="menu.featured.title"
-                      />
-                      <div class="overlay">
-                        <span>{{ menu.featured.title }}</span>
+
+                      <div class="col-md-4 ms-auto">
+                        <div
+                          class="mega-featured-card"
+                          [routerLink]="menu.featured.link"
+                        >
+                          <img
+                            [ngSrc]="menu.featured.img"
+                            fill
+                            [alt]="menu.featured.title"
+                            priority
+                          />
+                          <div class="overlay">
+                            <span>{{ menu.featured.title }}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </li>
+              }
+            </li>
           }
-          <li><a class="nav-item-link" routerLink="/courses">Courses</a></li>
-          <li><a class="nav-item-link" routerLink="/gallery">Studio</a></li>
         </ul>
       </nav>
 
@@ -73,66 +84,65 @@
         <div class="user-dropdown-container d-none d-lg-block">
           <div class="user-trigger">
             <div class="avatar-placeholder">
-              {{ isLoggedIn() ? userName()?.charAt(0) : "" }}
-              @if (!isLoggedIn()) { <i class="bi bi-person"></i> }
+              @if (isLoggedIn()) {
+                {{ userName().charAt(0).toUpperCase() }}
+              } @else {
+                <i class="bi bi-person"></i>
+              }
             </div>
-            <span
-              class="status-dot"
-              [class.online]="isLoggedIn()"
-              [class.offline]="!isLoggedIn()"
-            ></span>
+            <span class="status-dot" [class.online]="isLoggedIn()"></span>
           </div>
 
-          <div class="auth-dropdown-card shadow-xl">
+          <div class="auth-dropdown-card shadow-lg">
             @if (!isLoggedIn()) {
-            <div class="p-3">
-              <button
-                class="btn btn-primary-sm w-100 mb-2"
-                routerLink="/auth/login"
-              >
-                Sign In
-              </button>
-              <button
-                class="btn btn-outline-sm w-100"
-                routerLink="/auth/register"
-              >
-                Join
-              </button>
-            </div>
+              <div class="p-3">
+                <button
+                  class="btn btn-primary-sm w-100 mb-2"
+                  routerLink="/auth/login"
+                >
+                  Sign In
+                </button>
+                <button
+                  class="btn btn-outline-sm w-100"
+                  routerLink="/auth/register"
+                >
+                  Join
+                </button>
+              </div>
             } @else {
-            <div class="p-3 border-bottom bg-light">
-              <p class="fw-bold m-0 small">{{ userName() }}</p>
-            </div>
-            <ul class="auth-links">
-              <li>
-                <a routerLink="/auth/profile"
-                  ><i class="bi bi-person me-2"></i> Profile</a
-                >
-              </li>
-              <li>
-                <a
-                  (click)="logout()"
-                  class="text-danger pointer"
-                  style="cursor: pointer"
-                  ><i class="bi bi-power me-2"></i> Logout</a
-                >
-              </li>
-            </ul>
+              <div class="dropdown-header p-3 border-bottom bg-light">
+                <p class="fw-bold m-0 small">{{ userName() }}</p>
+              </div>
+              <ul class="auth-links list-unstyled m-0">
+                <li>
+                  <a routerLink="/auth/profile"
+                    ><i class="bi bi-person me-2"></i> Profile</a
+                  >
+                </li>
+                <li>
+                  <a routerLink="/auth/order-history"
+                    ><i class="bi bi-bag me-2"></i> My Orders</a
+                  >
+                </li>
+                <li>
+                  <a
+                    (click)="logout()"
+                    class="text-danger"
+                    style="cursor: pointer"
+                    ><i class="bi bi-power me-2"></i> Logout</a
+                  >
+                </li>
+              </ul>
             }
           </div>
         </div>
 
-        <div
-          class="cart-btn-wrapper"
-          routerLink="/cart"
-          aria-label="View Shopping Cart"
-        >
+        <div class="cart-btn-wrapper" routerLink="/cart">
           <i class="bi bi-bag"></i>
-
-          @if (cartService.cartItems().length > 0) {
-          <span class="badge-count" aria-hidden="false">
-            {{ cartService.cartItems().length }}
-          </span>
+          @if (cartService.cartCount() > 0) {
+            <span class="badge-count animate-pop">{{
+              cartService.cartCount()
+            }}</span>
           }
         </div>
       </div>
@@ -140,50 +150,62 @@
   </div>
 
   @if (isMobileOpen()) {
-  <div class="sidebar-backdrop" (click)="toggleMobile()"></div>
+    <div class="sidebar-backdrop" (click)="toggleMobile()"></div>
   }
+
   <div class="mobile-drawer" [class.active]="isMobileOpen()">
     <div class="mobile-user-section">
-      <div class="avatar-placeholder">{{ userName()?.charAt(0) }}</div>
+      <div class="avatar-placeholder">
+        {{ isLoggedIn() ? userName().charAt(0).toUpperCase() : "?" }}
+      </div>
       <div class="user-info">
         <p class="user-name">{{ userName() }}</p>
-        <p class="user-status">Online</p>
+        <p class="user-status">{{ isLoggedIn() ? "Online" : "Guest" }}</p>
       </div>
-      <button class="btn-close-drawer" (click)="toggleMobile()">
+      <button
+        class="btn-close-drawer border-0 bg-transparent"
+        (click)="toggleMobile()"
+      >
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
 
     <div class="drawer-content">
       <p class="menu-label">Main Menu</p>
-      <ul class="mobile-nav-list">
+      <ul class="mobile-nav-list list-unstyled">
         <li><a routerLink="/" (click)="toggleMobile()">Home</a></li>
+
         @for (item of navData; track item.label) {
-        <li>
-          <a [routerLink]="item.allLink" (click)="toggleMobile()">{{
-            item.label
-          }}</a>
-        </li>
+          <li>
+            <a [routerLink]="item.link" (click)="toggleMobile()">{{
+              item.label
+            }}</a>
+          </li>
         }
-        <li><a routerLink="/gallery" (click)="toggleMobile()">Studio</a></li>
       </ul>
 
       <p class="menu-label">Settings</p>
-      <ul class="mobile-nav-list">
+      <ul class="mobile-nav-list list-unstyled">
         @if (isLoggedIn()) {
-        <li>
-          <a routerLink="/auth/profile" (click)="toggleMobile()"
-            ><i class="bi bi-person"></i> Profile</a
-          >
-        </li>
-        <li>
-          <a routerLink="/orders" (click)="toggleMobile()"
-            ><i class="bi bi-bag"></i> My Orders</a
-          >
-        </li>
-        <li class="logout-item">
-          <a (click)="logout()"><i class="bi bi-power"></i> Logout</a>
-        </li>
+          <li>
+            <a routerLink="/auth/profile" (click)="toggleMobile()"
+              ><i class="bi bi-person"></i> Profile</a
+            >
+          </li>
+          <li>
+            <a routerLink="/auth/order-history" (click)="toggleMobile()"
+              ><i class="bi bi-bag"></i> My Orders</a
+            >
+          </li>
+          <li class="logout-item">
+            <a (click)="logout()"><i class="bi bi-power"></i> Logout</a>
+          </li>
+        } @else {
+          <li>
+            <a routerLink="/auth/login" (click)="toggleMobile()"
+              ><i class="bi bi-box-arrow-in-right"></i> Sign In</a
+            >
+          </li>
         }
       </ul>
     </div>

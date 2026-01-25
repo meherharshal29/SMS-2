@@ -8,7 +8,7 @@
       </a>
     </div>
 
-    @if (cartService.cartItems().length === 0) {
+    @if (cartItems().length === 0) {
     <div class="empty-state">
       <div class="empty-icon"><i class="bi bi-cart-x"></i></div>
       <h3>Your cart is empty</h3>
@@ -19,30 +19,36 @@
     <div class="cart-content">
       <div class="cart-items-section">
         <div class="items-container">
-          @for (item of cartService.cartItems(); track item.cart_id) {
+          @for (item of cartItems(); track item.id) {
           <div class="cart-item">
             <div class="item-image">
               <img
-                [src]="item.thumbnail"
-                [alt]="item.model_name"
-                (error)="$any($event.target).src = 'assets/placeholder.png'"
+                [src]="item.Camera?.images?.[0]?.url || 'assets/no-camera.png'"
+                [alt]="item.Camera?.name"
+                class="cart-product-img"
+                (error)="
+                  $any($event.target).src =
+                    'https://placehold.co/600x600?text=Gear+Image'
+                "
               />
             </div>
 
             <div class="item-details">
-              <span class="item-brand">{{ item.brand }}</span>
-              <h3 class="item-name">{{ item.model_name }}</h3>
+              <span class="item-brand">{{ item.Camera?.brand }}</span>
+              <h3 class="item-name">{{ item.Camera?.name }}</h3>
               <div class="item-price-mobile">
-                <span class="price-label">Daily Rate:</span>
                 <span class="price-value"
-                  >₹{{ item.price_per_day | number }}</span
+                  >₹{{ item.Camera?.pricePerDay | number }}</span
                 >
+                <span class="price-label">/day</span>
               </div>
             </div>
 
-            <div class="item-rate">
+            <div class="item-rate d-none d-md-block">
               <span class="rate-label">Daily Rate</span>
-              <span class="rate-value">₹{{ item.price_per_day | number }}</span>
+              <span class="rate-value"
+                >₹{{ item.Camera?.pricePerDay | number }}</span
+              >
             </div>
 
             <div class="item-quantity">
@@ -60,15 +66,16 @@
                   <i class="bi bi-plus"></i>
                 </button>
               </div>
+              <small class="rental-days"
+                >{{ item.rentalDays }} Days Rental</small
+              >
             </div>
 
             <div class="item-actions">
-              <span class="item-total"
-                >₹{{ item.price_per_day * item.quantity | number }}</span
-              >
+              <span class="item-total">₹{{ item.itemTotal | number }}</span>
               <button
                 class="btn-remove"
-                (click)="removeItem(item.cart_id, item.model_name)"
+                (click)="removeItem(item.id, item.Camera?.name)"
               >
                 <i class="bi bi-trash3"></i>
                 <span>Remove</span>
@@ -85,19 +92,24 @@
             <div class="suggested-card">
               <div class="suggested-image">
                 <img
-                  [src]="suggest.images[0]?.image_url"
-                  [alt]="suggest.model_name"
+                  [src]="suggest.images?.[0]?.url || 'assets/no-camera.png'"
+                  [alt]="suggest.name"
+                  class="suggested-product-img"
+                  (error)="
+                    $any($event.target).src =
+                      'https://placehold.co/600x600?text=Gear'
+                  "
                 />
               </div>
               <div class="suggested-info">
-                <h4 class="suggested-name">{{ suggest.model_name }}</h4>
+                <h4 class="suggested-name">{{ suggest.name }}</h4>
                 <span class="suggested-price"
-                  >₹{{ suggest.price_per_day | number }}/day</span
+                  >₹{{ suggest.pricePerDay | number }}/day</span
                 >
               </div>
               <button class="btn-quick-add" (click)="quickAdd(suggest)">
                 <i class="bi bi-plus-lg"></i>
-                <span>Add to Cart</span>
+                <span>Quick Add</span>
               </button>
             </div>
             }
@@ -108,17 +120,10 @@
       <div class="summary-section">
         <div class="summary-card">
           <h2 class="summary-title">Order Summary</h2>
-          <div class="summary-items-count">
-            <i class="bi bi-box-seam"></i>
-            <span>{{ cartService.cartItems().length }} Items in cart</span>
-          </div>
-
           <div class="summary-details mt-4">
             <div class="summary-row">
               <span class="summary-label">Rental Subtotal</span>
-              <span class="summary-value"
-                >₹{{ cartService.cartSubtotal() | number }}</span
-              >
+              <span class="summary-value">₹{{ subtotal() | number }}</span>
             </div>
             <div class="summary-row">
               <span class="summary-label">Security Deposit (20%)</span>
@@ -131,18 +136,15 @@
               <span class="summary-value free">FREE</span>
             </div>
           </div>
-
           <div class="summary-divider"></div>
-
           <div class="summary-total">
             <div class="total-row">
-              <span class="total-label">Total Amount Due</span>
+              <span class="total-label">Total Amount</span>
               <span class="total-value">₹{{ finalTotalDue() | number }}</span>
             </div>
           </div>
-
           <button class="btn-checkout" (click)="onProceedToPayment()">
-            <span>Proceed to Checkout</span>
+            <span>Checkout</span>
             <i class="bi bi-arrow-right"></i>
           </button>
         </div>
@@ -151,5 +153,4 @@
     }
   </div>
 </div>
-
 <app-footer></app-footer>

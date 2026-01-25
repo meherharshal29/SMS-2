@@ -1,3 +1,8 @@
-<ngx-ui-loader></ngx-ui-loader>
-<app-navbar></app-navbar>
-<router-outlet></router-outlet>
+<app-navbar *ngIf="showNavbar"></app-navbar>
+
+<div class="row m-auto">
+  <div class="col-lg col-md p-0 col-sm" *ngIf="showSidebar">
+    <app-sidebar></app-sidebar>
+  </div>
+</div>
+<router-outlet class=""></router-outlet>

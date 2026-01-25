@@ -1,0 +1,110 @@
+<div class="admin-wrapper" [class.sidebar-collapsed]="!sidebarOpen">
+  <div
+    class="sidebar-overlay"
+    *ngIf="sidebarOpen && isMobile"
+    (click)="toggleSidebar()"
+  ></div>
+
+  <aside class="app-sidebar" [class.open]="sidebarOpen">
+    <div class="sidebar-brand">
+      <div class="logo-wrapper">
+        <div class="logo-box">N</div>
+        <div class="brand-info" *ngIf="sidebarOpen">
+          <span class="brand-name">Nagpur.Property</span>
+          <span class="brand-tag">ADMIN PANEL</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-container">
+      <div class="nav-group">
+        <div class="group-title" *ngIf="sidebarOpen">General</div>
+        <a
+          routerLink="/admin/dashboard"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          <span class="material-icons">dashboard</span>
+          <span class="link-text" *ngIf="sidebarOpen">Dashboard</span>
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <div class="group-title" *ngIf="sidebarOpen">Real Estate</div>
+        <a
+          routerLink="/admin/property-list"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          <span class="material-icons">domain</span>
+          <span class="link-text" *ngIf="sidebarOpen">All Properties</span>
+        </a>
+        <a
+          routerLink="/admin/add-property"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          <span class="material-icons">add_business</span>
+          <span class="link-text" *ngIf="sidebarOpen">Add New Listing</span>
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <div class="group-title" *ngIf="sidebarOpen">Management</div>
+        <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
+          <span class="material-icons">groups</span>
+          <span class="link-text" *ngIf="sidebarOpen">User Base</span>
+        </a>
+        <a
+          routerLink="/admin/analytics"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          <span class="material-icons">bar_chart</span>
+          <span class="link-text" *ngIf="sidebarOpen">Analytics</span>
+        </a>
+        <a
+          routerLink="/admin/reports"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          <span class="material-icons">description</span>
+          <span class="link-text" *ngIf="sidebarOpen">Reports</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <span class="material-icons">logout</span>
+        <span *ngIf="sidebarOpen">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="viewport">
+    <header class="top-nav">
+      <div class="nav-left">
+        <button class="toggle-btn" (click)="toggleSidebar()">
+          <span class="material-icons">{{
+            sidebarOpen ? "menu_open" : "menu"
+          }}</span>
+        </button>
+        <div class="breadcrumb">
+          <span class="root">Control Center</span>
+          <span class="material-icons divider">chevron_right</span>
+          <span class="current">Overview</span>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="sync-status"><span class="status-dot"></span> Online</div>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="container-fluid">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </main>
+</div>

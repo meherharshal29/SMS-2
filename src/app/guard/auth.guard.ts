@@ -1,37 +1,33 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Router, CanActivateFn } from '@angular/router';
 import { map, take } from 'rxjs';
 import { AuthService } from '../auth/services/auth.service';
 
-/**
- * Prevents unauthenticated users from accessing a route.
- */
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authService.isLoggedIn$.pipe(
+  // If already logged in in memory, allow access
+  if (authService.isLoggedIn()) return true;
+
+  // Otherwise, wait for the background sync to finish before deciding
+  return authService.syncProfile().pipe(
     take(1),
-    map(isLoggedIn => {
-      if (isLoggedIn) return true;
-      // Redirect to login and save the attempted URL
-      return router.createUrlTree(['/auth/login'], { queryParams: { returnUrl: state.url } });
+    map(res => {
+      if (res && res.success) return true;
+      router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });
+      return false;
     })
   );
 };
 
-/**
- * Prevents logged-in users from accessing login/register pages.
- */
-export const guestGuard: CanActivateFn = () => {
+export const guestGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authService.isLoggedIn$.pipe(
-    take(1),
-    map(isLoggedIn => {
-      if (!isLoggedIn) return true;
-      return router.createUrlTree(['/']);
-    })
-  );
+  if (authService.isLoggedIn()) {
+    router.navigate(['/auth/profile']);
+    return false;
+  }
+  return true;
 };

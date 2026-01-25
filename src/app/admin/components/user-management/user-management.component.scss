@@ -1,0 +1,295 @@
+// Variables
+$primary: #6366f1;
+$success: #22c55e;
+$danger: #ef4444;
+$warning: #f59e0b;
+$bg-body: #f1f5f9;
+$text-dark: #1e293b;
+$text-muted: #64748b;
+
+.mgmt-viewport {
+    padding: 2.5rem 1.5rem;
+    background-color: $bg-body;
+    min-height: 100vh;
+}
+
+.mgmt-card {
+    background: white;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+
+    &.is-loading {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+}
+
+.mgmt-header {
+    padding: 1.75rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    gap: 1.5rem;
+
+    h2 {
+        font-weight: 800;
+        color: $text-dark;
+        margin: 0;
+    }
+
+    p {
+        color: $text-muted;
+        font-size: 0.9rem;
+        margin-top: 0.35rem;
+    }
+
+    .search-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        padding: 0.6rem 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        width: 320px;
+
+        input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        i {
+            color: #94a3b8;
+        }
+    }
+}
+
+// Header Online Indicator
+.online-indicator-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: $success;
+    font-weight: 600;
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: $success;
+        border-radius: 50%;
+        animation: pulse-green 2s infinite;
+    }
+}
+
+.mgmt-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+        background: #f8fafc;
+        padding: 1rem 1.5rem;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: $text-muted;
+    }
+
+    td {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+
+    .avatar-wrapper {
+        position: relative;
+        transition: filter 0.3s ease;
+
+        &.is-offline .avatar {
+            filter: grayscale(0.5);
+            opacity: 0.8;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            background: #eef2ff;
+            color: $primary;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        .status-tick {
+            position: absolute;
+            bottom: -3px;
+            right: -3px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+            &.online {
+                width: 20px;
+                height: 20px;
+                color: $success;
+                font-size: 1.1rem;
+            }
+
+            &.offline {
+                width: 12px;
+                height: 12px;
+                background: $danger;
+                border: 2px solid white;
+            }
+        }
+    }
+
+    .meta {
+        .name {
+            font-weight: 700;
+            color: $text-dark;
+
+            /* --- Clickable Name Style --- */
+            .user-link {
+                text-decoration: none;
+                color: inherit;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: $primary;
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        .email {
+            font-size: 0.8rem;
+            color: $text-muted;
+        }
+    }
+}
+
+.action-row {
+    display: flex;
+    gap: 0.65rem;
+    justify-content: flex-end;
+
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        cursor: pointer;
+        transition: 0.2s;
+        color: $text-muted;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        /* For the <a> tag */
+
+        &:hover {
+            transform: translateY(-2px);
+
+            /* --- View Button Hover --- */
+            &.view {
+                color: $primary;
+                border-color: $primary;
+                background: #eef2ff;
+            }
+
+            &.mail {
+                color: $warning;
+                border-color: $warning;
+                background: #fffbeb;
+            }
+
+            &.delete {
+                color: $danger;
+                border-color: $danger;
+                background: #fef2f2;
+            }
+
+            &.status {
+                color: $success;
+                border-color: $success;
+                background: #f0fdf4;
+            }
+        }
+    }
+}
+
+// Banned Badge
+.bg-soft-danger {
+    background-color: #fef2f2;
+    color: $danger;
+    border: 1px solid rgba($danger, 0.2);
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: $text-muted;
+}
+
+// Animations
+@keyframes pulse-green {
+    0% {
+        box-shadow: 0 0 0 0 rgba($success, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba($success, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba($success, 0);
+    }
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

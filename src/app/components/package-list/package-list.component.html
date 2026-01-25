@@ -1,45 +1,76 @@
 <div class="package-container">
   <header class="list-header mt-4">
-    <h1>Our Collections</h1>
-    <div class="filter-tabs">
-      <button
-        *ngFor="let cat of categories"
-        [class.active]="activeCategory === cat"
-        (click)="filterPackages(cat)"
-      >
-        {{ cat }}
-      </button>
+    <div class="header-text">
+      <p class="sub-title">EXCLUSIVE COLLECTIONS</p>
+      <h1>Our Collections</h1>
+    </div>
+
+    <div class="filter-tabs-wrapper">
+      <div class="filter-tabs">
+        <button
+          *ngFor="let cat of categories"
+          [class.active]="activeCategory === cat"
+          (click)="filterPackages(cat)"
+        >
+          {{ cat }}
+        </button>
+      </div>
     </div>
   </header>
 
-  <div class="package-grid">
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading collections...</p>
+  </div>
+
+  <div *ngIf="!isLoading && packages.length === 0" class="empty-state">
+    <div class="empty-icon">📂</div>
+    <h3>No Collections Found</h3>
+    <p>We couldn't find any packages in the "{{ activeCategory }}" category.</p>
+    <button (click)="filterPackages('All')" class="btn-reset">
+      View All Collections
+    </button>
+  </div>
+
+  <div *ngIf="!isLoading && packages.length > 0" class="package-grid">
     <div
       class="minimal-card"
       *ngFor="let pkg of packages"
       [routerLink]="['/package', pkg.id]"
     >
       <div class="card-img-wrapper">
-        <div
-          class="card-img"
-          [style.background-image]="
-            'url(' + (pkg.image || 'assets/placeholder.jpg') + ')'
-          "
-        >
-          <div class="overlay">
-            <span>Explore Package</span>
-          </div>
-        </div>
         <div class="category-tag">{{ pkg.category }}</div>
+
+        <img
+          [src]="pkg.coverImage || 'assets/placeholder.jpg'"
+          [alt]="pkg.title"
+          class="card-img"
+          loading="lazy"
+        />
+
+        <div class="overlay">
+          <span>View Portfolio</span>
+        </div>
       </div>
 
       <div class="card-info">
         <h3>{{ pkg.title }}</h3>
+        <p class="description-preview">
+          {{ pkg.description }}
+        </p>
+
         <div class="card-footer">
-          <span class="price-label">Starting from</span>
-          <span class="price-value">₹{{ pkg.price | number }}</span>
+          <div class="price-wrapper">
+            <span class="price-label">Starting From</span>
+            <span class="price-value">₹{{ pkg.price | number }}</span>
+          </div>
+          <div class="arrow-btn">
+            <i class="bi bi-arrow-right"></i>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 <app-footer></app-footer>

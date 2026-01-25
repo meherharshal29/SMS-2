@@ -1,156 +1,90 @@
-<div class="main-wrapper">
-  @if (isLoading()) {
-  <div class="loader-viewport">
-    <div class="spinner"></div>
-    <p>Fetching Technical Data...</p>
-  </div>
-  } @else if (camera()) {
-  <div class="container">
-    <nav class="breadcrumb-nav">
-      <a routerLink="/">Home</a> <i class="bi bi-chevron-right"></i>
-      <a routerLink="/rentals">Rentals</a> <i class="bi bi-chevron-right"></i>
-      <span class="active">{{ camera().model_name }}</span>
-    </nav>
+<ngx-ui-loader></ngx-ui-loader>
 
-    <div class="product-grid">
-      <div class="gallery-column">
-        <div class="main-image-card">
-          <img [src]="selectedImage()" alt="Product View" />
+<div class="rental-details-wrapper" *ngIf="!loading() && camera() as cam">
+  <section class="container py-4 py-md-5">
+    <div class="row g-4 g-lg-5 py-4">
+      <div class="col-lg-6">
+        <div class="main-image-stage rounded-4">
+          <img [src]="activeImage()" [alt]="cam.name" class="main-img" />
         </div>
-
-        <div class="thumbnail-row">
-          @for (img of camera().images; track img) {
+        <div class="d-flex gap-2 mt-3 overflow-auto pb-2 custom-scrollbar">
           <div
-            class="thumb-box"
-            [class.active]="selectedImage() === img"
-            (click)="updatePreview(img)"
+            *ngFor="let img of cam.images"
+            (click)="changeImage(img.url)"
+            [class.active]="activeImage() === img.url"
+            class="thumbnail-box border rounded-3 flex-shrink-0 cursor-pointer"
           >
-            <img [src]="img" alt="Thumbnail" />
-          </div>
-          }
-        </div>
-
-        <div class="product-info-grid">
-          <div class="info-section">
-            <h3>Description</h3>
-            <p class="description-text">
-              {{
-                camera().description ||
-                  "Experience professional-grade results with the " +
-                    camera().brand +
-                    " " +
-                    camera().model_name +
-                    ". This high-performance gear is maintained to the highest industry standards, ensuring reliability for your most demanding projects."
-              }}
-            </p>
-          </div>
-
-          <div class="info-section">
-            <h3>Key Features</h3>
-            <ul class="feature-list">
-              <li>
-                <i class="bi bi-check2-circle"></i> Professional Grade
-                maintenance
-              </li>
-              <li>
-                <i class="bi bi-check2-circle"></i> Includes 2 High capacity
-                batteries
-              </li>
-              <li>
-                <i class="bi bi-check2-circle"></i> Sanitized before every
-                dispatch
-              </li>
-            </ul>
+            <img [src]="img.url" class="rounded-2" />
           </div>
         </div>
       </div>
 
-      <aside class="sidebar-column">
-        <div class="booking-card">
-          <span class="brand-tag">{{ camera().brand }}</span>
-          <h1 class="product-name">{{ camera().model_name }}</h1>
+      <div class="col-lg-6 details-column">
+        <nav class="mb-2">
+          <span
+            class="text-uppercase text-muted fw-bold x-small letter-spacing-1"
+            >{{ cam.brand }}</span
+          >
+        </nav>
+        <h1 class="fw-bold h2 h1-md mb-1">{{ cam.name }}</h1>
 
-          <div class="price-display">
-            <span class="currency">₹</span>
-            <span class="amount">{{
-              camera().price_per_day | number : "1.0-0"
-            }}</span>
-            <span class="per-day">/ day</span>
-          </div>
-
-          <div class="booking-form">
-            <div class="qty-field">
-              <label>Units Needed</label>
-              <div class="stepper">
-                <button (click)="decrementQuantity()">-</button>
-                <span class="qty-val">{{ quantity() }}</span>
-                <button (click)="incrementQuantity()">+</button>
-              </div>
-            </div>
-
-            <div class="summary-details">
-              <div class="row-info">
-                <span>Base Price (1 Day)</span>
-                <span>₹{{ camera().price_per_day | number : "1.0-0" }}</span>
-              </div>
-              <div class="row-info total">
-                <span>Total Payable</span>
-                <span>₹{{ getTotalPrice() | number : "1.0-0" }}</span>
-              </div>
-            </div>
-
-            <button class="btn-book-now" (click)="addToCart()">
-              <i class="bi bi-lightning-charge-fill me-2"></i>
-              Book This Gear
-            </button>
-          </div>
+        <div class="d-flex align-items-center mb-4">
+          <span class="text-warning me-2">★★★★★</span>
+          <span class="text-muted small"
+            >({{ cam.totalReviews || 0 }} Reviews)</span
+          >
         </div>
-      </aside>
+
+        <div class="price-card p-4 rounded-4 bg-light mb-4">
+          <div class="d-flex align-items-baseline">
+            <span class="h1 fw-bold mb-0">₹{{ cam.pricePerDay }}</span>
+            <span class="ms-1 text-muted">/ Day</span>
+          </div>
+          <p class="text-secondary small mt-1 mb-0">
+            * Prices exclusive of Tax
+          </p>
+        </div>
+
+        <div class="mb-4">
+          <h6 class="fw-bold mb-2">Description</h6>
+          <p class="text-muted lh-lg">{{ cam.description }}</p>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row gap-3 mt-auto">
+          <button
+            class="btn btn-rent-now flex-grow-1 py-3 fw-bold rounded-3"
+            (click)="onAddToCart()"
+          >
+            Rent Now
+          </button>
+          <button class="btn btn-outline-secondary px-4 py-3 rounded-3">
+            <i class="bi bi-heart me-2"></i>Wishlist
+          </button>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <section class="related-section">
-      <div class="section-header">
-        <h2>Similar Gear for You</h2>
-        <a routerLink="/rentals" class="view-collection">
-          View Collection <i class="bi bi-arrow-right"></i>
-        </a>
+  <section class="container mb-5">
+    <h4 class="fw-bold mb-4">Technical Specifications</h4>
+    <div class="specs-grid">
+      <div
+        class="spec-card p-3 rounded-3 bg-light"
+        *ngFor="let spec of specEntries"
+      >
+        <label class="d-block text-uppercase text-muted fw-bold x-small mb-1">{{
+          spec.label
+        }}</label>
+        <span class="fw-bold text-dark">{{ spec.value }}</span>
       </div>
+    </div>
+  </section>
 
-      <div class="rental-grid">
-        @for (item of rentals(); track item.id) {
-        <div class="rental-card">
-          <div class="card-image" [routerLink]="['/rental', item.id]">
-            <img
-              [src]="item.displayImage"
-              [alt]="item.model_name"
-              loading="lazy"
-            />
-            <span class="category-tag">{{ item.brand || "Professional" }}</span>
-          </div>
-
-          <div class="card-content">
-            <p class="brand">{{ item.brand }}</p>
-            <h4 class="model">{{ item.model_name }}</h4>
-            <div class="card-footer">
-              <div class="price">
-                <span class="unit">₹</span
-                >{{ item.price_per_day | number : "1.0-0" }}<small>/day</small>
-              </div>
-              <button
-                class="btn-quick-add"
-                (click)="addToCart(item); $event.stopPropagation()"
-              >
-                <i class="bi bi-plus"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        }
-      </div>
-    </section>
-  </div>
-  }
+  <app-rental></app-rental>
 </div>
 
-<div class="footer-separator"></div>
+<div *ngIf="loading()" class="loading-overlay">
+  <div class="spinner-border text-dark" role="status"></div>
+</div>
+
 <app-footer></app-footer>

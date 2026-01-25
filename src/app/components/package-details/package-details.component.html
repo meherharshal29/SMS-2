@@ -1,15 +1,17 @@
-<div class="page-wrapper p-0 m-0" *ngIf="package">
+<div class="page-wrapper" *ngIf="package && !loading">
   <section
     class="hero-banner"
-    [style.background-image]="'url(' + (package.gallery?.[0]?.image_url || package.image || 'assets/placeholder.jpg') + ')'"
+    [style.background-image]="
+      'url(' + (package.coverImage || 'assets/placeholder.jpg') + ')'
+    "
   >
     <div class="hero-overlay">
       <div class="hero-content">
-        <button routerLink="/packages" class="btn-back">
-          ← Back to Collections
-        </button>
-        <span class="badge">{{ package.category }}</span>
-        <h1>{{ package.title }}</h1>
+        <button routerLink="/" class="btn-back">← Back to Collections</button>
+        <h1>
+          {{ package.title }}
+        </h1>
+        <span class="category-badge">{{ package.category }}</span>
       </div>
     </div>
   </section>
@@ -18,55 +20,135 @@
     <aside class="booking-card">
       <div class="card-inner">
         <p class="label">Total Investment</p>
-        <h2 class="price">₹{{ package.price | number }}</h2>
+        <div class="price-block">
+          <h2 class="price">₹{{ package.price | number }}</h2>
+          <span class="tax-tag">+ Applicable Taxes</span>
+        </div>
+
         <hr />
+
+        <div class="package-meta" *ngIf="package.albumDisplay">
+          <p class="label">Deliverable Album</p>
+          <p class="meta-text">
+            <i class="bi bi-book me-2"></i>{{ package.albumDisplay }}
+          </p>
+        </div>
+
         <p class="description">
-          Secure your date for a premium cinematic experience.
+          {{
+            package.description ||
+              "Secure your date for a premium cinematic experience designed for " +
+                package.category +
+                "."
+          }}
         </p>
-        <button class="btn-primary">Reserve This Package</button>
-        <div class="trust-footer">Available for 2024 - 2025 Bookings</div>
+
+        <button class="btn-primary" [routerLink]="['/book-shoot', package.id]">
+          Reserve This Package
+        </button>
+        <div class="trust-footer">Available for 2025-2026 Season</div>
       </div>
     </aside>
 
     <main class="content-area">
-      <section class="details-text" *ngIf="package.inclusions">
+      <section
+        class="details-section"
+        *ngIf="package.allInclusions?.length > 0"
+      >
         <h3 class="section-title">The Package Details</h3>
         <div class="inclusions-grid">
           <div
             class="inclusion-item"
-            *ngFor="let item of package.inclusions.split(',')"
+            *ngFor="let item of package.allInclusions"
           >
-            <span class="check">✦</span> {{ item.trim() }}
+            <span class="check">✦</span> {{ item }}
           </div>
         </div>
       </section>
 
-      <section class="gallery-magazine" *ngIf="package.gallery?.length > 0">
+      <section class="gallery-section">
         <h3 class="section-title">Captured Moments</h3>
         <div class="magazine-grid">
-          <div
-            class="mag-item"
-            *ngFor="let img of package.gallery; let i = index"
-            [class.wide]="i % 3 === 0"
-          >
-            <img [src]="img.image_url" [alt]="package.title" loading="lazy" />
+          <div class="mag-item featured" *ngIf="package.coverImage">
+            <img
+              [src]="package.coverImage"
+              [alt]="package.title"
+              loading="eager"
+            />
           </div>
-        </div>
-      </section>
 
-      <section
-        class="gallery-magazine"
-        *ngIf="package.gallery?.length === 0 && package.image"
-      >
-        <h3 class="section-title">Package Preview</h3>
-        <div class="magazine-grid">
-          <div class="mag-item wide">
-            <img [src]="package.image" alt="Main Preview" />
-          </div>
+          <ng-container *ngFor="let img of package.images; let i = index">
+            <div
+              class="mag-item"
+              *ngIf="img.url !== package.coverImage"
+              [class.wide]="i % 4 === 1"
+              [class.tall]="i % 4 === 3"
+            >
+              <img [src]="img.url" [alt]="package.title" loading="lazy" />
+            </div>
+          </ng-container>
         </div>
       </section>
     </main>
   </div>
+
+  <section
+    class="suggestions-section py-5 bg-light mt-5"
+    *ngIf="suggestedPackages.length"
+  >
+    <div class="container">
+      <div
+        class="header-row d-flex justify-content-between align-items-end mb-4 px-2"
+      >
+        <div>
+          <p class="sub-title mb-0 text-muted">DISCOVER MORE</p>
+          <p class="main-title mb-0 fw-bolder fs-5">Suggested Collections</p>
+        </div>
+        <a routerLink="/" class="text-dark fw-bold text-decoration-none"
+          >View All →</a
+        >
+      </div>
+
+      <div class="row g-3">
+        <div class="col-6 col-md-3" *ngFor="let p of suggestedPackages">
+          <div class="suggestion-card" [routerLink]="['/package', p.id]">
+            <div class="img-wrapper">
+              <img [src]="p.coverImage" [alt]="p.title" loading="lazy" />
+            </div>
+            <div class="info p-3">
+              <h4 class="m-0 fs-6 text-truncate">{{ p.title }}</h4>
+              <p class="price-text m-0 text-muted small">
+                Starting ₹{{ p.price | number }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div *ngIf="loading" class="loading-screen">
+  <div class="spinner"></div>
+  <p>Curating details...</p>
 </div>
 
 <app-footer *ngIf="!loading"></app-footer>
+<div class="floating-actions">
+  <button
+    class="scroll-top-btn shadow-lg"
+    [class.visible]="showScroll()"
+    (click)="scrollToTop()"
+    aria-label="Scroll to top"
+  >
+    <i class="bi bi-arrow-up-short"></i>
+  </button>
+  <a
+    href="https://wa.me/919834996139"
+    target="_blank"
+    class="whatsapp-btn shadow-lg"
+    aria-label="Contact us on WhatsApp"
+  >
+    <i class="bi bi-whatsapp"></i>
+  </a>
+</div>

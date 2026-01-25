@@ -1,0 +1,44 @@
+@use "sass:color";
+
+.callback-modal-container {
+    background: #fff;
+    border-radius: 20px;
+
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        background: rgba(139, 92, 246, 0.1); // Soft primary
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.4s ease-out;
+    }
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+
+    &.pending {
+        background: rgba(245, 158, 11, 0.1);
+        color: color.adjust(#f59e0b, $lightness: -15%);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,136 @@
+<div class="admin-details-container py-4" *ngIf="userData">
+  <div class="container-fluid">
+    <div class="row mb-4">
+      <div class="col-12 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar-circle shadow-sm">
+            {{ userData.profile.name[0] }}
+          </div>
+          <div>
+            <h2 class="h4 mb-0 fw-bold">{{ userData.profile.name }}</h2>
+            <small class="text-success fw-medium">
+              <span class="status-dot"></span> Active Now
+            </small>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="btn btn-outline-secondary btn-sm me-2">
+            Download Report
+          </button>
+          <button class="btn btn-danger btn-sm">Suspend User</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-3">
+        <div class="info-card p-4 shadow-sm h-100">
+          <h6 class="text-uppercase text-muted fw-bold small mb-4">
+            Identity Verification
+          </h6>
+
+          <div class="info-item mb-3">
+            <label>Aadhar Number</label>
+            <p>{{ userData.profile.defaultAdharNo || "123654486699" }}</p>
+          </div>
+
+          <div class="info-item mb-3">
+            <label>Phone / WhatsApp</label>
+            <p>{{ userData.profile.phone }}</p>
+          </div>
+
+          <div class="info-item mb-3">
+            <label>Verified Email</label>
+            <p class="text-break">{{ userData.profile.email }}</p>
+          </div>
+
+          <div class="revenue-box mt-4 p-3 rounded-3 text-white shadow-sm">
+            <small class="opacity-75 text-uppercase fw-bold tiny-label"
+              >Lifetime Revenue</small
+            >
+            <h3 class="m-0 fw-bold">₹{{ userData.summary.totalRevenue }}</h3>
+          </div>
+
+          <div
+            class="revenue-box pending mt-3 p-3 rounded-3 text-white shadow-sm"
+          >
+            <small class="opacity-75 text-uppercase fw-bold tiny-label"
+              >Pending Revenue</small
+            >
+            <h3 class="m-0 fw-bold">₹{{ userData.summary.pendingRevenue }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="table-card shadow-sm h-100">
+          <div
+            class="p-3 border-bottom d-flex justify-content-between align-items-center"
+          >
+            <h5 class="m-0 fw-bold">Equipment Rental History</h5>
+            <span class="badge bg-light text-dark border"
+              >{{ userData.summary.totalOrders }} Bookings</span
+            >
+          </div>
+
+          <div class="table-responsive">
+            <table class="table align-middle table-hover mb-0">
+              <thead>
+                <tr>
+                  <th class="ps-4">Order ID</th>
+                  <th>Gear & Images</th>
+                  <th>Dates</th>
+                  <th>Bill</th>
+                  <th class="text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of userData.orderHistory">
+                  <td class="ps-4 fw-bold text-secondary">
+                    #ORD-{{ order.id }}
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-3 py-2">
+                      <div class="img-container rounded border shadow-sm">
+                        <img
+                          [src]="order.Camera?.images[0]?.url"
+                          onerror="this.src='https://via.placeholder.com/150?text=No+Image'"
+                          class="object-fit-cover w-100 h-100"
+                        />
+                      </div>
+                      <div>
+                        <div class="fw-bold text-dark">
+                          {{ order.Camera?.name }}
+                        </div>
+                        <small class="text-muted">{{
+                          order.Camera?.brand
+                        }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="small fw-bold">
+                      {{ order.rentalStartDate | date : "dd MMM" }} -
+                      {{ order.rentalEndDate | date : "dd MMM" }}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="fw-bold">₹{{ order.totalPrice }}</div>
+                    <small class="text-muted text-uppercase">{{
+                      order.paymentMethod
+                    }}</small>
+                  </td>
+                  <td class="text-center">
+                    <span class="status-badge" [ngClass]="order.status">
+                      {{ order.status | uppercase }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+.preview-container {
+    height: 180px;
+    background: #fdfdfd;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        border-color: #3f51b5;
+        background: #f8f9ff;
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.gif-preview {
+    height: 140px;
+    border-style: dotted;
+}
+
+.asset-card {
+    transition: transform 0.2s;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
+}
+
+.send-btn {
+    border-radius: 50px !important;
+    box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3) !important;
+    font-weight: 600;
+}
+
+@media (max-width: 576px) {
+    .test-section {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .send-btn {
+        width: 100%;
+    }
+}

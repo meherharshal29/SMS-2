@@ -1,0 +1,234 @@
+<div class="dashboard-container">
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3"
+  >
+    <div class="title-group">
+      <h2 class="mb-1 fw-bold text-dark">Camera Inventory</h2>
+      <p class="text-muted mb-0">Manage your rental equipment assets</p>
+    </div>
+
+    <div class="d-flex gap-3">
+      <button
+        mat-raised-button
+        class="btn-add text-light"
+        routerLink="/admin/add-camera"
+      >
+        <mat-icon class="me-2">add</mat-icon> Add New Camera
+      </button>
+    </div>
+  </div>
+
+  <div class="search-section mb-4">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search by name, brand, or model..."
+        (keyup)="onSearch($event)"
+      />
+    </div>
+  </div>
+
+  <div
+    *ngIf="loading"
+    class="d-flex justify-content-center align-items-center py-5"
+    style="min-height: 300px"
+  >
+    <mat-spinner diameter="50" color="primary"></mat-spinner>
+  </div>
+
+  <div class="custom-table-card mat-elevation-z2" *ngIf="!loading">
+    <div class="table-responsive">
+      <table
+        mat-table
+        [dataSource]="cameras"
+        multiTemplateDataRows
+        class="w-100 align-middle"
+      >
+        <ng-container matColumnDef="image">
+          <th mat-header-cell *matHeaderCellDef>Product</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex align-items-center py-2">
+              <img
+                [src]="getPrimaryImage(element)"
+                (error)="handleImageError($event)"
+                class="product-img shadow-sm"
+                alt="Camera"
+              />
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Camera Name</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="fw-bold text-dark-navy">{{ element.name }}</div>
+            <div class="small text-muted" *ngIf="element.modelNumber">
+              {{ element.modelNumber }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="brand">
+          <th mat-header-cell *matHeaderCellDef>Brand</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="custom-badge brand-badge">{{ element.brand }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef>Daily Rate</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="fw-bold price-text">
+              {{ element.pricePerDay | currency : "INR" }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="custom-badge status-active"> Active </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="text-end pe-4">
+            Actions
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-end pe-3">
+            <button
+              mat-icon-button
+              class="action-btn edit-btn"
+              (click)="editCamera(element.id); $event.stopPropagation()"
+              matTooltip="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="action-btn delete-btn"
+              (click)="deleteCamera(element); $event.stopPropagation()"
+              matTooltip="Delete"
+            >
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="action-btn expand-btn"
+              (click)="toggleRow(element); $event.stopPropagation()"
+            >
+              <mat-icon>{{
+                expandedElement === element ? "expand_less" : "expand_more"
+              }}</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+          <td
+            mat-cell
+            *matCellDef="let element"
+            [attr.colspan]="displayedColumns.length"
+          >
+            <div
+              class="example-element-detail"
+              [@detailExpand]="
+                element == expandedElement ? 'expanded' : 'collapsed'
+              "
+            >
+              <div class="detail-container">
+                <div class="row g-4">
+                  <div class="col-lg-8">
+                    <h5 class="detail-header">Technical Specifications</h5>
+                    <div class="row g-3">
+                      <div class="col-md-4 col-sm-6">
+                        <div class="spec-item">
+                          <span class="label">Resolution</span>
+                          <span class="value">{{
+                            getSpec(element, "resolution")
+                          }}</span>
+                        </div>
+                      </div>
+                      <div class="col-md-4 col-sm-6">
+                        <div class="spec-item">
+                          <span class="label">Sensor Type</span>
+                          <span class="value">{{
+                            getSpec(element, "sensor")
+                          }}</span>
+                        </div>
+                      </div>
+                      <div class="col-md-4 col-sm-6">
+                        <div class="spec-item">
+                          <span class="label">ISO Range</span>
+                          <span class="value">{{
+                            getSpec(element, "iso")
+                          }}</span>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="spec-item description">
+                          <span class="label">Description</span>
+                          <p class="value mb-0">{{ element.description }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 border-start-lg">
+                    <h5 class="detail-header">
+                      Media Gallery
+                      <span class="badge bg-secondary rounded-pill ms-2">{{
+                        element.images?.length || 0
+                      }}</span>
+                    </h5>
+                    <div class="gallery-grid">
+                      <div
+                        *ngFor="let img of element.images"
+                        class="gallery-item"
+                      >
+                        <img
+                          [src]="img.url"
+                          (click)="getPrimaryImage(element)"
+                          title="Preview"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+        <tr
+          mat-row
+          *matRowDef="let element; columns: displayedColumns"
+          class="element-row"
+          [class.expanded-row]="expandedElement === element"
+          (click)="toggleRow(element)"
+        ></tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['expandedDetail']"
+          class="detail-row-placeholder"
+        ></tr>
+
+        <tr *matNoDataRow>
+          <td class="text-center p-5" [attr.colspan]="displayedColumns.length">
+            <div class="d-flex flex-column align-items-center text-muted">
+              <mat-icon
+                style="font-size: 48px; height: 48px; width: 48px; opacity: 0.5"
+                >search_off</mat-icon
+              >
+              <span class="mt-2">No cameras found matching your search.</span>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

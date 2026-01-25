@@ -1,0 +1,136 @@
+.admin-container {
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: 'Montserrat', sans-serif;
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+
+        .page-title {
+            font-weight: 800;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin: 0;
+        }
+    }
+}
+
+.table-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+}
+
+.client-info,
+.package-cell,
+.event-info {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+
+    .name,
+    .title {
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .subtext,
+    .price {
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+}
+
+.package-cell {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+
+    .pkg-thumb {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+}
+
+.event-info {
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: #94a3b8;
+        }
+    }
+
+    .requirements {
+        margin-top: 4px;
+        color: #a78bfa;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    &.status-pending {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+
+    &.status-confirmed {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    &.status-completed {
+        background: #e0f2fe;
+        color: #075985;
+    }
+
+    &.status-cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

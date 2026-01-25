@@ -1,0 +1,94 @@
+.admin-details-container {
+    background-color: #f4f7fe;
+    min-height: 100vh;
+
+    .avatar-circle {
+        width: 48px;
+        height: 48px;
+        background: #4e73df;
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .info-card,
+    .table-card {
+        background: white;
+        border-radius: 15px;
+        border: none;
+    }
+
+    .revenue-box {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); // Default Blue
+
+        &.pending {
+            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%); // Warm Orange for Pending
+        }
+
+        .tiny-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.05rem;
+        }
+    }
+
+    .info-item {
+        label {
+            font-size: 0.75rem;
+            color: #a0aec0;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        p {
+            margin: 0;
+            font-weight: 600;
+            color: #2d3748;
+        }
+    }
+
+    .img-container {
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+
+        &.confirmed {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        &.cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        &.pending {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+    }
+
+    .status-dot {
+        height: 8px;
+        width: 8px;
+        background-color: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+}

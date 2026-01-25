@@ -3,51 +3,93 @@
 <div class="auth-card">
   <h2>Welcome Back</h2>
 
-  @if (!showOtpStep()) {
-  <p class="subtitle">Login to access your studio dashboard</p>
-  } @else {
-  <p class="subtitle">
-    We sent a code to <strong>{{ email() }}</strong>
-  </p>
-  } @if (!showOtpStep()) {
-  <form (ngSubmit)="requestOtp()">
-    <div class="form-group">
-      <label>Email Address</label>
-      <input
-        type="email"
-        [ngModel]="email()"
-        (ngModelChange)="email.set($event)"
-        name="email"
-        placeholder="name@smartmedia.com"
-        required
-      />
-    </div>
-
-    <button type="submit" class="btn-auth">Send Login Code</button>
-  </form>
-  } @else {
-  <div class="otp-container">
-    <div class="form-group">
-      <label>Enter Verification Code</label>
-      <input
-        type="text"
-        [ngModel]="otp()"
-        (ngModelChange)="otp.set($event)"
-        maxlength="6"
-        placeholder="000000"
-        name="otp"
-      />
-    </div>
-
-    <button class="btn-auth" (click)="verifyOtp()">Verify & Login</button>
-
-    <div class="resend" (click)="goBack()">
-      <i class="bi bi-arrow-left"></i> Wrong email? Go back
-    </div>
+  <div class="login-tabs mb-4">
+    <button
+      [class.active]="loginMode() === 'password'"
+      (click)="toggleMode('password')"
+    >
+      Password
+    </button>
+    <button [class.active]="loginMode() === 'otp'" (click)="toggleMode('otp')">
+      OTP Login
+    </button>
   </div>
-  }
 
-  <div class="toggle-link">
+  <p class="subtitle" *ngIf="!showOtpInput()">
+    Login to access your studio dashboard
+  </p>
+  <p class="subtitle" *ngIf="showOtpInput()">
+    Code sent to <strong>{{ email() }}</strong>
+  </p>
+
+  <ng-container *ngIf="loginMode() === 'password'">
+    <form (ngSubmit)="loginWithPassword()">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input
+          type="email"
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          name="email"
+          required
+          placeholder="name@email.com"
+        />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          type="password"
+          [ngModel]="password()"
+          (ngModelChange)="password.set($event)"
+          name="password"
+          required
+          placeholder="••••••••"
+        />
+      </div>
+      <button type="submit" class="btn-auth">Sign In</button>
+    </form>
+  </ng-container>
+
+  <ng-container *ngIf="loginMode() === 'otp'">
+    <form *ngIf="!showOtpInput()" (ngSubmit)="requestOtp()">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input
+          type="email"
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          name="email"
+          required
+          placeholder="name@email.com"
+        />
+      </div>
+      <button type="submit" class="btn-auth">Send Verification Code</button>
+    </form>
+
+    <div *ngIf="showOtpInput()" class="otp-container">
+      <div class="form-group">
+        <label>Enter 6-Digit Code</label>
+        <input
+          type="text"
+          [ngModel]="otp()"
+          (ngModelChange)="otp.set($event)"
+          maxlength="6"
+          name="otp"
+          placeholder="000000"
+        />
+      </div>
+      <button class="btn-auth" (click)="verifyOtp()">Verify & Login</button>
+      <div
+        class="resend text-center mt-3"
+        (click)="showOtpInput.set(false)"
+        style="cursor: pointer"
+      >
+        <i class="bi bi-arrow-left"></i> Wrong email? Change it
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="toggle-link mt-4">
     Don't have an account? <a routerLink="/auth/register">Register Here</a>
   </div>
 </div>

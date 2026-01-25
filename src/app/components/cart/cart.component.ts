@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed, effect, OnDestroy } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { CartService, CartItem } from '../../services/cart/cart.service';
+import { CartService } from '../../services/cart/cart.service';
 import { CameraService } from '../../services/camera/camera.service';
 import { FooterComponent } from "../../common/footer/footer.component";
 import { NgxUiLoaderModule, NgxUiLoaderService } from 'ngx-ui-loader';
@@ -22,52 +22,88 @@ export class CartComponent implements OnInit, OnDestroy {
   private toastr = inject(ToastrService);
 
   suggestedGears = signal<any[]>([]);
+  cartItems = signal<any[]>([]);
+  subtotal = signal<number>(0);
 
-  // Computed totals for the summary card
-  securityDeposit = computed(() => Math.round(this.cartService.cartSubtotal() * 0.2));
-  finalTotalDue = computed(() => this.cartService.cartSubtotal() + this.securityDeposit());
+  securityDeposit = computed(() => Math.round(this.subtotal() * 0.2));
+  finalTotalDue = computed(() => this.subtotal() + this.securityDeposit());
 
   constructor() {
     effect(() => {
-      // Accessing cartItems() ensures this effect runs whenever the cart is updated
-      if (this.cartService.cartItems().length >= 0) {
+      if (this.cartItems().length >= 0) {
         this.loadSuggestions();
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   ngOnInit() {
-    this.cartService.loadCart();
+    this.loadCartData();
+  }
+
+  loadCartData() {
+    this.cartService.getUserCart().subscribe({
+      next: (res) => {
+        if (res.success) {
+          // FIX: Process image URLs for cart items
+          const processedItems = res.data.map((item: any) => {
+            if (item.Camera?.images) {
+              item.Camera.images = item.Camera.images.map((img: any) => ({
+                ...img,
+                url: this.cameraService.getPrivateImageUrl(img.url)
+              }));
+            }
+            return item;
+          });
+
+          this.cartItems.set(processedItems);
+          this.subtotal.set(res.cartSubtotal);
+        }
+      },
+      error: () => this.toastr.error('Failed to load cart')
+    });
   }
 
   loadSuggestions() {
     this.cameraService.getAllCameras().subscribe({
-      next: (data) => {
-        const cartCameraIds = this.cartService.cartItems().map(i => i.camera_id);
-        // Filter out items already in the cart and show only first 3
-        this.suggestedGears.set(
-          data.filter((c: any) => !cartCameraIds.includes(c.id)).slice(0, 3)
-        );
+      next: (res) => {
+        if (res.success) {
+          const cartCameraIds = this.cartItems().map(i => i.cameraId);
+
+          // FIX: Process image URLs for suggested items
+          const filtered = res.data
+            .filter((c: any) => !cartCameraIds.includes(c.id))
+            .slice(0, 3)
+            .map((camera: any) => {
+              if (camera.images) {
+                camera.images = camera.images.map((img: any) => ({
+                  ...img,
+                  url: this.cameraService.getPrivateImageUrl(img.url)
+                }));
+              }
+              return camera;
+            });
+
+          this.suggestedGears.set(filtered);
+        }
       },
       error: () => console.error('Could not load suggestions')
     });
   }
 
-  changeQuantity(item: CartItem, delta: number) {
+  changeQuantity(item: any, delta: number) {
     const newQty = item.quantity + delta;
     if (newQty >= 1) {
       this.loader.start();
-      this.cartService.updateQuantity(item.cart_id, newQty).subscribe({
+      this.cartService.updateCartItem(item.id, newQty, item.rentalDays).subscribe({
         next: () => {
-          setTimeout(() => this.loader.stop(), 500);
-          this.toastr.success('Quantity updated', 'Cart Update', {
-            toastClass: 'ngx-toastr custom-toast'
-          });
+          this.loadCartData();
+          this.loader.stop();
+          this.toastr.success('Quantity updated');
         },
         error: () => this.loader.stop()
       });
     } else {
-      this.removeItem(item.cart_id, item.model_name);
+      this.removeItem(item.id, item.Camera?.name);
     }
   }
 
@@ -76,10 +112,9 @@ export class CartComponent implements OnInit, OnDestroy {
       this.loader.start();
       this.cartService.removeFromCart(cartId).subscribe({
         next: () => {
-          setTimeout(() => this.loader.stop(), 800);
-          this.toastr.warning('Gear removed from project', 'Removed', {
-            toastClass: 'ngx-toastr custom-toast'
-          });
+          this.loadCartData();
+          this.loader.stop();
+          this.toastr.warning('Gear removed');
         },
         error: () => this.loader.stop()
       });
@@ -88,27 +123,21 @@ export class CartComponent implements OnInit, OnDestroy {
 
   quickAdd(item: any) {
     this.loader.start();
-    this.cartService.addToCart(item.id, 1).subscribe({
+    this.cartService.addToCart(item.id, 1, 1).subscribe({
       next: () => {
+        this.loadCartData();
         this.loader.stop();
-        this.toastr.success(`${item.model_name} added!`, 'Success', {
-          toastClass: 'ngx-toastr custom-toast'
-        });
+        this.toastr.success(`${item.name} added!`);
       },
       error: () => this.loader.stop()
     });
   }
 
-  /**
-   * FIXED: Navigate to Checkout page instead of direct payment
-   */
   onProceedToPayment() {
-    if (this.cartService.cartItems().length === 0) {
-      this.toastr.error("Your cart is empty!", "Checkout Error");
+    if (this.cartItems().length === 0) {
+      this.toastr.error("Your cart is empty!");
       return;
     }
-
-    // Redirect to the checkout page where the user enters Aadhaar/Address
     this.router.navigate(['/checkout']);
   }
 

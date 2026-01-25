@@ -1,74 +1,106 @@
-import { Component, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CartService } from '../../services/cart/cart.service';
-import { OrderService, OrderRequest } from '../../services/order/order.service';
+import { OrderService } from '../../services/order/order.service';
 import { ToastrService } from 'ngx-toastr';
-import { LoaderService } from '../../services/loader/loader.service';
-import { LoaderComponent } from "../../components/loader/loader.component";
+import { NgxUiLoaderService, NgxUiLoaderModule } from 'ngx-ui-loader';
+import { FooterComponent } from "../../common/footer/footer.component";
+import { LoaderComponent } from "../loader/loader.component";
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoaderComponent],
+  imports: [CommonModule, FormsModule, DecimalPipe, NgxUiLoaderModule, FooterComponent, LoaderComponent],
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
-export class CheckoutComponent {
+export class CheckoutComponent implements OnInit {
   private cartService = inject(CartService);
   private orderService = inject(OrderService);
   private router = inject(Router);
   private toast = inject(ToastrService);
-  public loaderService = inject(LoaderService);
+  private loader = inject(NgxUiLoaderService);
 
+  // --- Form Signals ---
   address = signal('');
   city = signal('');
   adharNo = signal('');
   paymentMethod = signal<'upi' | 'card' | 'netbanking'>('upi');
 
-  subtotal = computed(() => this.cartService.cartSubtotal());
-  tax = computed(() => Math.round(this.subtotal() * 0.18));
-  totalAmount = computed(() => this.subtotal() + this.tax());
+  // --- State Signals ---
+  cartItems = signal<any[]>([]);
+  cartSubtotal = signal<number>(0);
 
-  async confirmAndPay() {
-    if (!this.address() || !this.city() || this.adharNo().length !== 12) {
-      this.toast.error('Please enter a valid address and 12-digit Aadhaar number', 'Verification Failed', {
-        toastClass: 'ngx-toastr custom-toast'
-      });
+  // --- Computed totals (GST Removed - Price is inclusive) ---
+  totalAmount = computed(() => this.cartSubtotal());
+
+  ngOnInit() {
+    this.loadCheckoutData();
+    this.loadUserSuggestions(); // Fetch saved Aadhaar/Address
+  }
+
+  loadUserSuggestions() {
+    this.orderService.getSuggestions().subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.address.set(res.data.address || '');
+          this.city.set(res.data.city || '');
+          this.adharNo.set(res.data.adharNo || '');
+        }
+      }
+    });
+  }
+
+  loadCheckoutData() {
+    this.cartService.getUserCart().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.cartItems.set(res.data);
+          this.cartSubtotal.set(res.cartSubtotal);
+
+          if (res.data.length === 0) {
+            this.toast.info('Your cart is empty');
+            this.router.navigate(['/rental-all-item']);
+          }
+        }
+      },
+      error: () => this.toast.error('Failed to load checkout details')
+    });
+  }
+
+  confirmAndPay() {
+    if (!this.address() || !this.city()) {
+      this.toast.warning('Please provide shipping details');
       return;
     }
 
-    const payload: OrderRequest = {
+    if (this.adharNo().length !== 12 || !/^\d+$/.test(this.adharNo())) {
+      this.toast.warning('Please enter a valid 12-digit Aadhaar number');
+      return;
+    }
+
+    this.loader.start();
+
+    const checkoutPayload = {
       address: this.address(),
       city: this.city(),
-      adhar_no: this.adharNo(),
-      payment_method: this.paymentMethod(),
-      cartItems: this.cartService.cartItems(),
-      total_amount: this.totalAmount()
+      adharNo: this.adharNo(),
+      paymentMethod: this.paymentMethod()
     };
 
-    this.loaderService.start();
-
-    this.orderService.createOrder(payload).subscribe({
-      next: async (res) => {
-        await this.loaderService.animateTo100();
-        this.loaderService.isSuccess.set(true);
-
-        setTimeout(() => {
-          this.loaderService.reset();
-          this.cartService.loadCart();
-          this.toast.success('Your rental order has been confirmed!', 'Success', {
-            toastClass: 'ngx-toastr custom-toast'
-          });
-          this.router.navigate(['/profile']);
-        }, 1500);
+    this.orderService.checkout(checkoutPayload).subscribe({
+      next: (res) => {
+        this.loader.stop();
+        if (res.success) {
+          this.toast.success('Rental confirmed! Gear reserved.');
+          this.router.navigate(['/order-history']);
+        }
       },
       error: (err) => {
-        this.loaderService.reset();
-        this.toast.error(err.error?.message || 'Payment failed', 'Order Error', {
-          toastClass: 'ngx-toastr custom-toast'
-        });
+        this.loader.stop();
+        this.toast.error(err.error?.message || 'Transaction failed');
       }
     });
   }

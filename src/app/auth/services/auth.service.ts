@@ -1,24 +1,23 @@
-import { Injectable, Inject, PLATFORM_ID, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { Observable, tap, catchError, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
-// Updated Interface to match your SQL Backend
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   phone?: string;
-  role: string;
-  accountStatus: string;
+  role?: 'user';
   createdAt?: string;
 }
 
 interface AuthResponse {
   success: boolean;
-  token: string;
-  user: User;
+  token?: string;
+  user?: User;
   message?: string;
 }
 
@@ -26,104 +25,127 @@ interface AuthResponse {
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  private readonly apiUrl = 'http://localhost:5000/api/auth';
+  private readonly platformId = inject(PLATFORM_ID);
 
-  // State Management
-  private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  private _currentUser$ = new BehaviorSubject<User | null>(null);
+  private readonly authUrl = `${environment.apiUrl}/auth/user`;
 
-  public isLoggedIn$ = this._isLoggedIn$.asObservable();
-  public currentUser$ = this._currentUser$.asObservable();
+  // --- Reactive State Management ---
+  private _currentUser = signal<User | null>(null);
+  private _isLoggedIn = signal<boolean>(false);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
-    this.initializeState();
+  // Public Signals for Components
+  public currentUser = computed(() => this._currentUser());
+  public isLoggedIn = computed(() => this._isLoggedIn());
+
+  constructor() {
+    this.initializeAuth();
   }
 
   /**
-   * Restore session on app load
+   * 1. Initialize Auth on Refresh
+   * Restores data from localStorage and immediately verifies with Backend
    */
-  private initializeState() {
+  private initializeAuth(): void {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('token');
-      const userStr = localStorage.getItem('user');
+      const userData = localStorage.getItem('user');
 
-      if (token && userStr) {
+      if (token && userData) {
         try {
-          this._isLoggedIn$.next(true);
-          this._currentUser$.next(JSON.parse(userStr));
+          // Immediately populate state so UI doesn't flicker
+          const user = JSON.parse(userData);
+          this._currentUser.set(user);
+          this._isLoggedIn.set(true);
+
+          // Handshake: Verify if token is still valid on server
+          this.syncProfile().subscribe();
         } catch (e) {
-          this.logout(); // Clear corrupted data
+          this.logout();
         }
       }
     }
   }
 
-  // 1. Registration
-  register(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, data);
+  /**
+   * 2. Sync Profile
+   * Fetches fresh data from /profile. If 401 Unauthorized, triggers logout.
+   */
+  syncProfile(): Observable<any> {
+    return this.http.get<any>(`${this.authUrl}/profile`).pipe(
+      tap((res) => {
+        if (res.success) {
+          this.updateLocalState(res.user);
+        }
+      }),
+      catchError(() => {
+        this.logout();
+        return of(null);
+      })
+    );
   }
 
-  // 2. Request Login OTP
-  requestLoginOtp(email: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, { email });
+  // --- 3. Authentication Methods ---
+
+  register(userData: Partial<User>): Observable<any> {
+    return this.http.post(`${this.authUrl}/register`, userData);
   }
 
-  // 3. Verify OTP (Crucial Fix: handleAuthSuccess)
-  verifyOtp(email: string, otp: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/verify-otp`, { email, otp })
-      .pipe(
-        tap(res => {
-          if (res.token && res.user) {
-            this.handleAuthSuccess(res.token, res.user);
-          }
-        })
-      );
-  }
-
-  // 4. Fetch Profile (Fixes 401 error if using Interceptor)
-  getProfile(): Observable<{ success: boolean, user: User }> {
-    return this.http.get<{ success: boolean, user: User }>(`${this.apiUrl}/profile`).pipe(
+  login(credentials: { email: string, password: string }): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.authUrl}/login`, credentials).pipe(
       tap(res => {
-        // Refresh local storage data with latest DB info
-        if (isPlatformBrowser(this.platformId)) {
-          localStorage.setItem('user', JSON.stringify(res.user));
-          this._currentUser$.next(res.user);
+        if (res.success && res.token && res.user) {
+          this.handleAuthSuccess(res.token, res.user);
         }
       })
     );
   }
 
-  // 5. Request Unban
-  requestUnban(email: string, reason: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/request-unban`, { email, reason });
+  // --- 4. OTP Methods ---
+
+  sendOtp(email: string): Observable<any> {
+    return this.http.post(`${this.authUrl}/send-otp`, { email });
+  }
+
+  verifyOtp(email: string, otp: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.authUrl}/verify-otp`, { email, otp }).pipe(
+      tap(res => {
+        if (res.success && res.token && res.user) {
+          this.handleAuthSuccess(res.token, res.user);
+        }
+      })
+    );
   }
 
   /**
-   * Centralized Auth Handler
+   * Persistence Helpers
    */
-  private handleAuthSuccess(token: string, user: User) {
+  private handleAuthSuccess(token: string, user: User): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('userName', user.name);
     }
-    this._isLoggedIn$.next(true);
-    this._currentUser$.next(user);
+    this._currentUser.set(user);
+    this._isLoggedIn.set(true);
   }
 
-  // 6. Logout
-  logout() {
+  private updateLocalState(user: User): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+    this._currentUser.set(user);
+    this._isLoggedIn.set(true);
+  }
+
+  /**
+   * 5. Logout
+   */
+  logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      localStorage.removeItem('userName');
     }
-    this._isLoggedIn$.next(false);
-    this._currentUser$.next(null);
+    this._currentUser.set(null);
+    this._isLoggedIn.set(false);
     this.router.navigate(['/auth/login']);
-  }
-
-  getToken(): string | null {
-    return isPlatformBrowser(this.platformId) ? localStorage.getItem('token') : null;
   }
 }

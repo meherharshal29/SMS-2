@@ -1,0 +1,56 @@
+<div class="callback-modal-container p-4">
+  @if (!showForm) {
+    <div class="selection-view text-center animate-fade-in">
+      <div class="icon-circle mb-3">
+        <i class="bi bi-telephone-inbound fs-1 text-primary"></i>
+      </div>
+      <h2 class="fw-bold">Need Personal Assistance?</h2>
+      <p class="text-muted">
+        Would you like our photography experts to call you back for a free
+        consultation?
+      </p>
+
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button mat-stroked-button (click)="close()">
+          No, I'm just browsing
+        </button>
+        <button mat-flat-button color="primary" (click)="showForm = true">
+          Yes, Request a Call
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (showForm) {
+    <div class="form-view animate-fade-in">
+      <h3 class="fw-bold mb-3">Select Inquiry Type</h3>
+      <p class="small text-muted mb-4">
+        We will use your registered contact details to reach out.
+      </p>
+
+      <mat-form-field appearance="outline" class="w-100 mb-3">
+        <mat-label>What can we help you with?</mat-label>
+        <mat-select [(ngModel)]="selectedCategory">
+          <mat-option value="Shoot Package">Shoot Package Inquiry</mat-option>
+          <mat-option value="Camera Rental">Gear Rental Inquiry</mat-option>
+          <mat-option value="Equipment Inquiry"
+            >Technical Requirements</mat-option
+          >
+          <mat-option value="Other">General Question</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="d-flex flex-column gap-2 mt-3">
+        <button
+          mat-flat-button
+          color="accent"
+          [disabled]="!selectedCategory"
+          (click)="submitRequest()"
+        >
+          Confirm Callback Request
+        </button>
+        <button mat-button (click)="showForm = false">Back</button>
+      </div>
+    </div>
+  }
+</div>

@@ -1,176 +1,238 @@
 <div class="profile-page">
-  <div class="profile-container py-4">
-    @if (!(!isLoading() && !user())) {
-    <div class="content-wrapper" [class.is-loading]="isLoading()">
-      <aside class="profile-sidebar">
-        <div class="profile-card">
-          <div class="card-header-accent"></div>
-
-          <div class="avatar-container">
-            <div class="avatar-wrapper">
-              <div class="avatar">
-                {{ user() ? getInitials(user()?.name) : "" }}
+  <div class="profile-container">
+    @if (isLoading() || user()) {
+      <div class="content-wrapper" [class.is-loading]="isLoading()">
+        <aside class="profile-sidebar">
+          <div class="profile-card shadow-lg">
+            <div class="card-header-accent"></div>
+            <div class="avatar-container">
+              <div class="avatar-wrapper">
+                <div class="avatar">{{ user() ? getInitials() : "U" }}</div>
+                <div class="avatar-ring"></div>
               </div>
-              <div class="avatar-ring"></div>
+              <div
+                class="status-indicator"
+                [class.active]="user()?.accountStatus === 'active'"
+              >
+                @if (user()?.accountStatus === "active") {
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span>Verified Account</span>
+                } @else {
+                  <i class="bi bi-clock-fill"></i>
+                  <span>Pending Verification</span>
+                }
+              </div>
             </div>
 
-            <div
-              class="status-indicator"
-              [class.active]="user()?.accountStatus === 'active'"
-            >
-              @if (user()?.accountStatus === 'active') {
-              <i class="bi bi-check-circle-fill"></i>
-              <span>Verified Account</span>
-              } @else {
-              <i class="bi bi-clock-fill"></i>
-              <span>Pending Verification</span>
+            <div class="user-identity">
+              <h1 class="user-name text-truncate">
+                {{ user()?.name || "Loading Name..." }}
+              </h1>
+              <span class="user-role">{{
+                user()?.role || "User" | titlecase
+              }}</span>
+            </div>
+
+            <div class="contact-details">
+              <div class="detail-row">
+                <div class="detail-icon"><i class="bi bi-envelope"></i></div>
+                <div class="detail-content text-truncate">
+                  <span class="detail-label">Email Address</span>
+                  <span class="detail-value">{{ user()?.email }}</span>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-icon">
+                  <i class="bi bi-calendar-check"></i>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">Member Since</span>
+                  <span class="detail-value">{{
+                    (user()?.createdAt | date: "MMM d, y") || "Recently"
+                  }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn btn-primary shadow-sm">
+                <i class="bi bi-pencil"></i><span>Edit Profile</span>
+              </button>
+              <button class="btn btn-secondary" (click)="logout()">
+                <i class="bi bi-box-arrow-right"></i><span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <main class="dashboard-content">
+          <section class="stats-section">
+            <div class="stat-card">
+              <div class="stat-icon-wrapper blue">
+                <i class="bi bi-camera-reels"></i>
+              </div>
+              <div class="stat-info">
+                <h3 class="stat-number">{{ confirmedRentalsCount() }}</h3>
+                <p class="stat-label">Confirmed Rentals</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrapper purple">
+                <i class="bi bi-calendar2-check"></i>
+              </div>
+              <div class="stat-info">
+                <h3 class="stat-number">{{ confirmedShootsCount() }}</h3>
+                <p class="stat-label">Confirmed Shoots</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrapper green">
+                <i class="bi bi-wallet2"></i>
+              </div>
+              <div class="stat-info">
+                <h3 class="stat-number">₹{{ totalExpenditure() | number }}</h3>
+                <p class="stat-label">Total Spend</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="activity-section shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h3 class="section-title m-0">
+                <i class="bi bi-clock-history"></i> Recent Activity
+              </h3>
+            </div>
+
+            <div class="activity-container">
+              @if (bookings().length > 0) {
+                <div class="mb-4">
+                  <h6 class="text-uppercase text-muted small fw-bold mb-3">
+                    Shoot Bookings
+                  </h6>
+                  <div class="order-list">
+                    @for (booking of bookings().slice(0, 3); track booking.id) {
+                      <div class="order-item">
+                        <div class="order-gear-info">
+                          <div class="gear-preview">
+                            <img
+                              [src]="booking.package?.coverImage"
+                              [alt]="booking.package?.title"
+                            />
+                          </div>
+                          <div class="gear-meta">
+                            <h4 class="gear-name">
+                              {{ booking.package?.title }}
+                            </h4>
+                            <p class="order-date">
+                              {{ booking.eventDate | date: "mediumDate" }} • ₹{{
+                                booking.package?.price | number
+                              }}
+                            </p>
+                          </div>
+                        </div>
+                        <span
+                          class="status-badge"
+                          [ngClass]="getStatusClass(booking.status)"
+                        >
+                          {{ booking.status | uppercase }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
+              @if (orders().length > 0) {
+                <div>
+                  <h6 class="text-uppercase text-muted small fw-bold mb-3">
+                    Gear Rentals
+                  </h6>
+                  <div class="order-list">
+                    @for (order of orders().slice(0, 3); track order.id) {
+                      <div class="order-item">
+                        <div class="order-gear-info">
+                          <div class="gear-preview">
+                            <img
+                              [src]="order.Camera.images[0].url"
+                              [alt]="order.Camera.name"
+                            />
+                          </div>
+                          <div class="gear-meta">
+                            <h4 class="gear-name">{{ order.Camera.name }}</h4>
+                            <p class="order-date">
+                              {{ order.rentalStartDate | date: "mediumDate" }} •
+                              ₹{{ order.totalPrice | number }}
+                            </p>
+                          </div>
+                        </div>
+                        <span
+                          class="status-badge"
+                          [ngClass]="getStatusClass(order.status)"
+                        >
+                          {{ order.status | uppercase }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @else if (bookings().length === 0 && orders().length === 0) {
+                <div class="empty-state">
+                  <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+                  <h4 class="empty-title">No Recent Activity</h4>
+                  <p class="empty-text">
+                    Your bookings and rentals will appear here.
+                  </p>
+                  <button
+                    class="btn btn-primary btn-sm mt-3 px-4"
+                    routerLink="/"
+                  >
+                    Book Now
+                  </button>
+                </div>
               }
             </div>
-          </div>
+          </section>
 
-          <div class="user-identity">
-            <h1 class="user-name">{{ user()?.name || "Loading Name..." }}</h1>
-            <span class="user-role">{{
-              user()?.role || "User" | titlecase
-            }}</span>
-          </div>
-
-          <div class="contact-details">
-            <div class="detail-row">
-              <div class="detail-icon"><i class="bi bi-envelope"></i></div>
-              <div class="detail-content">
-                <span class="detail-label">Email Address</span>
-                <span class="detail-value text-truncate">{{
-                  user()?.email || "••••••••@••••.com"
-                }}</span>
-              </div>
+          <section class="quick-actions p-4">
+            <h5 class="section-title">Quick Actions</h5>
+            <div class="action-grid">
+              <button class="action-item shadow-sm" routerLink="/packages">
+                <i class="bi bi-images"></i><span>Book Shoot</span>
+              </button>
+              <button
+                class="action-item shadow-sm"
+                routerLink="/rental-all-item"
+              >
+                <i class="bi bi-plus-circle"></i><span>New Rental</span>
+              </button>
+              <button class="action-item shadow-sm" routerLink="/cart">
+                <i class="bi bi-bag-check"></i><span>My Cart</span>
+              </button>
+              <button
+                class="action-item shadow-sm"
+                routerLink="/auth/payment-history"
+              >
+                <i class="bi bi-file-text"></i><span>Billing Info</span>
+              </button>
             </div>
-
-            <div class="detail-row">
-              <div class="detail-icon"><i class="bi bi-telephone"></i></div>
-              <div class="detail-content">
-                <span class="detail-label">Phone Number</span>
-                <span class="detail-value">{{
-                  user()?.phone || "Not provided"
-                }}</span>
-              </div>
-            </div>
-
-            <div class="detail-row">
-              <div class="detail-icon">
-                <i class="bi bi-calendar-check"></i>
-              </div>
-              <div class="detail-content">
-                <span class="detail-label">Member Since</span>
-                <span class="detail-value">{{
-                  user()?.createdAt | date : "MMM d, y"
-                }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="action-buttons">
-            <button class="btn btn-primary">
-              <i class="bi bi-pencil"></i>
-              <span>Edit Profile</span>
-            </button>
-            <button class="btn btn-secondary" (click)="logout()">
-              <i class="bi bi-box-arrow-right"></i>
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      <main class="dashboard-content">
-        <section class="stats-section">
-          <div class="stat-card">
-            <div class="stat-icon-wrapper blue">
-              <i class="bi bi-camera"></i>
-            </div>
-            <div class="stat-info">
-              <h3 class="stat-number">0</h3>
-              <p class="stat-label">Active Rentals</p>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon-wrapper purple">
-              <i class="bi bi-collection"></i>
-            </div>
-            <div class="stat-info">
-              <h3 class="stat-number">0</h3>
-              <p class="stat-label">Active Projects</p>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon-wrapper green">
-              <i class="bi bi-graph-up"></i>
-            </div>
-            <div class="stat-info">
-              <h3 class="stat-number">0</h3>
-              <p class="stat-label">Rental Points</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="activity-section">
-          <div class="section-header">
-            <h3 class="section-title">
-              <i class="bi bi-clock-history"></i>
-              Recent Activity
-            </h3>
-          </div>
-
-          <div class="activity-card">
-            <div class="empty-state">
-              <div class="empty-icon"><i class="bi bi-inbox"></i></div>
-              <h4 class="empty-title">No Recent Activity</h4>
-              <p class="empty-text">
-                Your latest gear rentals and project updates will appear here.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section class="quick-actions">
-          <h3 class="section-title">Quick Actions</h3>
-          <div class="action-grid">
-            <button class="action-item" routerLink="/rental-all-item">
-              <i class="bi bi-plus-circle"></i>
-              <span>New Rental</span>
-            </button>
-            <button class="action-item">
-              <i class="bi bi-folder-plus"></i>
-              <span>Create Project</span>
-            </button>
-            <button class="action-item">
-              <i class="bi bi-chat-dots"></i>
-              <span>Get Support</span>
-            </button>
-            <button class="action-item">
-              <i class="bi bi-file-text"></i>
-              <span>Billing Info</span>
-            </button>
-          </div>
-        </section>
-      </main>
-    </div>
-    } @if (!isLoading() && !user()?.email) {
-    <div class="error-state">
-      <div class="error-icon">
-        <i class="bi bi-exclamation-triangle"></i>
+          </section>
+        </main>
       </div>
-      <h2 class="error-title">Session Expired</h2>
-      <p class="error-text">
-        Your secure session has ended. Please sign in again to continue to your
-        dashboard.
-      </p>
-      <button class="btn btn-primary px-5 py-3 rounded-pill" (click)="logout()">
-        Return to Login
-      </button>
-    </div>
+    }
+
+    @if (!isLoading() && !user()) {
+      <div class="error-state">
+        <div class="error-icon"><i class="bi bi-exclamation-triangle"></i></div>
+        <h2 class="error-title">Session Expired</h2>
+        <p class="error-text">Please sign in again to access your dashboard.</p>
+        <button
+          class="btn btn-primary px-5 py-3 rounded-pill"
+          (click)="logout()"
+        >
+          Return to Login
+        </button>
+      </div>
     }
   </div>
 </div>
+<app-footer></app-footer>

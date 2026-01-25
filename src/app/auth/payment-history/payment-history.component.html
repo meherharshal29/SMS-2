@@ -1,0 +1,171 @@
+<div class="billing-page py-5 mt-5 animate-fade-in">
+  <div class="container">
+    <header
+      class="page-header mb-5 d-flex justify-content-between align-items-center flex-wrap gap-3"
+    >
+      <div class="header-text">
+        <h1 class="fw-bold display-6 mb-1">Billing & Financial Summary</h1>
+        <p class="text-muted mb-0">
+          Unified overview of your photography services and gear rentals.
+        </p>
+      </div>
+      <button class="btn-refresh" (click)="loadAllFinancialData()" matRipple>
+        <i class="bi bi-arrow-clockwise me-2"></i> Refresh Data
+      </button>
+    </header>
+
+    <section class="stats-grid mb-5">
+      <div class="stat-card investment" matRipple>
+        <div class="card-body">
+          <span class="label">Lifetime Investment</span>
+          <h2 class="value">₹{{ totalSpent() | number: "1.0-0" }}</h2>
+          <i class="bi bi-currency-rupee icon"></i>
+        </div>
+      </div>
+      <div class="stat-card pending" matRipple>
+        <div class="card-body">
+          <span class="label">Total Pending</span>
+          <h2 class="value">₹{{ pendingPayments() | number: "1.0-0" }}</h2>
+          <i class="bi bi-clock icon"></i>
+        </div>
+      </div>
+      <div class="stat-card activities" matRipple>
+        <div class="card-body">
+          <span class="label">Total Activities</span>
+          <h2 class="value">{{ orders().length + bookings().length }}</h2>
+          <i class="bi bi-layers icon"></i>
+        </div>
+      </div>
+    </section>
+
+    <section class="data-section mb-5 shadow-sm">
+      <div class="section-title d-flex align-items-center p-4">
+        <div class="icon-box purple me-3"><i class="bi bi-camera"></i></div>
+        <h3 class="m-0 fw-bold">Photography Shoots</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="responsive-table">
+          <thead>
+            <tr>
+              <th>Shoot ID</th>
+              <th>Package</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (booking of bookings(); track booking.id) {
+              <tr>
+                <td data-label="Shoot ID" class="id-cell">
+                  #SHT-{{ booking.id }}
+                </td>
+                <td data-label="Package">
+                  <div class="item-info">
+                    <img
+                      [src]="booking.package?.coverImage"
+                      alt="Package"
+                      class="thumb shadow-sm"
+                    />
+                    <span class="fw-medium">{{ booking.package?.title }}</span>
+                  </div>
+                </td>
+                <td data-label="Date">
+                  {{ booking.eventDate | date: "mediumDate" }}
+                </td>
+                <td data-label="Location" class="text-muted">
+                  {{ booking.eventLocation }}
+                </td>
+                <td data-label="Amount" class="fw-bold">
+                  ₹{{ booking.package?.price | number }}
+                </td>
+                <td data-label="Status">
+                  <span
+                    class="status-badge"
+                    [ngClass]="getStatusClass(booking.status)"
+                  >
+                    {{ booking.status }}
+                  </span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                  No photography sessions found.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="data-section shadow-sm">
+      <div class="section-title d-flex align-items-center p-4">
+        <div class="icon-box green me-3">
+          <i class="bi bi-camera-reels"></i>
+        </div>
+        <h3 class="m-0 fw-bold">Equipment Rentals</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="responsive-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Gear</th>
+              <th>Rental Period</th>
+              <th>Daily Rate</th>
+              <th>Total Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of orders(); track order.id) {
+              <tr>
+                <td data-label="Order ID" class="id-cell">
+                  #GEAR-{{ order.id }}
+                </td>
+                <td data-label="Gear">
+                  <div class="item-info">
+                    <img
+                      [src]="order.Camera.images[0].url"
+                      alt="Gear"
+                      class="thumb shadow-sm"
+                    />
+                    <span class="fw-medium">{{ order.Camera.name }}</span>
+                  </div>
+                </td>
+                <td data-label="Period" class="small">
+                  {{ order.rentalStartDate | date: "shortDate" }} -
+                  {{ order.rentalEndDate | date: "shortDate" }}
+                </td>
+                <td data-label="Rate">
+                  ₹{{ order.Camera.pricePerDay | number }}
+                </td>
+                <td data-label="Total" class="fw-bold">
+                  ₹{{ order.totalPrice | number }}
+                </td>
+                <td data-label="Status">
+                  <span
+                    class="status-badge"
+                    [ngClass]="getStatusClass(order.status)"
+                  >
+                    {{ order.status }}
+                  </span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                  No gear rentals found.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+<app-footer></app-footer>

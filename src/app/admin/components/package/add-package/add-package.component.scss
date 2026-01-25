@@ -1,0 +1,35 @@
+.img-preview-card {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 100px;
+    width: 100%;
+}
+
+.img-preview-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    transform: scale(0.7);
+}
+
+.upload-area {
+    border: 2px dashed #ccc !important;
+    transition: border-color 0.3s;
+}
+
+.upload-area:hover {
+    border-color: #673ab7 !important;
+    /* Material Primary Color */
+}
+
+/* Material Override for inputs width */
+mat-form-field {
+    width: 100%;
+}

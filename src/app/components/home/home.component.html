@@ -31,9 +31,7 @@
             <div class="card-img-wrapper">
               <div
                 class="card-img"
-                [style.background-image]="
-                  'url(' + (pkg.image || 'assets/placeholder.jpg') + ')'
-                "
+                [style.background-image]="'url(' + pkg.coverImage + ')'"
               >
                 <div class="overlay">
                   <span>Explore Package</span>
@@ -61,75 +59,6 @@
     </div>
   </section>
 
-  <!--  -->
-  <section class="courses-section">
-    <div class="container">
-      <div class="header-row row mb-4 align-items-center">
-        <div class="col-sm-8 col-12 text-center text-sm-start">
-          <p class="sub-title mb-1">PREMIUM COLLECTION</p>
-          <h2 class="main-title">Popular Photography Courses</h2>
-          <div class="title-underline"></div>
-        </div>
-        <div class="col-sm-4 col-12 text-center text-sm-end mt-4 mt-sm-0">
-          <a routerLink="/courses" class="action-btn outline">
-            Browse All Courses <i class="bi bi-arrow-right-short"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="row g-4">
-        @for (course of displayCourses(); track course.id) {
-        <div class="col-12 col-sm-6 col-lg-3 slide-in">
-          <div class="course-card">
-            <div class="image-box">
-              <img [src]="course.image" [alt]="course.title" loading="lazy" />
-              <div class="category-tag">{{ course.category }}</div>
-            </div>
-
-            <div class="content-box">
-              <h3 class="course-title">{{ course.title }}</h3>
-
-              <p class="description-text small text-muted text-truncate">
-                {{ course.description }}
-              </p>
-
-              <div class="meta-row">
-                <span
-                  ><i class="bi bi-play-circle-fill"></i
-                  >{{ course.duration }}</span
-                >
-                <span
-                  ><i class="bi bi-mortarboard"></i
-                  >{{ course.lessons }} Lessons</span
-                >
-              </div>
-
-              @if (course.advantages?.length) {
-              <div class="advantages-preview">
-                @for (adv of course.advantages?.slice(0, 2); track adv) {
-                <div class="adv-item">
-                  <i class="bi bi-check2-circle"></i> {{ adv }}
-                </div>
-                }
-              </div>
-              }
-
-              <div class="footer-row">
-                <span class="price">₹{{ course.price | number }}</span>
-                <button
-                  class="enroll-btn"
-                  [routerLink]="['/course', course.id]"
-                >
-                  Join Now <i class="bi bi-arrow-right-short"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        }
-      </div>
-    </div>
-  </section>
   <!-- <app-course-grid></app-course-grid> -->
   <app-reviews></app-reviews>
 </main>
@@ -137,15 +66,6 @@
 <app-footer></app-footer>
 
 <div class="floating-actions">
-  <a
-    href="https://wa.me/919834996139"
-    target="_blank"
-    class="whatsapp-btn shadow-lg"
-    aria-label="Contact us on WhatsApp"
-  >
-    <i class="bi bi-whatsapp"></i>
-  </a>
-
   <button
     class="scroll-top-btn shadow-lg"
     [class.visible]="showScroll()"
@@ -154,4 +74,12 @@
   >
     <i class="bi bi-arrow-up-short"></i>
   </button>
+  <a
+    href="https://wa.me/919834996139"
+    target="_blank"
+    class="whatsapp-btn shadow-lg"
+    aria-label="Contact us on WhatsApp"
+  >
+    <i class="bi bi-whatsapp"></i>
+  </a>
 </div>

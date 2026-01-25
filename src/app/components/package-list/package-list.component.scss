@@ -1,8 +1,8 @@
 // Colors
 $gold: #a78bfa;
 $dark: #1a1a1a;
-$light-bg: #f8f9fa;
-$standard-ease: 0.3s ease; // Simplified timing function
+$light-gray: #f8f9fa;
+$standard-ease: 0.3s ease;
 
 .package-container {
     max-width: 1400px;
@@ -15,6 +15,14 @@ $standard-ease: 0.3s ease; // Simplified timing function
     text-align: center;
     margin-bottom: 50px;
 
+    .sub-title {
+        color: $gold;
+        letter-spacing: 3px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
     h1 {
         font-size: 2.5rem;
         font-weight: 700;
@@ -22,20 +30,32 @@ $standard-ease: 0.3s ease; // Simplified timing function
         margin-bottom: 25px;
     }
 
+    .filter-tabs-wrapper {
+        overflow-x: auto;
+        padding: 10px 0;
+        white-space: nowrap;
+        scrollbar-width: none; // Firefox
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        // Chrome/Safari
+    }
+
     .filter-tabs {
-        display: flex;
-        justify-content: center;
+        display: inline-flex;
         gap: 10px;
-        flex-wrap: wrap;
 
         button {
-            padding: 8px 20px;
+            padding: 8px 22px;
             border: 1px solid #e0e0e0;
             background: white;
             border-radius: 25px;
             cursor: pointer;
-            transition: $standard-ease; // Snappy transition
+            transition: $standard-ease;
             font-weight: 500;
+            white-space: nowrap;
 
             &.active,
             &:hover {
@@ -52,16 +72,15 @@ $standard-ease: 0.3s ease; // Simplified timing function
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
 
-    // Responsive adjustments
-    @media (max-width: 1100px) {
+    @media (max-width: 1200px) {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    @media (max-width: 850px) {
+    @media (max-width: 900px) {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (max-width: 550px) {
+    @media (max-width: 600px) {
         grid-template-columns: 1fr;
     }
 }
@@ -72,50 +91,49 @@ $standard-ease: 0.3s ease; // Simplified timing function
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     cursor: pointer;
-    transition: box-shadow $standard-ease; // Removed cubic-bezier
+    transition: all $standard-ease;
     border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
 
     &:hover {
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12); // Lift effect via shadow only
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 
         .overlay {
             opacity: 1;
         }
-
-        .card-img {
-            transform: scale(1.05); // Subtle zoom focus
-        }
     }
 
     .card-img-wrapper {
-        height: 220px;
+        height: 240px;
         overflow: hidden;
         position: relative;
 
         .card-img {
+            width: 100%;
             height: 100%;
-            background-size: cover;
-            background-position: center;
-            transition: transform $standard-ease; // Consistent timing
+            object-fit: cover;
+            transition: transform 0.6s ease;
         }
 
         .category-tag {
             position: absolute;
             top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.9);
+            left: 15px;
+            background: rgba(255, 255, 255, 0.95);
             padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
             color: $dark;
+            text-transform: uppercase;
             z-index: 2;
         }
 
         .overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.4); // Cleaned overlay
+            background: rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -128,40 +146,105 @@ $standard-ease: 0.3s ease; // Simplified timing function
                 border: 1px solid white;
                 padding: 8px 16px;
                 border-radius: 4px;
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+                backdrop-filter: blur(4px);
             }
         }
     }
 
     .card-info {
         padding: 20px;
-        // Removed translateY to keep text stable
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
 
         h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.15rem;
+            font-weight: 700;
             color: $dark;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
+            // Prevent title from wrapping
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .card-footer {
-            display: flex;
-            flex-direction: column;
+        // 👇 ONE LINE DESCRIPTION FIX
+        .description-preview {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 20px;
 
-            .price-label {
-                font-size: 0.75rem;
-                color: #888;
-                text-transform: uppercase;
+            // Ellipsis logic
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .card-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #f5f5f5;
+
+            .price-wrapper {
+                display: flex;
+                flex-direction: column;
+
+                .price-label {
+                    font-size: 0.65rem;
+                    color: #999;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+
+                .price-value {
+                    font-size: 1.25rem;
+                    font-weight: 800;
+                    color: $dark;
+                }
             }
 
-            .price-value {
-                font-size: 1.2rem;
-                font-weight: 700;
-                color: $gold;
+            .arrow-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: #f0f0f0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: $standard-ease;
+
+                i {
+                    font-size: 0.9rem;
+                    color: $dark;
+                }
             }
         }
+    }
+}
+
+.loading-state,
+.empty-state {
+    text-align: center;
+    padding: 80px 0;
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #eee;
+        border-top: 3px solid $gold;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }

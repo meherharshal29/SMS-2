@@ -1,0 +1,159 @@
+<div class="booking-page" *ngIf="!isLoading; else loader">
+  <div class="container py-5">
+    <div class="row g-4 g-xl-5">
+      <div class="col-lg-7">
+        <mat-card class="form-card animate-slide-in">
+          <div class="header-section">
+            <h2 class="section-title">Reserve Your Shoot</h2>
+            <p class="section-subtitle">
+              Provide your event details to secure your date in our calendar.
+            </p>
+          </div>
+
+          <form
+            [formGroup]="bookingForm"
+            (ngSubmit)="onSubmit()"
+            class="booking-form"
+          >
+            <div class="row">
+              <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100 custom-field">
+                  <mat-label>Event Date</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="picker"
+                    formControlName="eventDate"
+                    [min]="minDate"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="picker"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  <mat-hint>Select your preferred shoot date</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-form-field
+              appearance="outline"
+              class="w-100 custom-field mt-3"
+            >
+              <mat-label>Venue / Location Address</mat-label>
+              <input
+                matInput
+                formControlName="eventLocation"
+                placeholder="e.g. Grand Plaza Hotel, City Center"
+              />
+              <mat-icon matSuffix class="field-icon">place</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field
+              appearance="outline"
+              class="w-100 custom-field mt-3"
+            >
+              <mat-label>Special Requirements (Optional)</mat-label>
+              <textarea
+                matInput
+                formControlName="specialRequirements"
+                rows="5"
+                placeholder="Theme requests, specific shots, or extra details..."
+              ></textarea>
+            </mat-form-field>
+
+            <div class="action-footer mt-4">
+              <button
+                mat-raised-button
+                color="primary"
+                class="submit-btn"
+                type="submit"
+                [disabled]="isSubmitting || bookingForm.invalid"
+              >
+                <mat-spinner
+                  *ngIf="isSubmitting"
+                  diameter="20"
+                  class="btn-spinner"
+                ></mat-spinner>
+                <span *ngIf="!isSubmitting">CONFIRM BOOKING REQUEST</span>
+              </button>
+
+              <button
+                mat-button
+                color="warn"
+                type="button"
+                class="cancel-btn"
+                routerLink="/packages"
+              >
+                NEVERMIND, GO BACK
+              </button>
+            </div>
+          </form>
+        </mat-card>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="sticky-wrapper">
+          <mat-card class="summary-card animate-fade-in">
+            <div class="image-container">
+              <img
+                [src]="selectedPackage?.coverImage"
+                class="summary-img"
+                alt="Package Cover"
+              />
+              <div class="img-overlay"></div>
+            </div>
+
+            <div class="summary-content">
+              <div class="category-tag">{{ selectedPackage?.category }}</div>
+              <h3 class="package-title">{{ selectedPackage?.title }}</h3>
+
+              <div class="pricing-area">
+                <span class="currency">₹</span>
+                <span class="price-value">{{
+                  selectedPackage?.price | number
+                }}</span>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="inclusions-container">
+                <h4 class="inclusions-title">Inclusions:</h4>
+                <div
+                  class="inclusion-item"
+                  *ngIf="selectedPackage?.includesDrone"
+                >
+                  <mat-icon class="check-icon">verified</mat-icon>
+                  <span>High-End Drone Coverage</span>
+                </div>
+                <div
+                  class="inclusion-item"
+                  *ngIf="selectedPackage?.includesCinematicVideo"
+                >
+                  <mat-icon class="check-icon">verified</mat-icon>
+                  <span>4K Cinematic Highlight Film</span>
+                </div>
+                <div
+                  class="inclusion-item"
+                  *ngIf="selectedPackage?.includesCandid"
+                >
+                  <mat-icon class="check-icon">verified</mat-icon>
+                  <span>Candid Storytelling Photography</span>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loader>
+  <div class="loader-container">
+    <div class="spinner-box">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p class="loader-text">Curating your booking experience...</p>
+    </div>
+  </div>
+</ng-template>
+<app-footer></app-footer>

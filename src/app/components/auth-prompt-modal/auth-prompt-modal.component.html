@@ -1,0 +1,37 @@
+<div class="auth-card modal-version">
+  <button class="close-btn" (click)="close()" aria-label="Close modal">
+    <i class="bi bi-x-lg"></i>
+  </button>
+
+  <div class="icon-header">
+    <i class="bi bi-shield-lock-fill"></i>
+  </div>
+
+  <h2>Studio Access</h2>
+  <p class="subtitle">
+    Experience the full power of our studio. Sign in to view personalized
+    packages, track your rentals, and book shoots instantly.
+  </p>
+
+  <div class="action-buttons">
+    <button class="btn-auth" routerLink="/auth/login" (click)="close()">
+      SIGN IN
+    </button>
+
+    <div class="toggle-link mt-4">
+      Don't have an account?
+      <a routerLink="/auth/register" (click)="close()">Register Here</a>
+    </div>
+  </div>
+
+  <div class="benefits-grid mt-4">
+    <div class="benefit">
+      <i class="bi bi-lightning-charge"></i>
+      <span>Instant Booking</span>
+    </div>
+    <div class="benefit">
+      <i class="bi bi-camera"></i>
+      <span>Gear Tracking</span>
+    </div>
+  </div>
+</div>

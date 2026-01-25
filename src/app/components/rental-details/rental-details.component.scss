@@ -1,902 +1,177 @@
 @use "sass:color";
 
-// Variables
-$brand-violet: #a78bfa;
-$primary-dark: #111111;
-$border-color: #f1f5f9;
-$success-green: #16a34a;
-$text-muted: #64748b;
+$primary-dark: #111827;
+$text-muted: #6b7280;
+$bg-faded: #f3f4f6;
+$border-color: #e5e7eb;
+$btn-action-grey: #d1d5db;
+$white: #ffffff;
+$transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-// Global Styles
-html {
-    scroll-behavior: smooth;
-}
+.rental-details-wrapper {
+    font-family: 'Inter', sans-serif;
+    color: $primary-dark;
+    background: $white;
+    animation: fadeIn 0.4s ease-in;
 
-// Header
-.main-header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 80px;
-    background: #ffffff;
-    z-index: 1000;
-    border-bottom: 1px solid $border-color;
-    transition: all 0.3s ease;
-
-    @media (max-width: 768px) {
-        height: 60px;
+    .x-small {
+        font-size: 0.7rem;
     }
 
-    &.scrolled {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    }
-}
-
-// Main Wrapper
-.main-wrapper {
-    padding-top: 100px;
-    background: #ffffff;
-    min-height: 100vh;
-
-    @media (max-width: 768px) {
-        padding-top: 80px;
-    }
-}
-
-// Container
-.container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 20px;
-
-    @media (max-width: 576px) {
-        padding: 0 15px;
-    }
-}
-
-// Breadcrumb Navigation
-.breadcrumb-nav {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: $text-muted;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-
-    @media (max-width: 576px) {
-        font-size: 12px;
-        margin-bottom: 20px;
-        gap: 6px;
+    .letter-spacing-1 {
+        letter-spacing: 0.05em;
     }
 
-    a {
-        text-decoration: none;
-        color: inherit;
-        transition: color 0.3s ease;
-
-        &:hover {
-            color: $brand-violet;
-        }
-    }
-
-    .active {
-        color: $primary-dark;
-        font-weight: 700;
-    }
-
-    i {
-        font-size: 10px;
-    }
-}
-
-// Product Grid Layout
-.product-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 400px;
-    gap: 60px;
-    align-items: start;
-    margin-bottom: 80px;
-
-    @media (max-width: 991px) {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        margin-bottom: 60px;
-    }
-
-    @media (max-width: 576px) {
-        gap: 30px;
-        margin-bottom: 40px;
-    }
-}
-
-.gallery-column {
-    @media (max-width: 991px) {
-        order: 1;
-    }
-}
-
-.sidebar-column {
-    @media (max-width: 991px) {
-        order: 2;
-    }
-}
-
-// Main Image Card
-.main-image-card {
-    background: #f8fafc;
-    border-radius: 20px;
-    padding: 40px;
-    text-align: center;
-
-    @media (max-width: 768px) {
-        padding: 30px 20px;
-        border-radius: 16px;
-    }
-
-    @media (max-width: 576px) {
-        padding: 20px 15px;
-        border-radius: 12px;
-    }
-
-    img {
-        max-width: 100%;
-        height: 500px;
-        object-fit: contain;
-
-        @media (max-width: 768px) {
-            height: 350px;
-        }
-
-        @media (max-width: 576px) {
-            height: 280px;
-        }
-    }
-}
-
-// Thumbnail Row
-.thumbnail-row {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-    overflow-x: auto;
-    padding-bottom: 5px;
-
-    @media (max-width: 576px) {
-        gap: 8px;
-        margin-top: 15px;
-    }
-
-    &::-webkit-scrollbar {
-        height: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: $border-color;
-        border-radius: 4px;
-    }
-
-    .thumb-box {
-        min-width: 85px;
-        width: 85px;
-        height: 85px;
-        border-radius: 12px;
-        border: 2px solid transparent;
+    .cursor-pointer {
         cursor: pointer;
+    }
+
+    // 1. Fixed Main Image Display - Full size & Responsive
+    .main-image-stage {
+        width: 100%;
+        min-height: 300px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         overflow: hidden;
-        background: #f8fafc;
-        transition: all 0.3s ease;
 
-        @media (max-width: 576px) {
-            min-width: 70px;
-            width: 70px;
-            height: 70px;
-            border-radius: 10px;
+        @media (min-width: 768px) {
+            height: 550px; // Larger height for desktop
         }
 
-        &.active {
-            border-color: $brand-violet;
+        .main-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; // Changed to contain to ensure full camera body is visible
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.08));
         }
+    }
 
+    .thumbnail-box {
+        width: 80px;
+        height: 80px;
+        transition: $transition-smooth;
 
         img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-    }
-}
 
-// Features Section
-.features-section {
-    margin-top: 50px;
-
-    @media (max-width: 768px) {
-        margin-top: 40px;
-    }
-
-    @media (max-width: 576px) {
-        margin-top: 30px;
-    }
-
-    h3 {
-        font-size: 1.25rem;
-        font-weight: 800;
-        margin-bottom: 20px;
-        color: $primary-dark;
-
-        @media (max-width: 576px) {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-    }
-
-    .feature-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-
-        li {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-            color: #4b5563;
-            font-weight: 500;
-
-            @media (max-width: 576px) {
-                font-size: 0.95rem;
-                margin-bottom: 12px;
-                gap: 10px;
-            }
-
-            i {
-                color: $success-green;
-                font-size: 1.2rem;
-                flex-shrink: 0;
-
-                @media (max-width: 576px) {
-                    font-size: 1.1rem;
-                }
-            }
-        }
-    }
-}
-
-// Booking Card
-.booking-card {
-    position: sticky;
-    top: 110px;
-    background: white;
-    border: 1px solid $border-color;
-    border-radius: 24px;
-    padding: 30px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
-
-    @media (max-width: 991px) {
-        position: static;
-        top: auto;
-    }
-
-    @media (max-width: 576px) {
-        padding: 20px;
-        border-radius: 20px;
-    }
-
-    .brand-tag {
-        color: $brand-violet;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 0.5px;
-
-        @media (max-width: 576px) {
-            font-size: 10px;
-        }
-    }
-
-    .product-name {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: $primary-dark;
-        margin: 8px 0 15px;
-        line-height: 1.2;
-
-        @media (max-width: 768px) {
-            font-size: 1.8rem;
-        }
-
-        @media (max-width: 576px) {
-            font-size: 1.5rem;
-            margin: 6px 0 12px;
-        }
-    }
-}
-
-// Price Display
-.price-display {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    margin-bottom: 25px;
-
-    @media (max-width: 576px) {
-        margin-bottom: 20px;
-    }
-
-    .currency {
-        color: $success-green;
-        font-weight: 700;
-        font-size: 1.5rem;
-
-        @media (max-width: 576px) {
-            font-size: 1.3rem;
-        }
-    }
-
-    .amount {
-        font-size: 2.6rem;
-        font-weight: 900;
-        color: $primary-dark;
-
-        @media (max-width: 768px) {
-            font-size: 2.2rem;
-        }
-
-        @media (max-width: 576px) {
-            font-size: 1.9rem;
-        }
-    }
-
-    .per-day {
-        color: $text-muted;
-        font-weight: 500;
-        font-size: 1rem;
-
-        @media (max-width: 576px) {
-            font-size: 0.9rem;
-        }
-    }
-}
-
-// Booking Form
-.booking-form {
-    background: #f8fafc;
-    padding: 25px;
-    border-radius: 18px;
-
-    @media (max-width: 576px) {
-        padding: 20px;
-        border-radius: 14px;
-    }
-
-    .qty-field {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        gap: 15px;
-
-        @media (max-width: 576px) {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: 700;
-            color: #475569;
-            font-size: 0.95rem;
-
-            @media (max-width: 576px) {
-                font-size: 0.9rem;
-            }
-        }
-
-        .stepper {
-            display: flex;
-            align-items: center;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-
-            button {
-                border: none;
-                background: transparent;
-                padding: 8px 16px;
-                font-weight: bold;
-                cursor: pointer;
-                font-size: 1.1rem;
-                color: $primary-dark;
-                transition: all 0.2s;
-
-                @media (max-width: 576px) {
-                    padding: 6px 12px;
-                    font-size: 1rem;
-                }
-
-                &:hover {
-                    color: $brand-violet;
-                }
-
-                &:active {
-                    transform: scale(0.95);
-                }
-            }
-
-            .qty-val {
-                min-width: 40px;
-                text-align: center;
-                font-weight: 800;
-                font-size: 1rem;
-
-                @media (max-width: 576px) {
-                    min-width: 35px;
-                    font-size: 0.95rem;
-                }
-            }
-        }
-    }
-
-    .summary-details {
-        border-top: 1px dashed #cbd5e1;
-        padding-top: 20px;
-        margin-bottom: 25px;
-
-        @media (max-width: 576px) {
-            padding-top: 15px;
-            margin-bottom: 20px;
-        }
-
-        .row-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            color: $text-muted;
-            font-size: 0.95rem;
-
-            @media (max-width: 576px) {
-                font-size: 0.9rem;
-                margin-bottom: 8px;
-            }
-
-            &.total {
-                color: $primary-dark;
-                font-weight: 800;
-                font-size: 1.15rem;
-                margin-top: 5px;
-
-                @media (max-width: 576px) {
-                    font-size: 1.05rem;
-                }
-            }
-        }
-    }
-
-    .btn-book-now {
-        width: 100%;
-        background: $primary-dark;
-        color: white;
-        border: none;
-        padding: 18px;
-        border-radius: 12px;
-        font-weight: 800;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-
-        @media (max-width: 576px) {
-            padding: 15px;
-            font-size: 1rem;
-            border-radius: 10px;
+        &.active {
+            border: 2px solid $primary-dark !important;
         }
 
         &:hover {
-            background: #000;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        &:active {
-            transform: translateY(-1px);
-        }
-
-        i {
-            font-size: 1.2rem;
+            transform: scale(0.95);
         }
     }
-}
 
-// Related Section
-.related-section {
-    padding-bottom: 60px;
+    .btn-rent-now {
+        background-color: $btn-action-grey;
+        color: #4b5563;
+        border: none;
 
-    @media (max-width: 576px) {
-        padding-bottom: 40px;
-    }
-
-    .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 40px;
-        gap: 15px;
-
-        @media (max-width: 576px) {
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-
-        h2 {
-            font-size: 1.85rem;
-            font-weight: 800;
+        &:hover {
+            background-color: color.adjust($btn-action-grey, $lightness: -10%);
             color: $primary-dark;
-            margin: 0;
-
-            @media (max-width: 768px) {
-                font-size: 1.5rem;
-            }
-
-            @media (max-width: 576px) {
-                font-size: 1.3rem;
-            }
-        }
-
-        .view-collection {
-            color: $brand-violet;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-            transition: gap 0.3s ease;
-
-            @media (max-width: 576px) {
-                font-size: 0.9rem;
-            }
-
-            &:hover {
-                gap: 8px;
-            }
-
-            i {
-                transition: transform 0.3s ease;
-            }
-
-            &:hover i {
-                transform: translateX(3px);
-            }
         }
     }
-}
 
-// Rental Grid
-.rental-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
-
-    @media (max-width: 1200px) {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-
-    @media (max-width: 991px) {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 18px;
-    }
-
-    @media (max-width: 576px) {
+    // 2. Specifications Grid - 4 columns desktop, 2 mobile
+    .specs-grid {
+        display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
-    }
 
-    @media (max-width: 400px) {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-}
-
-// Rental Card
-.rental-card {
-    border: 1px solid $border-color;
-    border-radius: 16px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    background: white;
-
-    @media (max-width: 576px) {
-        border-radius: 12px;
-    }
-
-    .card-image {
-        height: 180px;
-        background: #f9fafb;
-        position: relative;
-        cursor: pointer;
-
-        @media (max-width: 768px) {
-            height: 160px;
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
         }
 
-        @media (max-width: 576px) {
-            height: 140px;
-        }
+        .spec-card {
+            background-color: $bg-faded;
+            border: 1px solid transparent;
 
-        img {
+            label {
+                color: #9ca3af;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    // 3. Suggested Cards - Remove extra space & Full size image
+    .product-card {
+        transition: $transition-smooth;
+
+        .product-img-wrapper {
             width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 20px;
-
-            @media (max-width: 576px) {
-                padding: 15px;
-            }
-        }
-
-        .category-tag {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: white;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-
-            @media (max-width: 576px) {
-                font-size: 9px;
-                padding: 3px 8px;
-                top: 10px;
-                left: 10px;
-            }
-        }
-    }
-
-
-    .card-content {
-        padding: 1.25rem;
-
-        @media (max-width: 768px) {
-            padding: 1rem;
-        }
-
-        @media (max-width: 576px) {
-            padding: 0.85rem;
-        }
-
-        .brand {
-            font-size: 11px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: 0.5px;
-
-            @media (max-width: 576px) {
-                font-size: 10px;
-            }
-        }
-
-        .model {
-            font-size: 1rem;
-            font-weight: 700;
-            color: $primary-dark;
-            margin: 6px 0 15px;
+            height: 280px; // Standard height for card image
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            background: $bg-faded;
 
-            @media (max-width: 768px) {
-                font-size: 0.95rem;
-                margin: 5px 0 12px;
+            @media (max-width: 575px) {
+                height: 350px; // Taller image for the single-column view on mobile
             }
 
-            @media (max-width: 576px) {
-                font-size: 0.9rem;
-                margin: 4px 0 10px;
-            }
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-
-            .price {
-                font-weight: 800;
-                font-size: 1.1rem;
-
-                @media (max-width: 768px) {
-                    font-size: 1rem;
-                }
-
-                @media (max-width: 576px) {
-                    font-size: 0.95rem;
-                }
-
-                .unit {
-                    color: $success-green;
-                    margin-right: 2px;
-                }
-
-                small {
-                    font-weight: 400;
-                    font-size: 12px;
-                    color: $text-muted;
-
-                    @media (max-width: 576px) {
-                        font-size: 11px;
-                    }
-                }
-            }
-
-            .btn-quick-add {
-                width: 36px;
-                height: 36px;
-                border: none;
-                border-radius: 10px;
-                background: #f3f4f6;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-                transition: all 0.3s ease;
-
-                @media (max-width: 576px) {
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 8px;
-                }
-
-                i {
-                    font-size: 1.1rem;
-
-                    @media (max-width: 576px) {
-                        font-size: 1rem;
-                    }
-                }
-
-                &:hover {
-                    background: $primary-dark;
-                    color: white;
-                    transform: scale(1.1);
-                }
-
-                &:active {
-                    transform: scale(0.95);
-                }
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover; // Removes white gaps
+                transition: $transition-smooth;
             }
         }
     }
-}
 
-.product-info-grid {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 40px;
-    margin-top: 50px;
-    padding-top: 30px;
-    border-top: 1px solid $border-color;
-
-    @media (max-width: 768px) {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
-
-    .info-section {
-        h3 {
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            color: $primary-dark;
-        }
-
-        .description-text {
-            color: #4b5563;
-            line-height: 1.7;
-            font-size: 1rem;
-        }
-
-        .feature-list {
-            list-style: none;
-            padding: 0;
-
-            li {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                margin-bottom: 12px;
-                color: #4b5563;
-                font-weight: 500;
-
-                i {
-                    color: $success-green;
-                    font-size: 1.2rem;
-                }
-            }
-        }
-    }
-}
-
-// Footer Separator
-.footer-separator {
-    height: 80px;
-
-    @media (max-width: 768px) {
-        height: 60px;
-    }
-
-    @media (max-width: 576px) {
-        height: 40px;
-    }
-}
-
-// Loader
-.loader-viewport {
-    height: 60vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    @media (max-width: 576px) {
-        height: 50vh;
-    }
-
-    .spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid #f3f4f6;
-        border-top-color: $brand-violet;
+    .wish-btn-circle {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 38px;
+        height: 38px;
+        background: $white;
+        border: none;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
 
-        @media (max-width: 576px) {
-            width: 35px;
-            height: 35px;
-            border-width: 3px;
-        }
-    }
-
-    p {
-        color: $text-muted;
-        font-weight: 600;
-        font-size: 0.95rem;
-
-        @media (max-width: 576px) {
-            font-size: 0.9rem;
+        &:hover {
+            color: #ef4444;
         }
     }
 }
 
-// Animations
-@keyframes spin {
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba($white, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: $btn-action-grey;
+    border-radius: 10px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
     to {
-        transform: rotate(360deg);
-    }
-}
-
-// Utility Classes
-.me-2 {
-    margin-right: 0.5rem;
-}
-
-// Touch-friendly interactions on mobile
-@media (max-width: 768px) {
-
-    button,
-    a,
-    .thumb-box,
-    .card-image {
-        -webkit-tap-highlight-color: transparent;
+        opacity: 1;
+        transform: translateY(0);
     }
 }

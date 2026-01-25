@@ -1,0 +1,113 @@
+<div class="container-fluid py-4">
+  <div
+    class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-3 shadow-sm"
+  >
+    <div>
+      <h2 class="fw-bold text-dark m-0">Callback Management</h2>
+      <p class="text-muted small m-0">
+        Manage customer inquiries and callback requests
+      </p>
+    </div>
+    <button
+      mat-mini-fab
+      color="primary"
+      matTooltip="Refresh Data"
+      (click)="loadCalls()"
+    >
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="d-flex justify-content-center py-5">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else {
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="callRequests()" class="w-100">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let call">
+              <span class="fw-bold">#{{ call.id }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="user">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let call">
+              <div class="d-flex flex-column">
+                <span class="fw-medium">{{ call.name }}</span>
+                <span class="text-muted smaller">{{
+                  call.user?.email || "Guest"
+                }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="contact">
+            <th mat-header-cell *matHeaderCellDef>Contact</th>
+            <td mat-cell *matCellDef="let call">
+              <a
+                [href]="'tel:' + call.phone"
+                class="btn btn-sm btn-outline-primary rounded-pill px-3"
+              >
+                <i class="bi bi-telephone-outbound me-2"></i>{{ call.phone }}
+              </a>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="subject">
+            <th mat-header-cell *matHeaderCellDef>Subject</th>
+            <td mat-cell *matCellDef="let call">
+              <span class="subject-tag">{{ call.subject }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let call">
+              <span class="status-badge" [ngClass]="call.status.toLowerCase()">
+                {{ call.status }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="text-center">
+              Actions
+            </th>
+            <td mat-cell *matCellDef="let call" class="text-center">
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="updateStatus(call.id, 'Called')">
+                  <mat-icon class="text-success">check_circle</mat-icon>
+                  <span>Mark as Called</span>
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="updateStatus(call.id, 'Cancelled')"
+                >
+                  <mat-icon class="text-danger">cancel</mat-icon>
+                  <span>Cancel Request</span>
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+
+      @if (callRequests().length === 0) {
+        <div class="text-center py-5">
+          <i class="bi bi-journal-check display-4 text-muted"></i>
+          <p class="text-muted mt-2">No pending callback requests.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,245 @@
+<div class="admin-wrapper" [class.sidebar-collapsed]="!sidebarOpen">
+  <div
+    class="sidebar-overlay"
+    *ngIf="sidebarOpen && isMobile"
+    (click)="toggleSidebar()"
+  ></div>
+
+  <aside class="app-sidebar" [class.open]="sidebarOpen">
+    <div class="sidebar-header">
+      <div class="logo-wrapper">
+        <div class="logo-box">
+          <span class="logo-icon">SMS</span>
+        </div>
+        <div class="logo-text-group" *ngIf="sidebarOpen">
+          <span class="brand-main">Smart Media</span>
+          <span class="brand-sub">ADMIN PANEL</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label" *ngIf="sidebarOpen">General</div>
+
+      <a
+        routerLink="/admin/dashboard"
+        routerLinkActive="active"
+        class="nav-item"
+        [attr.aria-label]="'Dashboard'"
+      >
+        <i class="material-icons">dashboard</i>
+        <span class="nav-label-text">Dashboard</span>
+      </a>
+
+      <div class="nav-group">
+        <div
+          class="nav-item parent"
+          [class.expanded]="menuStates['camera']"
+          (click)="toggleSubMenu('camera', $event)"
+          [attr.aria-label]="'Cameras Menu'"
+        >
+          <i class="material-icons">photo_camera</i>
+          <span class="nav-label-text">Cameras</span>
+          <i class="material-icons arrow" *ngIf="sidebarOpen">
+            {{ menuStates["camera"] ? "expand_less" : "expand_more" }}
+          </i>
+        </div>
+
+        <div
+          class="sub-menu"
+          [class.show]="menuStates['camera'] && sidebarOpen"
+        >
+          <a
+            routerLink="/admin/add-camera"
+            routerLinkActive="active"
+            class="sub-nav-item"
+          >
+            <i class="material-icons">add_circle_outline</i>
+            <span class="nav-label-text">Add Camera</span>
+          </a>
+          <a
+            routerLink="/admin/view-cameras"
+            routerLinkActive="active"
+            class="sub-nav-item"
+          >
+            <i class="material-icons">view_list</i>
+            <span class="nav-label-text">View All</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="nav-label" *ngIf="sidebarOpen">Management</div>
+
+      <a
+        routerLink="/admin/admin-booking"
+        routerLinkActive="active"
+        class="nav-item"
+        [attr.aria-label]="'Shoot Management'"
+      >
+        <i class="material-icons">videocam</i>
+        <span class="nav-label-text">Shoot Management</span>
+      </a>
+
+      <a
+        routerLink="/admin/admin-calls"
+        routerLinkActive="active"
+        class="nav-item"
+        [attr.aria-label]="'Shoot Management'"
+      >
+        <i class="material-icons">phone</i>
+        <span class="nav-label-text">Call Request</span>
+      </a>
+
+      <div class="nav-group">
+        <div
+          class="nav-item parent"
+          [class.expanded]="menuStates['packages']"
+          (click)="toggleSubMenu('packages', $event)"
+          [attr.aria-label]="'Packages Menu'"
+        >
+          <i class="material-icons">photo_library</i>
+          <span class="nav-label-text">Packages</span>
+          <i class="material-icons arrow" *ngIf="sidebarOpen">
+            {{ menuStates["packages"] ? "expand_less" : "expand_more" }}
+          </i>
+        </div>
+
+        <div
+          class="sub-menu"
+          [class.show]="menuStates['packages'] && sidebarOpen"
+        >
+          <a
+            routerLink="/admin/add-package"
+            routerLinkActive="active"
+            class="sub-nav-item"
+          >
+            <i class="material-icons">add_a_photo</i>
+            <span class="nav-label-text">Create New</span>
+          </a>
+          <a
+            routerLink="/admin/manage-packages"
+            routerLinkActive="active"
+            class="sub-nav-item"
+          >
+            <i class="material-icons">collections</i>
+            <span class="nav-label-text">Manage All</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div
+          class="nav-item parent"
+          [class.expanded]="menuStates['courses']"
+          (click)="toggleSubMenu('courses', $event)"
+          [attr.aria-label]="'Courses Menu'"
+        >
+          <i class="material-icons">school</i>
+          <span class="nav-label-text">Courses</span>
+          <i class="material-icons arrow" *ngIf="sidebarOpen">
+            {{ menuStates["courses"] ? "expand_less" : "expand_more" }}
+          </i>
+        </div>
+
+        <div
+          class="sub-menu"
+          [class.show]="menuStates['courses'] && sidebarOpen"
+        >
+          <a
+            routerLink="/admin/add-course"
+            routerLinkActive="active"
+            class="sub-nav-item"
+          >
+            <i class="material-icons">add_circle_outline</i>
+            <span class="nav-label-text">Create New</span>
+          </a>
+          <a
+            routerLink="/admin/manage-courses"
+            routerLinkActive="active"
+            class="sub-nav-item"
+          >
+            <i class="material-icons">list_alt</i>
+            <span class="nav-label-text">Batch List</span>
+          </a>
+        </div>
+      </div>
+
+      <a
+        routerLink="/admin/orders"
+        routerLinkActive="active"
+        class="nav-item"
+        [attr.aria-label]="'Orders'"
+      >
+        <i class="material-icons">shopping_bag</i>
+        <span class="nav-label-text">Orders</span>
+      </a>
+
+      <a
+        routerLink="/admin/users"
+        routerLinkActive="active"
+        class="nav-item"
+        [attr.aria-label]="'User Base'"
+      >
+        <i class="material-icons">groups</i>
+        <span class="nav-label-text">All Users</span>
+      </a>
+      <a
+        routerLink="/admin/admin-newsletter"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <i class="material-icons">mark_email_read</i>
+        <span class="nav-label-text">Newsletter</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button
+        class="logout-btn"
+        (click)="logout()"
+        [attr.aria-label]="'Logout'"
+      >
+        <i class="material-icons">logout</i>
+        <span *ngIf="sidebarOpen">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-viewport">
+    <header class="top-navbar">
+      <div class="navbar-left">
+        <button
+          class="menu-toggle"
+          (click)="toggleSidebar()"
+          [attr.aria-label]="'Toggle Sidebar'"
+        >
+          <i class="material-icons">menu</i>
+        </button>
+
+        <div class="breadcrumb">
+          <span class="breadcrumb-item">Control Center</span>
+          <i class="material-icons breadcrumb-separator">chevron_right</i>
+          <span class="breadcrumb-item active">Overview</span>
+        </div>
+      </div>
+
+      <div class="navbar-right">
+        <div class="admin-badge" *ngIf="adminEmail">
+          <div class="admin-meta">
+            <span class="admin-name">Super Admin</span>
+            <span class="admin-mail">{{ adminEmail }}</span>
+          </div>
+          <div class="admin-avatar">
+            {{ getAdminInitials() }}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="scroll-content">
+      <div class="container-fluid">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </main>
+</div>

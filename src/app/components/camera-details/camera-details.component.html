@@ -1,0 +1,170 @@
+<div class="camera-details-container">
+  @if (isLoading()) {
+  <div class="loading-state" aria-live="polite">
+    <div class="spinner"></div>
+    <p>Preparing professional gear...</p>
+  </div>
+  } @if (!isLoading() && camera(); as cam) {
+  <div class="content-wrapper">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/rental-all-item">Catalog</a>
+      <span class="sep">/</span>
+      <span class="current">{{ cam.brand }}</span>
+    </nav>
+
+    <div class="product-main-grid">
+      <div class="gallery-column">
+        <div class="main-frame">
+          <img
+            [src]="selectedImage()"
+            [alt]="cam.brand + ' ' + cam.name"
+            class="img-main"
+            fetchpriority="high"
+            loading="eager"
+          />
+
+          @if (cam.status === 'active') {
+          <div class="status-badge available">Available</div>
+          }
+        </div>
+
+        @if (cam.images && cam.images.length > 1) {
+        <div class="thumb-strip">
+          @for (img of cam.images; track img.id) {
+          <button
+            type="button"
+            class="thumb-item"
+            [class.active]="selectedImage() === img.url"
+            (click)="changeImage(img.url)"
+          >
+            <img [src]="img.url" [alt]="cam.name + ' detail'" loading="lazy" />
+          </button>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="info-column">
+        <header>
+          <span class="brand-label">{{ cam.brand }}</span>
+          <h1 class="product-title">{{ cam.name }}</h1>
+        </header>
+
+        <div class="rating-summary">
+          <div class="stars-static" aria-hidden="true">
+            @for (s of [1,2,3,4,5]; track s) {
+            <i class="star-icon" [class.fill]="s <= averageRating()">★</i>
+            }
+          </div>
+          <span class="rating-text">
+            {{ averageRating() | number : "1.1-1" }}
+            <span class="count">({{ reviews().length }} Reviews)</span>
+          </span>
+        </div>
+
+        <div class="price-box">
+          <div class="price-tag">
+            <span class="currency">₹</span>
+            <span class="amount">{{ cam.pricePerDay | number : "1.0-0" }}</span>
+            <span class="period">/ day</span>
+          </div>
+          <p class="security-note">
+            ✓ Fully Insured Gear & Maintenance Included
+          </p>
+        </div>
+
+        <div class="desc-block">
+          <h2 class="h5">Description</h2>
+          <p>{{ cam.description }}</p>
+        </div>
+
+        <div class="cta-actions">
+          <button
+            class="btn-primary"
+            (click)="onAddToCart($event, cam)"
+            [disabled]="cam.status !== 'active'"
+          >
+            Rent Now
+          </button>
+          <button class="btn-secondary" (click)="onWishlist($event, cam)">
+            <i class="bi bi-heart me-1"></i> Wishlist
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section class="specs-section">
+      <h2 class="section-heading">Technical Specifications</h2>
+      <div class="specs-grid">
+        @for (item of displaySpecKeys; track item.key) {
+        <div class="spec-card">
+          <span class="spec-label">{{ item.label }}</span>
+          <span class="spec-value">{{ parsedSpecs()[item.key] || "N/A" }}</span>
+        </div>
+        }
+      </div>
+    </section>
+
+    <section class="reviews-section" id="reviews">
+      <h2 class="section-heading">Customer Reviews</h2>
+      <div class="reviews-layout">
+        <div class="review-form-card" id="reviewForm">
+          <h3>{{ editingReviewId() ? "Update Review" : "Write a Review" }}</h3>
+          <div class="stars-interactive">
+            @for (star of [5,4,3,2,1]; track star) {
+            <input
+              type="radio"
+              [id]="'star' + star"
+              name="rating"
+              [(ngModel)]="newReview.rating"
+              [value]="star"
+            />
+            <label [for]="'star' + star">★</label>
+            }
+          </div>
+          <textarea
+            [(ngModel)]="newReview.comment"
+            placeholder="Share your experience..."
+          ></textarea>
+          <button
+            class="btn-submit"
+            (click)="submitReview()"
+            [disabled]="isSubmittingReview() || !newReview.comment"
+          >
+            {{ isSubmittingReview() ? "Processing..." : "Post Review" }}
+          </button>
+        </div>
+
+        <div class="reviews-list">
+          @for (review of reviews().slice(0, showAllReviews() ? reviews().length
+          : 3); track review.id) {
+          <div class="review-item">
+            <div class="review-header">
+              <div class="user-box">
+                <div class="avatar">{{ review.user?.name?.[0] || 'U' }}</div>
+                <div>
+                  <div class="u-name">
+                    {{ review.user?.name || "Verified User" }}
+                  </div>
+                  <div class="u-date">
+                    {{ review.createdAt | date : "mediumDate" }}
+                  </div>
+                </div>
+              </div>
+              <div class="stars-static">
+                @for (s of [1,2,3,4,5]; track s) {
+                <i [class.fill]="s <= review.rating">★</i>
+                }
+              </div>
+            </div>
+            <p>{{ review.comment }}</p>
+          </div>
+          }
+        </div>
+      </div>
+    </section>
+  </div>
+  }
+</div>
+<app-rental></app-rental>
+<app-footer></app-footer>
