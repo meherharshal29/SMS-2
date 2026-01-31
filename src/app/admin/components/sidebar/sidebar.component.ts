@@ -146,39 +146,13 @@ export class SidebarComponent implements OnInit {
 
   logout(): void {
     const confirmLogout = confirm('Are you sure you want to logout?');
+    if (!confirmLogout) return;
 
-    if (!confirmLogout) {
-      return;
-    }
+    // Simply call the service method. 
+    // All the HTTP logic and Navigation is now handled there.
+    this.adminService.logout();
 
-    // Notify server to set isOnline: false
-    this.http.post(`${this.adminUrl}/logout`, {}).pipe(
-      catchError((error) => {
-        console.error('Logout API error:', error);
-        return of(null); // Prevent blocking local logout on network error
-      })
-    ).subscribe(() => {
-      console.log('Server logout completed');
-    });
-
-    // Clear local storage (browser only)
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('adminToken');
-      localStorage.removeItem('adminUser');
-      localStorage.removeItem('adminEmail');
-      localStorage.removeItem('sidebarMenuStates');
-    }
-
-    // Clear admin service states if available
-    try {
-      if (this.adminService && typeof this.adminService.logout === 'function') {
-        this.adminService.logout();
-      }
-    } catch (error) {
-      console.error('AdminService logout error:', error);
-    }
-
-    // Reset component state
+    // Reset local component UI states
     this.adminEmail = null;
     this.menuStates = {
       camera: false,
@@ -186,9 +160,6 @@ export class SidebarComponent implements OnInit {
       shoots: false,
       packages: false
     };
-
-    // Navigate to login page
-    this.router.navigate(['/admin/login']);
   }
 
   // Helper method to get admin initials

@@ -9,13 +9,14 @@ import { CartService } from '../cart/cart.service';
 export interface Order {
   id: number;
   totalPrice: number;
-  status: 'pending' | 'confirmed' | 'shipped' | 'returned' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'returned' | 'cancelled' | 'cancel';
+  paymentMethod: 'upi' | 'card' | 'net_banking' | 'cod';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   rentalStartDate: string;
   rentalEndDate: string;
   quantity: number;
   shippingAddress: string;
   adharNumber: string;
-  paymentMethod: string;
   createdAt: string;
   Camera: {
     id: number;
@@ -45,19 +46,17 @@ export class OrderService {
   private cartService = inject(CartService);
 
   private readonly apiUrl = `${environment.apiUrl}/orders`;
-
-  // Ensure this matches your CameraService backend URL to load images properly
-  private readonly backendUrl = 'http://localhost:5000';
+  private readonly backendUrl = environment.apiUrl.replace('/api', ''); // Derives base URL for images
 
   /**
-   * SUGGESTIONS: Pre-fill the checkout form using saved User Profile data.
+   * SUGGESTIONS: Pre-fill checkout with saved profile data
    */
   getSuggestions(): Observable<ApiResponse<CheckoutSuggestions>> {
     return this.http.get<ApiResponse<CheckoutSuggestions>>(`${this.apiUrl}/suggestions`);
   }
 
   /**
-   * CHECKOUT: Submits order and clears the Cart Signal upon success.
+   * CHECKOUT: Submit order and clear local cart signal
    */
   checkout(checkoutData: any): Observable<ApiResponse<Order[]>> {
     return this.http.post<ApiResponse<Order[]>>(`${this.apiUrl}/checkout`, checkoutData).pipe(
@@ -70,13 +69,12 @@ export class OrderService {
   }
 
   /**
-   * HISTORY: Fetches user orders and fixes image URLs for display.
+   * HISTORY: Get orders for the logged-in user
    */
   getMyOrders(): Observable<Order[]> {
     return this.http.get<ApiResponse<Order[]>>(`${this.apiUrl}/my-orders`).pipe(
       map(res => {
         if (res.success && res.data) {
-          // Fix image paths for every order in the list
           res.data.forEach(order => this.fixOrderImages(order));
           return res.data;
         }
@@ -86,7 +84,7 @@ export class OrderService {
   }
 
   /**
-   * DETAILS: Get specific order by ID and fix its images.
+   * DETAILS: Get a single order by ID
    */
   getOrderById(id: string | number): Observable<Order> {
     return this.http.get<ApiResponse<Order>>(`${this.apiUrl}/${id}`).pipe(
@@ -98,6 +96,13 @@ export class OrderService {
         throw new Error(res.message || 'Order not found');
       })
     );
+  }
+
+  /**
+   * ADMIN: Update order status (e.g., Shipped -> Delivered)
+   */
+  updateStatus(orderId: number, status: string): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.apiUrl}/status/${orderId}`, { status });
   }
 
   /**
@@ -122,16 +127,31 @@ export class OrderService {
   }
 
   /**
-   * UI HELPER: Maps status to Bootstrap/Tailwind badge classes
+   * UI HELPER: Maps status to CSS classes for badges
    */
   getStatusBadgeClass(status: string): string {
     const statusMap: Record<string, string> = {
       'pending': 'badge bg-warning text-dark',
       'confirmed': 'badge bg-info text-white',
       'shipped': 'badge bg-primary text-white',
-      'returned': 'badge bg-success text-white',
-      'cancelled': 'badge bg-danger text-white'
+      'delivered': 'badge bg-success text-white',
+      'returned': 'badge bg-dark text-white',
+      'cancelled': 'badge bg-danger text-white',
+      'cancel': 'badge bg-danger text-white'
     };
     return statusMap[status] || 'badge bg-secondary';
+  }
+
+  /**
+   * UI HELPER: Maps payment method to readable labels
+   */
+  getPaymentMethodLabel(method: string): string {
+    const methods: Record<string, string> = {
+      'upi': 'UPI / QR Code',
+      'card': 'Credit/Debit Card',
+      'net_banking': 'Net Banking',
+      'cod': 'Cash on Delivery'
+    };
+    return methods[method] || method.toUpperCase();
   }
 }

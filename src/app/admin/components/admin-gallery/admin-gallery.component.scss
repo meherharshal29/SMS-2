@@ -1,0 +1,120 @@
+@use "sass:color";
+
+// Variables
+$primary: #0d6efd;
+$info: #0dcaf0;
+$warn: #f44336;
+$dark: #212529;
+
+.border-dashed {
+    border: 2px dashed rgba($primary, 0.25);
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        background: rgba($primary, 0.05);
+        border-color: $primary;
+        transform: translateY(-2px);
+    }
+}
+
+.object-fit-cover {
+    object-fit: cover;
+}
+
+// --- Soft Badges ---
+.bg-primary-soft {
+    background-color: rgba($primary, 0.12) !important;
+}
+
+.bg-info-soft {
+    background-color: rgba($info, 0.12) !important;
+}
+
+.bg-dark-soft {
+    background-color: rgba($dark, 0.12) !important;
+}
+
+.small-field {
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+    }
+
+    font-size: 13px;
+}
+
+.smaller {
+    font-size: 0.8rem;
+}
+
+.smaller-badge {
+    font-size: 0.65rem;
+    padding: 4px 8px;
+}
+
+.mat-mdc-tab-group {
+    --mat-tab-header-active-label-text-color: #{$primary};
+    --mat-tab-header-active-indicator-color: #{$primary};
+}
+
+.table-row {
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #f8faff;
+    }
+}
+
+.mat-mdc-header-cell {
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+.spinner {
+    animation: rotate 2s linear infinite;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Mobile specific tweaks
+@media (max-width: 768px) {
+    .mat-mdc-tab-label {
+        min-width: 120px;
+        font-size: 13px;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+    }
+}

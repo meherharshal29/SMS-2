@@ -1,5 +1,5 @@
 export const environment = {
-    production: false,
-    apiUrl: 'http://localhost:5000/api', // Matches your backend server configuration 
+    production: true,
+    apiUrl: 'https://sms-app-a5ar.onrender.com/api', // Your live Render URL
     featureFlag: true
 };

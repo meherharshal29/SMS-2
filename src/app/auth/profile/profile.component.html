@@ -2,9 +2,13 @@
   <div class="profile-container">
     @if (isLoading() || user()) {
       <div class="content-wrapper" [class.is-loading]="isLoading()">
+        <!-- ============================================ -->
+        <!-- SIDEBAR - PROFILE CARD -->
+        <!-- ============================================ -->
         <aside class="profile-sidebar">
-          <div class="profile-card shadow-lg">
+          <div class="profile-card">
             <div class="card-header-accent"></div>
+
             <div class="avatar-container">
               <div class="avatar-wrapper">
                 <div class="avatar">{{ user() ? getInitials() : "U" }}</div>
@@ -25,7 +29,7 @@
             </div>
 
             <div class="user-identity">
-              <h1 class="user-name text-truncate">
+              <h1 class="user-name">
                 {{ user()?.name || "Loading Name..." }}
               </h1>
               <span class="user-role">{{
@@ -36,7 +40,7 @@
             <div class="contact-details">
               <div class="detail-row">
                 <div class="detail-icon"><i class="bi bi-envelope"></i></div>
-                <div class="detail-content text-truncate">
+                <div class="detail-content">
                   <span class="detail-label">Email Address</span>
                   <span class="detail-value">{{ user()?.email }}</span>
                 </div>
@@ -47,15 +51,15 @@
                 </div>
                 <div class="detail-content">
                   <span class="detail-label">Member Since</span>
-                  <span class="detail-value">{{
-                    (user()?.createdAt | date: "MMM d, y") || "Recently"
-                  }}</span>
+                  <span class="detail-value">
+                    {{ (user()?.createdAt | date: "MMM d, y") || "Recently" }}
+                  </span>
                 </div>
               </div>
             </div>
 
             <div class="action-buttons">
-              <button class="btn btn-primary shadow-sm">
+              <button class="btn btn-primary" routerLink="/auth/settings">
                 <i class="bi bi-pencil"></i><span>Edit Profile</span>
               </button>
               <button class="btn btn-secondary" (click)="logout()">
@@ -65,7 +69,11 @@
           </div>
         </aside>
 
+        <!-- ============================================ -->
+        <!-- MAIN DASHBOARD CONTENT -->
+        <!-- ============================================ -->
         <main class="dashboard-content">
+          <!-- Stats Section -->
           <section class="stats-section">
             <div class="stat-card">
               <div class="stat-icon-wrapper blue">
@@ -96,45 +104,50 @@
             </div>
           </section>
 
-          <section class="activity-section shadow-sm">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h3 class="section-title m-0">
-                <i class="bi bi-clock-history"></i> Recent Activity
-              </h3>
-            </div>
+          <!-- Activity Section -->
+          <section class="activity-section">
+            <h3 class="section-title">
+              <i class="bi bi-clock-history"></i> Recent Activity
+            </h3>
 
-            <div class="activity-container">
+            <div class="scrollable-activity">
               @if (bookings().length > 0) {
-                <div class="mb-4">
-                  <h6 class="text-uppercase text-muted small fw-bold mb-3">
-                    Shoot Bookings
-                  </h6>
+                <div class="activity-group">
+                  <h6 class="activity-group-title">Shoot Bookings</h6>
                   <div class="order-list">
-                    @for (booking of bookings().slice(0, 3); track booking.id) {
+                    @for (booking of bookings(); track booking.id) {
                       <div class="order-item">
                         <div class="order-gear-info">
                           <div class="gear-preview">
                             <img
-                              [src]="booking.package?.coverImage"
-                              [alt]="booking.package?.title"
+                              [src]="
+                                booking?.package?.coverImage ||
+                                'assets/placeholder.png'
+                              "
+                              [alt]="booking?.package?.title"
                             />
                           </div>
                           <div class="gear-meta">
                             <h4 class="gear-name">
-                              {{ booking.package?.title }}
+                              {{ booking?.package?.title }}
                             </h4>
                             <p class="order-date">
-                              {{ booking.eventDate | date: "mediumDate" }} • ₹{{
-                                booking.package?.price | number
-                              }}
+                              {{ booking?.eventDate | date: "mediumDate" }} •
+                              ₹{{ booking?.package?.price | number }}
                             </p>
                           </div>
                         </div>
                         <span
                           class="status-badge"
-                          [ngClass]="getStatusClass(booking.status)"
+                          [ngClass]="getStatusClass(booking?.status)"
                         >
-                          {{ booking.status | uppercase }}
+                          @if (
+                            booking?.status?.toLowerCase() === "delivered" ||
+                            booking?.status?.toLowerCase() === "completed"
+                          ) {
+                            <i class="bi bi-check-circle-fill"></i>
+                          }
+                          {{ booking?.status || "PENDING" | uppercase }}
                         </span>
                       </div>
                     }
@@ -143,49 +156,54 @@
               }
 
               @if (orders().length > 0) {
-                <div>
-                  <h6 class="text-uppercase text-muted small fw-bold mb-3">
-                    Gear Rentals
-                  </h6>
+                <div class="activity-group">
+                  <h6 class="activity-group-title">Gear Rentals</h6>
                   <div class="order-list">
-                    @for (order of orders().slice(0, 3); track order.id) {
+                    @for (order of orders(); track order.id) {
                       <div class="order-item">
                         <div class="order-gear-info">
                           <div class="gear-preview">
                             <img
-                              [src]="order.Camera.images[0].url"
-                              [alt]="order.Camera.name"
+                              [src]="
+                                order?.Camera?.images?.[0]?.url ||
+                                'assets/no-camera.png'
+                              "
+                              [alt]="order?.Camera?.name"
                             />
                           </div>
                           <div class="gear-meta">
-                            <h4 class="gear-name">{{ order.Camera.name }}</h4>
+                            <h4 class="gear-name">{{ order?.Camera?.name }}</h4>
                             <p class="order-date">
-                              {{ order.rentalStartDate | date: "mediumDate" }} •
-                              ₹{{ order.totalPrice | number }}
+                              {{ order?.rentalStartDate | date: "mediumDate" }}
+                              • ₹{{ order?.totalPrice | number }}
                             </p>
                           </div>
                         </div>
                         <span
                           class="status-badge"
-                          [ngClass]="getStatusClass(order.status)"
+                          [ngClass]="getStatusClass(order?.status)"
                         >
-                          {{ order.status | uppercase }}
+                          @if (order?.status?.toLowerCase() === "delivered") {
+                            <i class="bi bi-check-circle-fill"></i>
+                          }
+                          {{ order?.status || "PENDING" | uppercase }}
                         </span>
                       </div>
                     }
                   </div>
                 </div>
-              } @else if (bookings().length === 0 && orders().length === 0) {
+              }
+
+              @if (
+                !isLoading() && bookings().length === 0 && orders().length === 0
+              ) {
                 <div class="empty-state">
                   <div class="empty-icon"><i class="bi bi-inbox"></i></div>
                   <h4 class="empty-title">No Recent Activity</h4>
                   <p class="empty-text">
                     Your bookings and rentals will appear here.
                   </p>
-                  <button
-                    class="btn btn-primary btn-sm mt-3 px-4"
-                    routerLink="/"
-                  >
+                  <button class="btn btn-primary btn-sm" routerLink="/">
                     Book Now
                   </button>
                 </div>
@@ -193,25 +211,20 @@
             </div>
           </section>
 
-          <section class="quick-actions p-4">
+          <!-- Quick Actions Section -->
+          <section class="quick-actions-section">
             <h5 class="section-title">Quick Actions</h5>
             <div class="action-grid">
-              <button class="action-item shadow-sm" routerLink="/packages">
+              <button class="action-item" routerLink="/packages">
                 <i class="bi bi-images"></i><span>Book Shoot</span>
               </button>
-              <button
-                class="action-item shadow-sm"
-                routerLink="/rental-all-item"
-              >
+              <button class="action-item" routerLink="/rental-all-item">
                 <i class="bi bi-plus-circle"></i><span>New Rental</span>
               </button>
-              <button class="action-item shadow-sm" routerLink="/cart">
+              <button class="action-item" routerLink="/cart">
                 <i class="bi bi-bag-check"></i><span>My Cart</span>
               </button>
-              <button
-                class="action-item shadow-sm"
-                routerLink="/auth/payment-history"
-              >
+              <button class="action-item" routerLink="/auth/payment-history">
                 <i class="bi bi-file-text"></i><span>Billing Info</span>
               </button>
             </div>
@@ -220,19 +233,20 @@
       </div>
     }
 
+    <!-- ============================================ -->
+    <!-- ERROR STATE -->
+    <!-- ============================================ -->
     @if (!isLoading() && !user()) {
       <div class="error-state">
         <div class="error-icon"><i class="bi bi-exclamation-triangle"></i></div>
         <h2 class="error-title">Session Expired</h2>
         <p class="error-text">Please sign in again to access your dashboard.</p>
-        <button
-          class="btn btn-primary px-5 py-3 rounded-pill"
-          (click)="logout()"
-        >
+        <button class="btn btn-primary" (click)="logout()">
           Return to Login
         </button>
       </div>
     }
   </div>
 </div>
+
 <app-footer></app-footer>

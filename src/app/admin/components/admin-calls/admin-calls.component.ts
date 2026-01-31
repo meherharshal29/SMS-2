@@ -10,18 +10,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AdminCallsService, CallRequest } from '../../services/admin-calls/admin-calls.service';
+import { MaterialModule } from '../../../shared/material/material.module';
 
 @Component({
   selector: 'app-admin-calls',
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatTooltipModule,
-    MatProgressSpinnerModule,
+    MaterialModule
   ],
   templateUrl: './admin-calls.component.html',
   styleUrl: './admin-calls.component.scss'

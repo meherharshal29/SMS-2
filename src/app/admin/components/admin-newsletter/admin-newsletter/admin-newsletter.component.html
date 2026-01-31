@@ -1,141 +1,179 @@
-<div class="container-fluid bg-light min-vh-100">
-  <div class="row justify-content-start">
-    <div class="col-xl-11">
-      <mat-card class="newsletter-card border-0 shadow-sm">
-        <mat-card-header class="pb-3 border-bottom">
-          <div mat-card-avatar class="header-icon">
-            <mat-icon color="primary">campaign</mat-icon>
-          </div>
-          <mat-card-title class="fw-bold text-dark"
-            >Campaign Manager</mat-card-title
-          >
-          <mat-card-subtitle
-            >Design professional media updates for your
-            subscribers.</mat-card-subtitle
-          >
-        </mat-card-header>
-
-        <mat-card-content class="pt-4">
-          <form [formGroup]="newsletterForm">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Email Subject</mat-label>
-                  <input
-                    matInput
-                    formControlName="subject"
-                    placeholder="Inbox subject line"
-                  />
-                  <mat-icon matSuffix>subject</mat-icon>
-                </mat-form-field>
+<ngx-ui-loader></ngx-ui-loader>
+<div class="newsletter-viewport">
+  <div class="container-fluid">
+    <div class="row justify-content-start">
+      <div class="col-xl-10 col-xxl-9">
+        <mat-card class="main-card border-0 shadow-sm overflow-hidden">
+          <div class="card-header-gradient p-4 text-white">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box shadow-sm">
+                <mat-icon>campaign</mat-icon>
               </div>
-              <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Banner Heading</mat-label>
-                  <input
-                    matInput
-                    formControlName="title"
-                    placeholder="Main title in email"
-                  />
-                  <mat-icon matSuffix>title</mat-icon>
-                </mat-form-field>
-              </div>
-              <div class="col-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Introductory Message</mat-label>
-                  <textarea
-                    matInput
-                    formControlName="body"
-                    rows="3"
-                    placeholder="Engage your audience..."
-                  ></textarea>
-                </mat-form-field>
+              <div>
+                <h1 class="h4 mb-0 fw-bold">Campaign Manager</h1>
+                <p class="mb-0 opacity-75 small">
+                  Design and broadcast high-impact newsletters
+                </p>
               </div>
             </div>
+          </div>
 
-            <h5 class="mt-4 mb-3 fw-bold text-secondary text-uppercase small">
-              Media Grid (3 Images Required)
-            </h5>
-            <div class="row g-4">
-              <div class="col-lg-4 col-md-6" *ngFor="let i of [1, 2, 3]">
-                <div class="asset-card border rounded bg-white p-3 shadow-xs">
-                  <div
-                    class="preview-container mb-3"
-                    (click)="imgInput.click()"
+          <mat-card-content class="p-4 p-md-5">
+            <form [formGroup]="newsletterForm">
+              <div class="section-label mb-3">
+                <span class="text-uppercase fw-bold small text-primary"
+                  >1. Email Content</span
+                >
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <mat-form-field
+                    appearance="outline"
+                    class="w-100 custom-field"
                   >
-                    <img
-                      *ngIf="imagePreviews[i]"
-                      [src]="imagePreviews[i]"
-                      class="img-fluid rounded shadow-sm"
-                    />
-                    <div
-                      *ngIf="!imagePreviews[i]"
-                      class="placeholder d-flex flex-column align-items-center justify-content-center text-muted"
-                    >
-                      <mat-icon class="mb-2">add_a_photo</mat-icon>
-                      <span class="small">Upload Image {{ i }}</span>
-                    </div>
-                  </div>
-                  <input
-                    #imgInput
-                    type="file"
-                    hidden
-                    (change)="onFileSelected($event, i)"
-                    accept="image/*"
-                  />
-
-                  <mat-form-field appearance="fill" class="w-100 compact-field">
-                    <mat-label>Action Link {{ i }}</mat-label>
+                    <mat-label>Subject Line</mat-label>
                     <input
                       matInput
-                      [formControlName]="'link' + i"
-                      placeholder="https://..."
+                      formControlName="subject"
+                      placeholder="What users see in inbox"
                     />
-                    <mat-icon matSuffix>link</mat-icon>
+                    <mat-icon matSuffix class="text-secondary"
+                      >alternate_email</mat-icon
+                    >
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field
+                    appearance="outline"
+                    class="w-100 custom-field"
+                  >
+                    <mat-label>Banner Heading</mat-label>
+                    <input
+                      matInput
+                      formControlName="title"
+                      placeholder="H1 title inside email"
+                    />
+                    <mat-icon matSuffix class="text-secondary">title</mat-icon>
+                  </mat-form-field>
+                </div>
+                <div class="col-12">
+                  <mat-form-field
+                    appearance="outline"
+                    class="w-100 custom-field"
+                  >
+                    <mat-label>Body Message</mat-label>
+                    <textarea
+                      matInput
+                      formControlName="body"
+                      rows="4"
+                      placeholder="Craft your message..."
+                    ></textarea>
+                    <mat-hint align="end"
+                      >{{ newsletterForm.get("body")?.value?.length || 0 }} /
+                      250</mat-hint
+                    >
                   </mat-form-field>
                 </div>
               </div>
-            </div>
 
-            <div
-              class="mt-5 pt-4 border-top d-flex flex-column flex-md-row justify-content-between align-items-center gap-4"
-            >
-              <div class="test-section d-flex align-items-center gap-2">
-                <mat-form-field appearance="outline" class="mb-0">
-                  <mat-label>Test Email</mat-label>
-                  <input
-                    matInput
-                    type="email"
-                    formControlName="targetEmail"
-                    placeholder="Single recipient"
-                  />
-                </mat-form-field>
-                <button
-                  mat-stroked-button
-                  color="accent"
-                  type="button"
-                  (click)="sendNewsletter('single')"
-                  [disabled]="loading"
+              <div class="section-label mt-5 mb-3">
+                <span class="text-uppercase fw-bold small text-primary"
+                  >2. Media Assets (Required)</span
                 >
-                  SEND TEST
-                </button>
               </div>
 
-              <button
-                mat-flat-button
-                color="primary"
-                class="send-btn py-2 px-5"
-                type="button"
-                (click)="sendNewsletter('all')"
-                [disabled]="loading"
-              >
-                <mat-icon>send</mat-icon>
-                BLAST TO ALL USERS
-              </button>
-            </div>
-          </form>
-        </mat-card-content>
-      </mat-card>
+              <div class="row g-4 media-grid">
+                @for (i of [1, 2, 3]; track i) {
+                  <div class="col-lg-4">
+                    <div
+                      class="asset-card shadow-xs border"
+                      [class.active]="imagePreviews[i]"
+                    >
+                      <div class="preview-zone" (click)="imgInput.click()">
+                        @if (imagePreviews[i]) {
+                          <img [src]="imagePreviews[i]" class="img-preview" />
+                          <div class="change-overlay">
+                            <mat-icon>cached</mat-icon>
+                          </div>
+                        } @else {
+                          <div class="placeholder-content">
+                            <mat-icon>add_photo_alternate</mat-icon>
+                            <span>Upload Image {{ i }}</span>
+                          </div>
+                        }
+                      </div>
+                      <input
+                        #imgInput
+                        type="file"
+                        hidden
+                        (change)="onFileSelected($event, i)"
+                        accept="image/*"
+                      />
+
+                      <div class="p-3 bg-light border-top">
+                        <mat-form-field
+                          appearance="fill"
+                          class="w-100 compact-field"
+                        >
+                          <mat-label>Button Link {{ i }}</mat-label>
+                          <input
+                            matInput
+                            [formControlName]="'link' + i"
+                            placeholder="https://..."
+                          />
+                          <mat-icon matSuffix class="fs-6">link</mat-icon>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <div class="action-bar mt-5 pt-4 border-top">
+                <div class="row align-items-center g-4">
+                  <div class="col-md-6">
+                    <div class="d-flex gap-2">
+                      <mat-form-field
+                        appearance="outline"
+                        class="flex-grow-1 hide-hint"
+                      >
+                        <mat-label>Test Recipient</mat-label>
+                        <input
+                          matInput
+                          type="email"
+                          formControlName="targetEmail"
+                          placeholder="admin@test.com"
+                        />
+                      </mat-form-field>
+                      <button
+                        mat-stroked-button
+                        class="test-btn"
+                        (click)="sendNewsletter('single')"
+                        [disabled]="loading"
+                      >
+                        SEND TEST
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-6 text-md-end">
+                    <button
+                      mat-flat-button
+                      color="primary"
+                      class="blast-btn"
+                      (click)="sendNewsletter('all')"
+                      [disabled]="loading"
+                    >
+                      <mat-icon>rocket_launch</mat-icon>
+                      BLAST TO ALL USERS
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
   </div>
 </div>

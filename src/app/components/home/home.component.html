@@ -4,58 +4,68 @@
   <app-promo-banner></app-promo-banner>
   <app-rental></app-rental>
 
-  <!-- wedding packages -->
-
-  <section class="wedding-section py-5">
+  <!-- wedding-packages.component.html -->
+  <section class="wedding-section">
     <div class="container">
-      <div class="header-row row mb-5 align-items-center">
-        <div class="col-sm-8 col-12 text-center text-sm-start">
-          <p class="sub-title mb-1">CINEMATIC COLLECTIONS</p>
-          <h2 class="main-title">Wedding Photography Packages</h2>
-          <div class="title-underline"></div>
-        </div>
-        <div class="col-sm-4 col-12 text-center text-sm-end mt-4 mt-sm-0">
-          <a routerLink="/packages" class="action-btn outline">
-            View All Collections <i class="bi bi-arrow-right-short"></i>
-          </a>
+      <!-- Header Section -->
+      <div class="header-row">
+        <div class="header-content">
+          <div class="title-wrapper">
+            <p class="sub-title">CINEMATIC COLLECTIONS</p>
+            <h2 class="main-title">Wedding Photography Packages</h2>
+            <div class="title-underline"></div>
+          </div>
+          <div class="action-wrapper">
+            <a routerLink="/packages" class="action-btn outline">
+              View All Collections
+              <i class="bi bi-arrow-right-short"></i>
+            </a>
+          </div>
         </div>
       </div>
 
-      <div class="row g-4">
+      <!-- Packages Grid -->
+      <div class="packages-grid">
         @for (pkg of displayPackages(); track pkg.id) {
-        <div class="col-12 col-sm-6 col-lg-3 slide-in">
-          <div
-            class="minimal-card shadow-sm"
-            [routerLink]="['/package', pkg.id]"
-          >
-            <div class="card-img-wrapper">
-              <div
-                class="card-img"
-                [style.background-image]="'url(' + pkg.coverImage + ')'"
-              >
-                <div class="overlay">
-                  <span>Explore Package</span>
-                </div>
-              </div>
-              <div class="category-tag">{{ pkg.category }}</div>
-            </div>
+          <div class="package-item">
+            <div class="minimal-card" [routerLink]="['/package', pkg.id]">
+              <!-- Image Section -->
+              <div class="card-img-wrapper">
+                <div
+                  class="card-img"
+                  [style.background-image]="'url(' + pkg.coverImage + ')'"
+                  [attr.aria-label]="pkg.title"
+                ></div>
 
-            <div class="card-info p-3">
-              <h3>{{ pkg.title }}</h3>
-              <div
-                class="card-footer d-flex justify-content-between align-items-end"
-              >
-                <div class="price-box">
-                  <span class="price-label d-block">Starting from</span>
-                  <span class="price-value">₹{{ pkg.price | number }}</span>
+                <div class="category-tag">{{ pkg.category }}</div>
+              </div>
+
+              <!-- Content Section -->
+              <div class="card-info">
+                <h3 class="package-title" [title]="pkg.title">
+                  {{ pkg.title }}
+                </h3>
+
+                <div class="card-footer">
+                  <div class="price-box">
+                    <span class="price-label">Starting from</span>
+                    <span class="price-value">₹{{ pkg.price | number }}</span>
+                  </div>
+                  <i class="bi bi-chevron-right arrow-icon"></i>
                 </div>
-                <i class="bi bi-chevron-right text-muted"></i>
               </div>
             </div>
           </div>
-        </div>
         }
       </div>
+
+      <!-- Empty State (Optional) -->
+      @if (displayPackages().length === 0) {
+        <div class="empty-state">
+          <i class="bi bi-camera"></i>
+          <p>No packages available at the moment</p>
+        </div>
+      }
     </div>
   </section>
 

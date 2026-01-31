@@ -26,26 +26,26 @@ export class PaymentStatusComponent implements OnInit {
     this.transactionId.set(txnId);
 
     if (txnId) {
-      this.verifyPayment(txnId);
+      // this.verifyPayment(txnId);
     } else {
       this.status.set('failed');
     }
   }
 
-  verifyPayment(txnId: string) {
-    this.paymentService.verifyStatus(txnId).subscribe({
-      next: (res: any) => {
-        // PhonePe returns 'PAYMENT_SUCCESS' in the code field
-        if (res.code === 'PAYMENT_SUCCESS') {
-          this.status.set('success');
-        } else {
-          this.status.set('failed');
-        }
-      },
-      error: (err) => {
-        console.error('Status check failed:', err);
-        this.status.set('failed');
-      }
-    });
-  }
+  // verifyPayment(txnId: string) {
+  //   this.paymentService.verifyStatus(txnId).subscribe({
+  //     next: (res: any) => {
+  //       // PhonePe returns 'PAYMENT_SUCCESS' in the code field
+  //       if (res.code === 'PAYMENT_SUCCESS') {
+  //         this.status.set('success');
+  //       } else {
+  //         this.status.set('failed');
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error('Status check failed:', err);
+  //       this.status.set('failed');
+  //     }
+  //   });
+  // }
 }

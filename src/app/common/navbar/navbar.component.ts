@@ -18,6 +18,7 @@ import { CartService } from '../../services/cart/cart.service';
 import { AuthService } from '../../auth/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthPromptModalComponent } from '../../components/auth-prompt-modal/auth-prompt-modal.component';
+import { RequestCallModalComponent } from '../../components/request-call-modal/request-call-modal.component';
 
 @Component({
   selector: 'app-navbar',
@@ -93,14 +94,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     // Double-check conditions before opening
     if (!this.isLoggedIn() && !isAuthPage) {
-      this.dialog.open(AuthPromptModalComponent, {
+      this.dialog.open(RequestCallModalComponent, {
         width: '450px',
-        maxWidth: '95vw',
-        panelClass: 'auth-modal-overlay'
+        panelClass: 'custom-studio-modal',
       });
-
-      // Mark as shown so it doesn't appear again this session/refresh
-      localStorage.setItem(this.MODAL_SHOWN_KEY, 'true');
     }
   }
 

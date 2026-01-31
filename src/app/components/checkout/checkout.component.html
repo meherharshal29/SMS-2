@@ -6,12 +6,15 @@
       <div class="col-lg-8">
         <div class="card checkout-card p-4 shadow-sm border-0">
           <h2 class="section-title mb-4">
-            <i class="bi bi-shield-check"></i> Verification & Shipping
+            <i class="bi bi-shield-check text-primary me-2"></i> Verification &
+            Shipping
           </h2>
 
           <div class="row g-3">
             <div class="col-md-12">
-              <label class="form-label">Aadhaar Card Number (12 Digits)</label>
+              <label class="form-label fw-bold"
+                >Aadhaar Card Number (12 Digits)</label
+              >
               <input
                 type="text"
                 class="form-control shadow-none"
@@ -20,37 +23,40 @@
                 (ngModelChange)="adharNo.set($event)"
                 placeholder="0000 0000 0000"
               />
-              <small class="text-muted"
-                >Your Aadhaar is saved for faster future checkouts.</small
-              >
+              <small class="text-muted">
+                <i class="bi bi-info-circle"></i> This is required for security
+                verification during gear handover.
+              </small>
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">City</label>
+              <label class="form-label fw-bold">City</label>
               <input
                 type="text"
                 class="form-control shadow-none"
                 [ngModel]="city()"
                 (ngModelChange)="city.set($event)"
-                placeholder="Enter City"
+                placeholder="e.g. Nagpur"
               />
             </div>
 
             <div class="col-md-12">
-              <label class="form-label">Full Address</label>
+              <label class="form-label fw-bold">Full Delivery Address</label>
               <textarea
                 class="form-control shadow-none"
                 rows="3"
                 [ngModel]="address()"
                 (ngModelChange)="address.set($event)"
-                placeholder="House no, Street, Landmark..."
+                placeholder="House no, Building name, Street, Landmark..."
               ></textarea>
             </div>
           </div>
 
           <h2 class="section-title mt-5 mb-4">
-            <i class="bi bi-credit-card"></i> Payment Method
+            <i class="bi bi-credit-card text-primary me-2"></i> Select Payment
+            Method
           </h2>
+
           <div class="payment-grid">
             <div
               class="payment-option"
@@ -60,21 +66,23 @@
               <i class="bi bi-qr-code-scan"></i>
               <span>UPI / QR</span>
             </div>
+
             <div
               class="payment-option"
               [class.active]="paymentMethod() === 'card'"
               (click)="paymentMethod.set('card')"
             >
               <i class="bi bi-credit-card-2-front"></i>
-              <span>Credit/Debit Card</span>
+              <span>Debit/Credit Card</span>
             </div>
+
             <div
               class="payment-option"
-              [class.active]="paymentMethod() === 'netbanking'"
-              (click)="paymentMethod.set('netbanking')"
+              [class.active]="paymentMethod() === 'cod'"
+              (click)="paymentMethod.set('cod')"
             >
-              <i class="bi bi-bank"></i>
-              <span>Net Banking</span>
+              <i class="bi bi-cash-stack"></i>
+              <span>Cash on Delivery</span>
             </div>
           </div>
         </div>
@@ -92,46 +100,66 @@
               <span class="text-muted">Rental Subtotal</span>
               <span class="fw-medium">₹{{ cartSubtotal() | number }}</span>
             </div>
+
             <div class="d-flex justify-content-between mb-2">
-              <span class="text-muted">Delivery</span>
+              <span class="text-muted">Delivery Charges</span>
               <span class="text-success fw-bold">FREE</span>
             </div>
+
             <div class="d-flex justify-content-between mb-2">
-              <span class="text-muted small">Tax (Inclusive)</span>
+              <span class="text-muted small">GST (Inclusive)</span>
               <span class="text-muted small">₹0</span>
             </div>
-            <hr />
+
+            <hr class="my-3" />
+
             <div class="d-flex justify-content-between mb-4">
-              <span class="fw-bold">Total Amount</span>
-              <span class="fw-bold text-primary h5"
+              <span class="fw-bold">Grand Total</span>
+              <span class="fw-bold text-primary h4 mb-0"
                 >₹{{ totalAmount() | number }}</span
               >
             </div>
           </div>
 
           <button
-            class="btn btn-primary w-100 py-3 rounded-pill fw-bold"
+            class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm"
             (click)="confirmAndPay()"
           >
-            CONFIRM & PAY NOW
+            <i
+              class="bi"
+              [ngClass]="
+                paymentMethod() === 'cod' ? 'bi-box-seam' : 'bi-shield-lock'
+              "
+            ></i>
+            {{
+              paymentMethod() === "cod"
+                ? " PLACE ORDER (CASH)"
+                : " CONFIRM & PAY NOW"
+            }}
           </button>
 
-          <div class="mt-4 p-3 bg-light rounded-3">
+          <div class="mt-4 p-3 bg-light border border-info-subtle rounded-3">
             <div class="d-flex gap-2">
-              <i class="bi bi-info-circle text-primary"></i>
-              <p class="small mb-0 text-muted">
-                By clicking pay, you agree to our gear rental terms and
-                conditions.
+              <i class="bi bi-info-circle-fill text-primary"></i>
+              <p class="small mb-0 text-dark">
+                <strong *ngIf="paymentMethod() === 'cod'">COD Policy:</strong>
+                {{
+                  paymentMethod() === "cod"
+                    ? "Please ensure you have the exact amount ready upon delivery. Our agent will verify your Aadhaar before handover."
+                    : "Your payment is processed through a secure gateway. You will receive a booking confirmation email instantly."
+                }}
               </p>
             </div>
           </div>
 
-          <p class="text-center text-muted small mt-3">
-            <i class="bi bi-lock-fill"></i> Secure 256-bit SSL Payment
+          <p class="text-center text-muted small mt-3 mb-0">
+            <i class="bi bi-patch-check-fill text-success"></i> Smart Media
+            Trusted Partner
           </p>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 <app-footer></app-footer>

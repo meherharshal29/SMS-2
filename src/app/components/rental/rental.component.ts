@@ -10,6 +10,7 @@ import { Category } from '../../admin/services/camera/camera.service';
 
 // Extended Interface to match the template requirements
 interface RentalItem extends Camera {
+  isWishlisted: any;
   discount?: number;
   original_price?: number;
   avgRating?: number;
@@ -82,7 +83,7 @@ export class RentalComponent implements OnInit {
       next: (response: any) => {
         if (response.success) {
           // KEY: Take only the first 8 items (Latest 8 because of backend DESC order)
-          const latestGear = response.data.slice(0, 8);
+          const latestGear = response.data.slice(0, 10);
           this.rentals.set(latestGear);
           this.error.set(null);
         }

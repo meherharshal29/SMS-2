@@ -40,18 +40,26 @@ export class ProfileComponent implements OnInit {
 
   // --- Derived Stats ---
   confirmedRentalsCount = computed(() =>
-    this.orders().filter(o => o.status.toLowerCase() === 'confirmed' || o.status.toLowerCase() === 'shipped').length
+    this.orders().filter(o =>
+      ['confirmed', 'shipped', 'delivered'].includes(o.status.toLowerCase())
+    ).length
   );
 
   confirmedShootsCount = computed(() =>
-    this.bookings().filter(b => b.status.toLowerCase() === 'confirmed' || b.status.toLowerCase() === 'completed').length
+    this.bookings().filter(b =>
+      ['confirmed', 'completed', 'delivered'].includes(b.status.toLowerCase())
+    ).length
   );
 
   totalExpenditure = computed(() => {
-    const gearTotal = this.orders().filter(o => o.status.toLowerCase() !== 'cancelled')
+    const gearTotal = this.orders()
+      .filter(o => !['cancelled', 'cancel'].includes(o.status.toLowerCase()))
       .reduce((acc, o) => acc + Number(o.totalPrice || 0), 0);
-    const shootTotal = this.bookings().filter(b => b.status.toLowerCase() !== 'cancelled')
+
+    const shootTotal = this.bookings()
+      .filter(b => !['cancelled', 'cancel'].includes(b.status.toLowerCase()))
       .reduce((acc, b) => acc + Number(b.package?.price || 0), 0);
+
     return gearTotal + shootTotal;
   });
 
@@ -81,7 +89,10 @@ export class ProfileComponent implements OnInit {
 
   fetchUserOrders(): void {
     this.orderService.getMyOrders().subscribe({
-      next: (data) => this.orders.set(data),
+      next: (data) => {
+        // Data Normalization
+        this.orders.set(Array.isArray(data) ? data : []);
+      },
       error: () => this.toast.error('Could not load gear rentals')
     });
   }
@@ -89,7 +100,9 @@ export class ProfileComponent implements OnInit {
   fetchUserBookings(): void {
     this.bookingService.getMyBookings().subscribe({
       next: (res) => {
-        this.bookings.set(res.data);
+        // Data Normalization from paginated response or direct array
+        const shoots = res?.data || (Array.isArray(res) ? res : []);
+        this.bookings.set(shoots);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
@@ -105,15 +118,24 @@ export class ProfileComponent implements OnInit {
       : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
-  getStatusClass(status: string): string {
+  /**
+   * UI HELPER: Maps status strings to CSS classes
+   * Fixes ngtsc(2345) by allowing undefined
+   */
+  getStatusClass(status: string | undefined): string {
+    if (!status) return 'status-default';
+
     const s = status.toLowerCase();
     const map: Record<string, string> = {
       'pending': 'status-pending',
       'confirmed': 'status-confirmed',
       'completed': 'status-confirmed',
+      'delivered': 'status-delivered', // Updated for new badge style
       'shipped': 'status-shipped',
-      'cancelled': 'status-cancelled'
+      'cancelled': 'status-cancelled',
+      'cancel': 'status-cancelled'
     };
+
     return map[s] || 'status-default';
   }
 

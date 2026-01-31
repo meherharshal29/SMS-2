@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule, UpperCasePipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterModule } from '@angular/router'; // Required for navigation
+import { RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 import { AdminService, ManagedUser } from '../../services/admin/admin.service';
@@ -11,11 +11,10 @@ import { AdminService, ManagedUser } from '../../services/admin/admin.service';
   standalone: true,
   imports: [
     CommonModule,
-    DatePipe,
     FormsModule,
-    UpperCasePipe,
     RouterModule
   ],
+  providers: [DatePipe], // Provided for use in template if needed
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss'
 })
@@ -26,7 +25,7 @@ export class UserManagementComponent implements OnInit {
   public searchTerm = signal<string>('');
   public isLoading = signal<boolean>(true);
 
-  // Computed signal: Filters users from the central Service Signal
+  // Computed signal for real-time filtering
   public filteredUsers = computed(() => {
     const allUsers = this.adminService.managedUsers();
     const term = this.searchTerm().toLowerCase().trim();
@@ -36,7 +35,6 @@ export class UserManagementComponent implements OnInit {
     );
   });
 
-  // This signal tracks the count of users where isOnline is true
   public onlineCount = this.adminService.onlineUserCount;
 
   ngOnInit(): void {
@@ -45,7 +43,6 @@ export class UserManagementComponent implements OnInit {
 
   loadUsers(): void {
     this.isLoading.set(true);
-    // fetchUsers() triggers the signal update inside the service
     this.adminService.fetchUsers()
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
@@ -53,10 +50,15 @@ export class UserManagementComponent implements OnInit {
       });
   }
 
+  onAddUser(): void {
+    this.toastr.info('Opening user registration wizard...');
+    // Logic for opening a modal or navigating to /admin/users/new
+  }
+
   onToggleStatus(user: ManagedUser): void {
     const newStatus = !user.isActive;
     this.adminService.updateUser(user.id, { isActive: newStatus }).subscribe({
-      next: () => this.toastr.success(`User ${newStatus ? 'Activated' : 'Deactivated'}`),
+      next: () => this.toastr.success(`User ${newStatus ? 'Activated' : 'Banned'}`),
       error: () => this.toastr.error('Status update failed')
     });
   }
@@ -75,10 +77,11 @@ export class UserManagementComponent implements OnInit {
   }
 
   getInitials(name: string): string {
-    if (!name) return 'U';
-    const parts = name.trim().split(' ');
-    return parts.length > 1
-      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-      : parts[0][0].toUpperCase();
+    if (!name) return '??';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return parts[0].substring(0, 2).toUpperCase();
   }
 }

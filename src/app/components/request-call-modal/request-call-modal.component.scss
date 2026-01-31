@@ -1,44 +1,1000 @@
 @use "sass:color";
 
-.callback-modal-container {
-    background: #fff;
-    border-radius: 20px;
+// ========================================
+// VARIABLES
+// ========================================
+$primary-color: #6366f1;
+$primary-dark: #4f46e5;
+$primary-light: #818cf8;
+$success-color: #10b981;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$text-muted: #9ca3af;
+$bg-light: #f9fafb;
+$bg-white: #ffffff;
+$border-color: #e5e7eb;
+$border-radius: 12px;
+$border-radius-lg: 16px;
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
-    .icon-circle {
-        width: 80px;
-        height: 80px;
-        background: rgba(139, 92, 246, 0.1); // Soft primary
+// ========================================
+// MODAL CONTAINER
+// ========================================
+.modal-container {
+    position: relative;
+    background: $bg-white;
+    border-radius: $border-radius-lg;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: $shadow-xl;
+
+    // Responsive sizing
+    @media (max-width: 767px) {
+        max-width: 95vw;
+        max-height: 95vh;
+        border-radius: $border-radius;
+    }
+
+    @media (max-width: 575px) {
+        max-width: 100vw;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    // Smooth transitions
+    &.submitted {
+        .view {
+            animation: slideUp 0.4s ease-out;
+        }
+    }
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba($primary-color, 0.2);
+        border-radius: 3px;
+
+        &:hover {
+            background: rgba($primary-color, 0.3);
+        }
+    }
+}
+
+// ========================================
+// CLOSE BUTTON
+// ========================================
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($text-primary, 0.05);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: $text-secondary;
+
+    @media (max-width: 575px) {
+        width: 32px;
+        height: 32px;
+        top: 12px;
+        right: 12px;
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    &:hover:not(:disabled) {
+        background: rgba($text-primary, 0.1);
+        color: $text-primary;
+        transform: rotate(90deg);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+// ========================================
+// BACKGROUND DECORATION
+// ========================================
+.modal-bg-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-light, 0.08) 100%);
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    pointer-events: none;
+
+    @media (max-width: 575px) {
+        height: 140px;
+        border-radius: 0;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba($primary-color, 0.1) 0%, transparent 70%);
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-    }
 
-    .animate-fade-in {
-        animation: fadeIn 0.4s ease-out;
+        @media (max-width: 575px) {
+            width: 200px;
+            height: 200px;
+            right: -30%;
+        }
     }
 }
 
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 8px;
+// ========================================
+// VIEW TRANSITIONS
+// ========================================
+.view {
+    position: relative;
+    padding: 32px 0;
+    animation: fadeIn 0.4s ease-out;
+
+    @media (max-width: 767px) {
+        padding: 24px 0;
+    }
+
+    @media (max-width: 575px) {
+        padding: 20px 0;
+    }
+}
+
+// ========================================
+// WELCOME VIEW
+// ========================================
+.welcome-view {
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+
+    @media (max-width: 575px) {
+        min-height: auto;
+    }
+}
+
+.welcome-content {
+    position: relative;
+    z-index: 1;
+}
+
+.icon-container {
+    margin-bottom: 24px;
+
+    @media (max-width: 575px) {
+        margin-bottom: 16px;
+    }
+}
+
+.icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($primary-light, 0.15) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+
+    @media (max-width: 575px) {
+        width: 64px;
+        height: 64px;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -8px;
+        border: 2px solid rgba($primary-color, 0.1);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .phone-icon {
+        color: $primary-color;
+
+        @media (max-width: 575px) {
+            width: 36px;
+            height: 36px;
+        }
+    }
+}
+
+.welcome-title {
+    font-size: 28px;
     font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 12px;
+    line-height: 1.2;
 
-    &.pending {
-        background: rgba(245, 158, 11, 0.1);
-        color: color.adjust(#f59e0b, $lightness: -15%);
+    @media (max-width: 767px) {
+        font-size: 24px;
+    }
+
+    @media (max-width: 575px) {
+        font-size: 22px;
+        margin-bottom: 8px;
     }
 }
 
+.welcome-subtitle {
+    font-size: 16px;
+    color: $text-secondary;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto 32px;
+
+    @media (max-width: 767px) {
+        font-size: 15px;
+        margin-bottom: 24px;
+    }
+
+    @media (max-width: 575px) {
+        font-size: 14px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+}
+
+// ========================================
+// PRIMARY BUTTON
+// ========================================
+.primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+
+    @media (max-width: 575px) {
+        padding: 12px 24px;
+        font-size: 15px;
+    }
+
+    svg {
+        transition: transform 0.3s ease;
+    }
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba($primary-color, 0.4);
+
+        svg {
+            transform: translateX(4px);
+        }
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+    }
+}
+
+// ========================================
+// TRUST INDICATORS
+// ========================================
+.trust-indicators {
+    margin-top: 32px;
+
+    @media (max-width: 767px) {
+        margin-top: 24px;
+    }
+
+    @media (max-width: 575px) {
+        margin-top: 20px;
+    }
+}
+
+.trust-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 8px;
+    background: rgba($primary-color, 0.03);
+    border-radius: $border-radius;
+    transition: all 0.3s ease;
+
+    @media (max-width: 575px) {
+        padding: 10px 6px;
+        gap: 6px;
+    }
+
+    &:hover {
+        background: rgba($primary-color, 0.06);
+        transform: translateY(-2px);
+    }
+}
+
+.trust-icon {
+    font-size: 24px;
+    line-height: 1;
+
+    @media (max-width: 575px) {
+        font-size: 20px;
+    }
+}
+
+.trust-text {
+    font-size: 13px;
+    color: $text-secondary;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.3;
+
+    @media (max-width: 575px) {
+        font-size: 11px;
+    }
+}
+
+// ========================================
+// FORM VIEW
+// ========================================
+.form-view {
+    min-height: 520px;
+
+    @media (max-width: 575px) {
+        min-height: auto;
+    }
+}
+
+.form-content {
+    position: relative;
+    z-index: 1;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    font-size: 14px;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    @media (max-width: 575px) {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    &:hover:not(:disabled) {
+        background: $bg-light;
+        color: $text-primary;
+        border-color: $text-muted;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.form-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 8px;
+    line-height: 1.2;
+
+    @media (max-width: 767px) {
+        font-size: 22px;
+    }
+
+    @media (max-width: 575px) {
+        font-size: 20px;
+    }
+}
+
+.form-subtitle {
+    font-size: 15px;
+    color: $text-secondary;
+    line-height: 1.5;
+
+    @media (max-width: 575px) {
+        font-size: 14px;
+    }
+}
+
+// ========================================
+// CATEGORY GRID
+// ========================================
+.category-grid {
+    margin: 24px 0;
+
+    @media (max-width: 575px) {
+        margin: 16px 0;
+    }
+}
+
+.category-card {
+    padding: 16px;
+    background: $bg-white;
+    border: 2px solid $border-color;
+    border-radius: $border-radius;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 100%;
+    min-height: 90px;
+
+    @media (max-width: 575px) {
+        padding: 12px;
+        min-height: 80px;
+    }
+
+    &:hover {
+        border-color: rgba($primary-color, 0.3);
+        background: rgba($primary-color, 0.02);
+        transform: translateY(-2px);
+        box-shadow: $shadow-md;
+    }
+
+    &.selected {
+        border-color: $primary-color;
+        background: rgba($primary-color, 0.05);
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+
+        .category-check {
+            opacity: 1;
+            transform: scale(1);
+
+            svg {
+                stroke: $primary-color;
+            }
+        }
+    }
+}
+
+.category-icon {
+    font-size: 32px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($primary-color, 0.08);
+    border-radius: 10px;
+    margin-right: 12px;
+
+    @media (max-width: 575px) {
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+    }
+}
+
+.category-content {
+    text-align: left;
+}
+
+.category-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: 4px;
+    line-height: 1.3;
+
+    @media (max-width: 575px) {
+        font-size: 14px;
+    }
+}
+
+.category-description {
+    font-size: 13px;
+    color: $text-muted;
+    line-height: 1.4;
+
+    @media (max-width: 575px) {
+        font-size: 12px;
+    }
+}
+
+.category-check {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($primary-color, 0.1);
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+    margin-left: 8px;
+
+    @media (max-width: 575px) {
+        width: 24px;
+        height: 24px;
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+
+    svg {
+        stroke: $primary-color;
+    }
+}
+
+// ========================================
+// SELECTED PREVIEW
+// ========================================
+.selected-preview {
+    padding: 16px;
+    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-light, 0.08) 100%);
+    border-radius: $border-radius;
+    border: 1px solid rgba($primary-color, 0.15);
+    animation: slideDown 0.3s ease-out;
+
+    @media (max-width: 575px) {
+        padding: 12px;
+    }
+}
+
+.preview-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    @media (max-width: 575px) {
+        gap: 10px;
+    }
+}
+
+.preview-icon {
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 10px;
+    box-shadow: $shadow-sm;
+
+    @media (max-width: 575px) {
+        font-size: 22px;
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.preview-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.preview-label {
+    font-size: 12px;
+    color: $text-muted;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    @media (max-width: 575px) {
+        font-size: 11px;
+    }
+}
+
+.preview-value {
+    font-size: 16px;
+    color: $text-primary;
+    font-weight: 600;
+
+    @media (max-width: 575px) {
+        font-size: 14px;
+    }
+}
+
+// ========================================
+// SUBMIT BUTTON
+// ========================================
+.form-actions {
+    margin-top: 24px;
+
+    @media (max-width: 575px) {
+        margin-top: 16px;
+    }
+}
+
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    min-height: 52px;
+
+    @media (max-width: 575px) {
+        padding: 14px 24px;
+        font-size: 15px;
+        min-height: 48px;
+    }
+
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba($primary-color, 0.4);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+    }
+
+    &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    &.loading {
+        .spinner {
+            ::ng-deep circle {
+                stroke: white;
+            }
+        }
+    }
+}
+
+// ========================================
+// SUCCESS VIEW
+// ========================================
+.success-view {
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+
+    @media (max-width: 575px) {
+        min-height: auto;
+    }
+}
+
+.success-content {
+    position: relative;
+    z-index: 1;
+}
+
+.success-animation {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+
+    @media (max-width: 575px) {
+        margin-bottom: 16px;
+    }
+}
+
+.checkmark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: $success-color;
+    stroke-miterlimit: 10;
+    animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
+
+    @media (max-width: 575px) {
+        width: 64px;
+        height: 64px;
+    }
+}
+
+.checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: $success-color;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+.success-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: 12px;
+    line-height: 1.2;
+
+    @media (max-width: 767px) {
+        font-size: 24px;
+    }
+
+    @media (max-width: 575px) {
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+}
+
+.success-message {
+    font-size: 16px;
+    color: $text-secondary;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto 32px;
+
+    @media (max-width: 767px) {
+        font-size: 15px;
+        margin-bottom: 24px;
+    }
+
+    @media (max-width: 575px) {
+        font-size: 14px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+}
+
+.success-details {
+    margin-bottom: 32px;
+
+    @media (max-width: 767px) {
+        margin-bottom: 24px;
+    }
+
+    @media (max-width: 575px) {
+        margin-bottom: 20px;
+    }
+}
+
+.detail-item {
+    padding: 16px;
+    background: rgba($success-color, 0.05);
+    border-radius: $border-radius;
+    border: 1px solid rgba($success-color, 0.15);
+
+    @media (max-width: 575px) {
+        padding: 12px;
+    }
+}
+
+.detail-label {
+    font-size: 12px;
+    color: $text-muted;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    @media (max-width: 575px) {
+        font-size: 11px;
+    }
+}
+
+.detail-value {
+    font-size: 16px;
+    color: $text-primary;
+    font-weight: 600;
+
+    @media (max-width: 575px) {
+        font-size: 14px;
+    }
+}
+
+// ========================================
+// SECONDARY BUTTON
+// ========================================
+.secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    background: white;
+    color: $text-primary;
+    border: 2px solid $border-color;
+    border-radius: $border-radius;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    @media (max-width: 575px) {
+        padding: 12px 24px;
+        font-size: 15px;
+    }
+
+    &:hover {
+        background: $bg-light;
+        border-color: $text-muted;
+        transform: translateY(-2px);
+        box-shadow: $shadow-md;
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: $shadow-sm;
+    }
+}
+
+// ========================================
+// ANIMATIONS
+// ========================================
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scale {
+
+    0%,
+    100% {
+        transform: none;
+    }
+
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
+}
+
+@keyframes fill {
+    100% {
+        box-shadow: inset 0 0 0 30px $success-color;
+    }
+}
+
+// ========================================
+// MATERIAL SPINNER OVERRIDE
+// ========================================
+::ng-deep {
+    .spinner {
+        display: inline-block;
+
+        circle {
+            stroke: white;
+        }
+    }
+}
+
+// ========================================
+// ACCESSIBILITY
+// ========================================
+.category-card:focus-visible {
+    outline: 3px solid rgba($primary-color, 0.5);
+    outline-offset: 2px;
+}
+
+.close-btn:focus-visible,
+.back-btn:focus-visible,
+.primary-btn:focus-visible,
+.submit-btn:focus-visible,
+.secondary-btn:focus-visible {
+    outline: 3px solid rgba($primary-color, 0.5);
+    outline-offset: 2px;
+}
+
+// ========================================
+// PRINT STYLES
+// ========================================
+@media print {
+    .modal-container {
+        box-shadow: none;
+        max-height: none;
+    }
+
+    .close-btn,
+    .back-btn {
+        display: none;
     }
 }

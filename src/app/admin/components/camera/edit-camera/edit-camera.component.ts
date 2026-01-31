@@ -6,25 +6,24 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { MatSelectModule } from '@angular/material/select'; // Added for Category selection
+import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Camera, CameraImage, CameraService, Category, ApiResponse } from '../../../services/camera/camera.service';
+import { Camera, CameraImage, CameraService, Category } from '../../../services/camera/camera.service';
+import { MaterialModule } from '../../../../shared/material/material.module';
+
+interface ImageItem {
+  url: string;
+  file?: File;      // Present if it's a new upload
+  isExisting: boolean;
+}
 
 @Component({
   selector: 'app-edit-camera',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatSelectModule
-  ],
+    CommonModule, ReactiveFormsModule, MaterialModule],
   templateUrl: './edit-camera.component.html',
   styleUrls: ['./edit-camera.component.scss']
 })
@@ -40,9 +39,8 @@ export class EditCameraComponent implements OnInit {
   cameraId!: number;
   categories: Category[] = [];
 
-  imagePreviews: string[] = [];
-  existingImageUrls: string[] = [];
-  newSelectedFiles: File[] = [];
+  // Single source of truth for the UI
+  displayImages: ImageItem[] = [];
 
   isSubmitting = false;
   private readonly MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
@@ -66,7 +64,7 @@ export class EditCameraComponent implements OnInit {
     this.cameraForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       brand: ['', Validators.required],
-      categoryId: [null, Validators.required], // Added category support
+      categoryId: [null, Validators.required],
       modelNumber: [''],
       pricePerDay: [null, [Validators.required, Validators.min(0.01)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
@@ -87,16 +85,15 @@ export class EditCameraComponent implements OnInit {
   loadCamera(): void {
     this.loader.start();
     this.cameraService.getCameraById(this.cameraId).subscribe({
-      next: (res: ApiResponse<Camera> | any) => {
-        // Handle both direct Camera object or ApiResponse wrapper
-        const camera = res.data ? res.data : res;
+      next: (res) => {
+        const camera = res.data;
 
         let specs: any = {};
-        if (camera.specifications) {
+        try {
           specs = typeof camera.specifications === 'string'
             ? JSON.parse(camera.specifications)
-            : camera.specifications;
-        }
+            : (camera.specifications || {});
+        } catch (e) { specs = {}; }
 
         this.cameraForm.patchValue({
           name: camera.name,
@@ -111,11 +108,15 @@ export class EditCameraComponent implements OnInit {
           video: specs.video || '4K 30p'
         });
 
-        this.existingImageUrls = camera.images?.map((img: CameraImage) => img.url) || [];
-        this.imagePreviews = [...this.existingImageUrls];
+        // Initialize display images with existing server items
+        this.displayImages = (camera.images || []).map(img => ({
+          url: img.url,
+          isExisting: true
+        }));
+
         this.loader.stop();
       },
-      error: (err) => {
+      error: () => {
         this.loader.stop();
         this.toastr.error('Failed to load camera data');
         this.router.navigate(['/admin/view-cameras']);
@@ -129,39 +130,31 @@ export class EditCameraComponent implements OnInit {
 
     Array.from(input.files).forEach(file => {
       if (file.size > this.MAX_FILE_SIZE_BYTES) {
-        this.toastr.error(`"${file.name}" exceeds 10MB`);
+        this.toastr.error(`"${file.name}" is too large`);
         return;
       }
-      this.newSelectedFiles.push(file);
+
       const reader = new FileReader();
-      reader.onload = () => this.imagePreviews.push(reader.result as string);
+      reader.onload = () => {
+        this.displayImages.push({
+          url: reader.result as string,
+          file: file,
+          isExisting: false
+        });
+      };
       reader.readAsDataURL(file);
     });
     input.value = '';
   }
 
   removeImage(index: number): void {
-    const previewToRemove = this.imagePreviews[index];
-    this.imagePreviews.splice(index, 1);
-
-    // If removing an existing image from server
-    const existingIdx = this.existingImageUrls.indexOf(previewToRemove);
-    if (existingIdx !== -1) {
-      this.existingImageUrls.splice(existingIdx, 1);
-    } else {
-      // If removing a newly selected file
-      // Calculate index by checking how many "new" previews came before this one
-      const newFileIndex = index - this.existingImageUrls.length;
-      if (newFileIndex >= 0) {
-        this.newSelectedFiles.splice(newFileIndex, 1);
-      }
-    }
+    this.displayImages.splice(index, 1);
   }
 
   onSubmit(): void {
-    if (this.cameraForm.invalid || this.imagePreviews.length === 0) {
+    if (this.cameraForm.invalid || this.displayImages.length === 0) {
       this.cameraForm.markAllAsTouched();
-      this.toastr.warning('Please complete the form and add images');
+      this.toastr.warning('Form is invalid or images are missing');
       return;
     }
 
@@ -169,17 +162,13 @@ export class EditCameraComponent implements OnInit {
     this.loader.start();
     const formData = new FormData();
 
-    // Text fields
-    formData.append('name', this.cameraForm.value.name.trim());
-    formData.append('brand', this.cameraForm.value.brand.trim());
-    formData.append('categoryId', this.cameraForm.value.categoryId);
-    formData.append('pricePerDay', this.cameraForm.value.pricePerDay);
-    formData.append('description', this.cameraForm.value.description.trim());
-    if (this.cameraForm.value.modelNumber) {
-      formData.append('modelNumber', this.cameraForm.value.modelNumber.trim());
-    }
+    // Map Form Fields
+    Object.keys(this.cameraForm.value).forEach(key => {
+      if (['resolution', 'sensor', 'iso', 'video'].includes(key)) return;
+      formData.append(key, this.cameraForm.value[key]);
+    });
 
-    // Specifications JSON
+    // Map Specifications
     const specs = {
       resolution: this.cameraForm.value.resolution,
       sensor: this.cameraForm.value.sensor,
@@ -188,14 +177,21 @@ export class EditCameraComponent implements OnInit {
     };
     formData.append('specifications', JSON.stringify(specs));
 
-    // Images logic
-    this.existingImageUrls.forEach(url => formData.append('keepImages', url));
-    this.newSelectedFiles.forEach(file => formData.append('images', file));
+    // Handle Image Logic
+    this.displayImages.forEach(img => {
+      if (img.isExisting) {
+        // We send the original server path back to backend
+        formData.append('keepImages', img.url);
+      } else if (img.file) {
+        // It's a new binary file
+        formData.append('images', img.file);
+      }
+    });
 
     this.cameraService.updateCamera(this.cameraId, formData).subscribe({
       next: () => {
         this.loader.stop();
-        this.toastr.success('Item updated successfully');
+        this.toastr.success('Camera updated successfully');
         this.router.navigate(['/admin/view-cameras']);
       },
       error: (err) => {

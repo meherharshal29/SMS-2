@@ -201,3 +201,118 @@ $transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     background: rgba(0, 0, 0, 0.32); // Darken background
     backdrop-filter: blur(4px); // Blur background content
 }
+
+/* Target the container to ensure it's responsive on small screens */
+#toast-container {
+    @media (max-width: 480px) {
+        width: 100% !important;
+        padding: 0 10px;
+        left: 0 !important;
+        top: 10px !important;
+    }
+
+    .ngx-toastr {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-radius: 16px !important;
+        backdrop-filter: blur(8px);
+        /* Modern glass effect */
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #1f2937;
+        padding: 20px 20px 20px 60px;
+        width: 380px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+        &:hover {
+            transform: scale(1.02);
+            box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Progress Bar Customization */
+        .toast-progress {
+            background-color: #a78bfa;
+            /* Matches your UI Loader */
+            height: 4px;
+            opacity: 0.6;
+        }
+    }
+
+    /* Success Toast Variation */
+    .toast-success {
+        background-image: none !important;
+        /* Removing default icon to use custom SVG if desired */
+        border-left: 6px solid #10b981 !important;
+
+        &::before {
+            content: '✓';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #10b981;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    }
+
+    /* Error Toast Variation */
+    .toast-error {
+        border-left: 6px solid #ef4444 !important;
+
+        &::before {
+            content: '!';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ef4444;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    }
+}
+
+/* Entrance Animation Override */
+@keyframes toast-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast-top-right {
+    animation: toast-in 0.5s ease-out;
+}
+
+
+// Remove the default Material box styling for this specific modal
+.custom-studio-modal {
+    .mat-mdc-dialog-container .mdc-dialog__surface {
+        background-color: transparent !important;
+        box-shadow: none !important;
+        overflow: visible !important; // Fixes the clipping on the right side
+    }
+}
+
+// Optional: Premium background blur
+.modal-backdrop-blur {
+    backdrop-filter: blur(10px) saturate(180%);
+    background-color: rgba(0, 0, 0, 0.45) !important;
+}

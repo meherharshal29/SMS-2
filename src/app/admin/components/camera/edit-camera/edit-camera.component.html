@@ -1,197 +1,265 @@
-<div class="container mt-4 mb-5">
-  <mat-card class="shadow p-4">
-    <h2 class="mb-4 text-primary d-flex align-items-center">
-      <mat-icon class="me-2">edit</mat-icon> Edit Rental Camera
-    </h2>
-
-    <form [formGroup]="cameraForm" (ngSubmit)="onSubmit()" novalidate>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Category (Equipment Type)</mat-label>
-            <mat-select formControlName="categoryId">
-              <mat-option *ngFor="let cat of categories" [value]="cat.id">
-                {{ cat.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error
-              *ngIf="cameraForm.get('categoryId')?.hasError('required')"
-            >
-              Category is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="col-md-6 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Camera Name</mat-label>
-            <input
-              matInput
-              formControlName="name"
-              placeholder="e.g. Sony Alpha a7 IV"
-            />
-            <mat-error *ngIf="cameraForm.get('name')?.hasError('required')">
-              Name is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
+<div class="container mb-5 py-4">
+  <mat-card class="shadow border-0 rounded-4 overflow-hidden">
+    <header
+      class="p-4 bg-white border-bottom d-flex align-items-center justify-content-between"
+    >
+      <div>
+        <h2 class="text-primary d-flex align-items-center m-0 fw-bold">
+          <mat-icon class="me-2">edit</mat-icon> Edit Rental Item
+        </h2>
+        <p class="text-muted small m-0 mt-1">
+          Update equipment details, pricing, and manage the image gallery.
+        </p>
       </div>
+      <button
+        mat-icon-button
+        color="warn"
+        routerLink="/admin/view-cameras"
+        matTooltip="Cancel and Return"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
 
-      <div class="row">
-        <div class="col-md-3 mb-3">
+    <div class="p-4">
+      <form [formGroup]="cameraForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Category (Equipment Type)</mat-label>
+              <mat-select formControlName="categoryId">
+                <mat-option *ngFor="let cat of categories" [value]="cat.id">
+                  {{ cat.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error
+                *ngIf="cameraForm.get('categoryId')?.hasError('required')"
+              >
+                Category is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Equipment Name</mat-label>
+              <input
+                matInput
+                formControlName="name"
+                placeholder="e.g. Sony Alpha a7 IV"
+              />
+              <mat-error *ngIf="cameraForm.get('name')?.hasError('required')">
+                Name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Brand</mat-label>
+              <input matInput formControlName="brand" placeholder="e.g. Sony" />
+              <mat-error *ngIf="cameraForm.get('brand')?.hasError('required')">
+                Required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Price per Day</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="pricePerDay"
+                step="0.01"
+              />
+              <span matPrefix>₹&nbsp;</span>
+              <mat-error
+                *ngIf="cameraForm.get('pricePerDay')?.hasError('required')"
+              >
+                Required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Resolution</mat-label>
+              <input
+                matInput
+                formControlName="resolution"
+                placeholder="e.g. 33 MP"
+              />
+              <mat-error
+                *ngIf="cameraForm.get('resolution')?.hasError('required')"
+                >Required</mat-error
+              >
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Sensor Type</mat-label>
+              <input
+                matInput
+                formControlName="sensor"
+                placeholder="e.g. Full Frame"
+              />
+              <mat-error *ngIf="cameraForm.get('sensor')?.hasError('required')"
+                >Required</mat-error
+              >
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="mb-3">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Brand</mat-label>
-            <input matInput formControlName="brand" placeholder="e.g. Sony" />
-            <mat-error *ngIf="cameraForm.get('brand')?.hasError('required')">
-              Brand is <strong>required</strong>
+            <mat-label>Detailed Description</mat-label>
+            <textarea
+              matInput
+              rows="4"
+              formControlName="description"
+              placeholder="Technical details, included accessories, condition..."
+            ></textarea>
+            <mat-error
+              *ngIf="cameraForm.get('description')?.hasError('required')"
+            >
+              Description is <strong>required</strong>
             </mat-error>
           </mat-form-field>
         </div>
 
-        <div class="col-md-3 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Price per Day ($)</mat-label>
-            <input
-              matInput
-              type="number"
-              formControlName="pricePerDay"
-              step="0.01"
-            />
-            <span matPrefix>$&nbsp;</span>
-            <mat-error
-              *ngIf="cameraForm.get('pricePerDay')?.hasError('required')"
-            >
-              Price is <strong>required</strong>
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="col-md-3 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Resolution</mat-label>
-            <input
-              matInput
-              formControlName="resolution"
-              placeholder="e.g. 33 MP"
-            />
-            <mat-error
-              *ngIf="cameraForm.get('resolution')?.hasError('required')"
-              >Required</mat-error
-            >
-          </mat-form-field>
-        </div>
-
-        <div class="col-md-3 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Sensor Type</mat-label>
-            <input
-              matInput
-              formControlName="sensor"
-              placeholder="e.g. Full Frame"
-            />
-            <mat-error *ngIf="cameraForm.get('sensor')?.hasError('required')"
-              >Required</mat-error
-            >
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Description</mat-label>
-          <textarea
-            matInput
-            rows="4"
-            formControlName="description"
-            placeholder="Product details..."
-          ></textarea>
-          <mat-error
-            *ngIf="cameraForm.get('description')?.hasError('required')"
-          >
-            Description is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <div class="mb-4 p-3 border rounded bg-light">
-        <label class="form-label d-block fw-bold mb-2"
-          >Item Images <span class="text-danger">*</span></label
+        <div
+          class="image-management-section mb-4 p-4 border rounded-4 bg-light shadow-inner"
         >
-        <input
-          #fileInput
-          type="file"
-          (change)="onFileSelected($event)"
-          multiple
-          hidden
-          accept="image/*"
-        />
-        <button
-          type="button"
-          mat-raised-button
-          color="accent"
-          (click)="fileInput.click()"
-        >
-          <mat-icon>add_photo_alternate</mat-icon> Manage Images
-        </button>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <label class="form-label d-block fw-bold m-0 text-dark">
+              Gallery Management <span class="text-danger">*</span>
+              <span class="text-muted fw-normal small ms-2"
+                >(At least 1 image required)</span
+              >
+            </label>
 
-        <div class="d-flex flex-wrap mt-3 gap-3">
-          <div
-            *ngFor="let preview of imagePreviews; let i = index"
-            class="position-relative"
-          >
-            <img
-              [src]="preview"
-              class="img-thumbnail bg-white"
-              style="
-                width: 130px;
-                height: 130px;
-                object-fit: cover;
-                border-radius: 8px;
-              "
+            <input
+              #fileInput
+              type="file"
+              (change)="onFileSelected($event)"
+              multiple
+              hidden
+              accept="image/*"
             />
 
             <button
               type="button"
-              (click)="removeImage(i)"
-              class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle shadow-sm"
-              style="
-                transform: translate(30%, -30%);
-                width: 28px;
-                height: 28px;
-                padding: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              "
+              mat-stroked-button
+              color="primary"
+              (click)="fileInput.click()"
             >
-              <mat-icon style="font-size: 16px">close</mat-icon>
+              <mat-icon>add_photo_alternate</mat-icon> Upload New Images
             </button>
+          </div>
 
-            <span
-              *ngIf="i === 0"
-              class="position-absolute bottom-0 start-50 translate-middle-x badge bg-success mb-1"
+          <div class="row g-3">
+            <div
+              *ngFor="let item of displayImages; let i = index"
+              class="col-6 col-sm-4 col-md-3 col-lg-2"
             >
-              Primary
-            </span>
+              <div
+                class="position-relative preview-card shadow-sm border bg-white rounded-3 overflow-hidden"
+              >
+                <img
+                  [src]="item.url"
+                  class="img-fluid w-100"
+                  style="height: 140px; object-fit: cover"
+                />
+
+                <button
+                  type="button"
+                  (click)="removeImage(i)"
+                  class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle m-1 shadow-sm d-flex align-items-center justify-content-center"
+                  style="width: 26px; height: 26px; padding: 0"
+                  matTooltip="Remove this image"
+                >
+                  <mat-icon style="font-size: 16px; width: 16px; height: 16px"
+                    >close</mat-icon
+                  >
+                </button>
+
+                <div
+                  class="position-absolute bottom-0 start-0 w-100 p-1 text-center"
+                  style="background: rgba(0, 0, 0, 0.5)"
+                >
+                  <span *ngIf="i === 0" class="badge bg-success small py-1"
+                    >Primary Display</span
+                  >
+                  <span
+                    *ngIf="!item.isExisting && i !== 0"
+                    class="badge bg-info text-dark small py-1"
+                    >New Upload</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div
+              *ngIf="displayImages.length === 0"
+              class="col-12 text-center py-4"
+            >
+              <mat-icon
+                style="font-size: 48px; width: 48px; height: 48px"
+                class="text-muted mb-2"
+                >image_not_supported</mat-icon
+              >
+              <p class="text-danger fw-bold">
+                Please select at least one image to represent this item.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="d-grid">
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="
-            cameraForm.invalid || isSubmitting || imagePreviews.length === 0
-          "
-          class="py-2 fs-6"
+        <div
+          class="d-flex flex-column flex-md-row gap-3 justify-content-end align-items-center mt-4 pt-3 border-top"
         >
-          <mat-icon class="me-2">save</mat-icon>
-          <span *ngIf="!isSubmitting">Update Camera Details</span>
-          <span *ngIf="isSubmitting">Updating...</span>
-        </button>
-      </div>
-    </form>
+          <button
+            mat-button
+            type="button"
+            color="warn"
+            routerLink="/admin/view-cameras"
+            class="px-4"
+          >
+            Discard Changes
+          </button>
+
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="
+              cameraForm.invalid || isSubmitting || displayImages.length === 0
+            "
+            class="px-5 py-2 fs-6 rounded-pill shadow-sm"
+          >
+            <mat-icon class="me-2">cloud_upload</mat-icon>
+            <span *ngIf="!isSubmitting">Sync & Save Updates</span>
+            <span *ngIf="isSubmitting">Processing Sync...</span>
+          </button>
+        </div>
+      </form>
+    </div>
   </mat-card>
+</div>
+
+<div
+  *ngIf="isSubmitting"
+  class="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center"
+  style="
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+  "
+>
+  <mat-spinner diameter="60"></mat-spinner>
+  <p class="mt-3 fw-bold text-primary">Synchronizing database changes...</p>
 </div>

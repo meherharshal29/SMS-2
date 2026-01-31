@@ -27,12 +27,22 @@ export const appConfig: ApplicationConfig = {
     ),
 
     provideAnimations(),
-
     provideToastr({
-      timeOut: 1500,
+      timeOut: 1500, // Slightly longer to appreciate the animation
       positionClass: 'toast-top-right',
       progressBar: true,
-      preventDuplicates: true
+      newestOnTop: true,
+      preventDuplicates: true,
+      easing: 'ease-in-out',
+      easeTime: 300,
+      // This allows the CSS to target the classes correctly
+      toastClass: 'ngx-toastr',
+      iconClasses: {
+        error: 'toast-error',
+        info: 'toast-info',
+        success: 'toast-success',
+        warning: 'toast-warning',
+      },
     }),
 
     // Correcting the Image Loader Provider syntax

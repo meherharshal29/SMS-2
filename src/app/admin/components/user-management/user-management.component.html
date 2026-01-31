@@ -1,130 +1,213 @@
 <div class="mgmt-viewport">
-  <div class="mgmt-card shadow-sm" [class.is-loading]="isLoading()">
-    <div class="mgmt-header">
-      <div class="title-group">
-        <h2>User Directory</h2>
-        <p>
-          Managing
-          <span class="text-primary fw-bold">{{ filteredUsers().length }}</span>
-          accounts
-          <span class="online-indicator-text">
-            (<span class="pulse-dot"></span> {{ onlineCount() }} online now)
-          </span>
-        </p>
-      </div>
+  <div
+    class="card shadow-sm border-0 main-container"
+    [class.is-loading]="isLoading()"
+  >
+    <div class="card-header bg-white border-bottom py-3">
+      <div class="row align-items-center g-3">
+        <div class="col-12 col-md-4">
+          <h2 class="h4 fw-bold mb-0">User Directory</h2>
+          <div class="d-flex align-items-center gap-2 mt-1">
+            <span class="badge online-indicator">
+              <span class="pulse-dot"></span> {{ onlineCount() }} Online
+            </span>
+            <span class="text-muted small"
+              >{{ filteredUsers().length }} Accounts</span
+            >
+          </div>
+        </div>
 
-      <div class="search-box">
-        <i class="bi bi-search"></i>
-        <input
-          type="text"
-          placeholder="Search name or email..."
-          [ngModel]="searchTerm()"
-          (ngModelChange)="searchTerm.set($event)"
-        />
+        <div class="col-12 col-md-8">
+          <div
+            class="d-flex flex-wrap flex-md-nowrap gap-2 justify-content-md-end"
+          >
+            <div class="input-group search-group">
+              <span class="input-group-text border-0 bg-light">
+                <span class="material-icons text-secondary fs-5">search</span>
+              </span>
+              <input
+                type="text"
+                class="form-control border-0 bg-light"
+                placeholder="Search name or email..."
+                [ngModel]="searchTerm()"
+                (ngModelChange)="searchTerm.set($event)"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="table-responsive">
-      <table class="mgmt-table">
-        <thead>
-          <tr>
-            <th>User Identity</th>
-            <th>Role</th>
-            <th>Joined Date</th>
-            <th class="text-end">Management</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (user of filteredUsers(); track user.id) {
-          <tr>
-            <td>
-              <div class="user-info">
-                <div class="avatar-wrapper" [class.is-offline]="!user.isOnline">
-                  <div class="avatar">{{ getInitials(user.name) }}</div>
-                  <span
-                    class="status-tick"
-                    [class.online]="user.isOnline"
-                    [class.offline]="!user.isOnline"
-                  >
-                    @if (user.isOnline) {
-                    <i class="bi bi-patch-check-fill"></i> }
-                  </span>
-                </div>
-                <div class="meta">
-                  <div class="name">
-                    <a
-                      [routerLink]="['/admin/user-details', user.id]"
-                      class="user-link"
-                    >
-                      {{ user.name }}
-                    </a>
-                    @if (!user.isActive) {
-                    <span class="badge bg-soft-danger ms-1">Banned</span> }
+    <div class="card-body p-0 position-relative">
+      <div class="d-none d-lg-block table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4">Identity</th>
+              <th>Role</th>
+              <th>Joined Date</th>
+              <th class="text-end pe-4">Management</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of filteredUsers(); track user.id) {
+              <tr>
+                <td class="ps-4">
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-wrapper">
+                      <div class="avatar-sq">{{ getInitials(user.name) }}</div>
+                      <span
+                        class="status-dot"
+                        [class.online]="user.isOnline"
+                      ></span>
+                    </div>
+                    <div class="ms-3">
+                      <a
+                        [routerLink]="['/admin/user-details', user.id]"
+                        class="user-link text-dark fw-bold text-decoration-none"
+                      >
+                        {{ user.name }}
+                      </a>
+                      <div class="small text-muted">{{ user.email }}</div>
+                    </div>
                   </div>
-                  <div class="email">{{ user.email }}</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <span class="role-badge" [class.admin]="user.role === 'admin'">{{
-                user.role | uppercase
-              }}</span>
-            </td>
-            <td>
-              <div class="date-cell">
-                <div class="text-dark small fw-semibold">
-                  {{ user.createdAt | date : "mediumDate" }}
-                </div>
-                <div class="text-muted x-small">
-                  {{ user.createdAt | date : "shortTime" }}
-                </div>
-              </div>
-            </td>
-            <td class="text-end">
-              <div class="action-row">
-                <a
-                  [routerLink]="['/admin/user-details', user.id]"
-                  class="btn-action view"
-                  title="View Full Details"
-                >
-                  <i class="bi bi-eye-fill"></i>
-                </a>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <span
+                      class="role-badge"
+                      [class.admin]="user.role === 'admin'"
+                    >
+                      {{ user.role }}
+                    </span>
+                    @if (!user.isActive) {
+                      <span
+                        class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle"
+                        >Banned</span
+                      >
+                    }
+                  </div>
+                </td>
+                <td>
+                  <div class="small fw-semibold">
+                    {{ user.createdAt | date: "mediumDate" }}
+                  </div>
+                  <div class="text-muted x-small">
+                    {{ user.createdAt | date: "shortTime" }}
+                  </div>
+                </td>
+                <td class="text-end pe-4">
+                  <div class="d-flex justify-content-end gap-1">
+                    <button
+                      class="btn-action view"
+                      title="View Details"
+                      [routerLink]="['/admin/user-details', user.id]"
+                    >
+                      <span class="material-icons">visibility</span>
+                    </button>
+                    <button
+                      class="btn-action status"
+                      [class.active]="user.isActive"
+                      (click)="onToggleStatus(user)"
+                      title="Toggle Ban"
+                    >
+                      <span class="material-icons">{{
+                        user.isActive ? "check_circle" : "block"
+                      }}</span>
+                    </button>
+                    <button
+                      class="btn-action mail"
+                      (click)="onNewsletter(user)"
+                      title="Send Newsletter"
+                    >
+                      <span class="material-icons">mail</span>
+                    </button>
+                    <button
+                      class="btn-action delete"
+                      (click)="onDelete(user.id)"
+                      title="Delete User"
+                    >
+                      <span class="material-icons">delete_forever</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-                <button
-                  class="btn-action status"
-                  [class.active]="user.isActive"
-                  (click)="onToggleStatus(user)"
-                  title="Toggle Active Status"
+      <div class="d-lg-none p-3 bg-light-subtle">
+        @for (user of filteredUsers(); track user.id) {
+          <div
+            class="card mb-3 border-0 shadow-sm user-mobile-card"
+            [class.is-banned]="!user.isActive"
+          >
+            <div class="card-body">
+              <div
+                class="d-flex align-items-start justify-content-between mb-3"
+              >
+                <div class="d-flex align-items-center">
+                  <div class="avatar-sq small">
+                    {{ getInitials(user.name) }}
+                  </div>
+                  <div class="ms-3">
+                    <h6 class="mb-0 fw-bold">{{ user.name }}</h6>
+                    <small class="text-muted">{{ user.email }}</small>
+                  </div>
+                </div>
+                <span
+                  class="role-badge"
+                  [class.admin]="user.role === 'admin'"
+                  >{{ user.role }}</span
                 >
-                  <i
-                    class="bi"
-                    [class.bi-shield-check]="user.isActive"
-                    [class.bi-shield-exclamation]="!user.isActive"
-                  ></i>
-                </button>
-                <button class="btn-action mail" (click)="onNewsletter(user)">
-                  <i class="bi bi-send-fill"></i>
-                </button>
-                <button class="btn-action delete" (click)="onDelete(user.id)">
-                  <i class="bi bi-trash3-fill"></i>
-                </button>
               </div>
-            </td>
-          </tr>
-          } @empty {
-          <tr>
-            <td colspan="4" class="empty-state"><h4>No users found</h4></td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
 
-    @if (isLoading()) {
-    <div class="loading-overlay">
-      <div class="spinner-border text-primary"></div>
-      <span class="ms-3 fw-bold">Syncing Directory...</span>
+              <div
+                class="d-flex justify-content-between align-items-center pt-2 border-top"
+              >
+                <small class="text-muted"
+                  >Joined {{ user.createdAt | date: "shortDate" }}</small
+                >
+                <div class="d-flex gap-2">
+                  <button
+                    class="btn-action btn-sm view"
+                    [routerLink]="['/admin/user-details', user.id]"
+                  >
+                    <span class="material-icons">visibility</span>
+                  </button>
+                  <button
+                    class="btn-action btn-sm mail"
+                    (click)="onNewsletter(user)"
+                  >
+                    <span class="material-icons">mail</span>
+                  </button>
+                  <button
+                    class="btn-action btn-sm delete"
+                    (click)="onDelete(user.id)"
+                  >
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (filteredUsers().length === 0 && !isLoading()) {
+        <div class="text-center py-5">
+          <span class="material-icons text-light display-1">group_off</span>
+          <h4 class="text-muted mt-3">No matching users found</h4>
+        </div>
+      }
+
+      @if (isLoading()) {
+        <div class="loading-overlay">
+          <div class="spinner-border text-primary"></div>
+          <span class="ms-3 fw-bold text-primary">Refreshing Directory...</span>
+        </div>
+      }
     </div>
-    }
   </div>
 </div>

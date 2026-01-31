@@ -22,7 +22,7 @@
         <a routerLink="/rental" class="hero-cta primary-cta">
           Rent Gear Now <i class="bi bi-arrow-right-short"></i>
         </a>
-        <button routerLink="/gallary" class="hero-cta secondary-cta">
+        <button routerLink="/gallery" class="hero-cta secondary-cta">
           Show Studio Work
         </button>
       </div>
@@ -32,13 +32,13 @@
       <div class="hero-animation-container">
         <div class="image-column column-one">
           @for (img of columnOneImages(); track $index) {
-          <img [src]="img.url" [alt]="img.alt" loading="lazy" />
+            <img [src]="img.url" [alt]="img.alt" loading="lazy" />
           }
         </div>
 
         <div class="image-column column-two">
           @for (img of columnTwoImages(); track $index) {
-          <img [src]="img.url" [alt]="img.alt" loading="lazy" />
+            <img [src]="img.url" [alt]="img.alt" loading="lazy" />
           }
         </div>
       </div>

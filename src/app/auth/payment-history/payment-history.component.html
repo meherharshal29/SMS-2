@@ -1,3 +1,5 @@
+<ngx-ui-loader></ngx-ui-loader>
+
 <div class="billing-page py-5 mt-5 animate-fade-in">
   <div class="container">
     <header
@@ -50,7 +52,7 @@
               <th>Shoot ID</th>
               <th>Package</th>
               <th>Date</th>
-              <th>Location</th>
+              <th>Payment</th>
               <th>Amount</th>
               <th>Status</th>
             </tr>
@@ -64,28 +66,37 @@
                 <td data-label="Package">
                   <div class="item-info">
                     <img
-                      [src]="booking.package?.coverImage"
-                      alt="Package"
+                      [src]="
+                        booking?.package?.coverImage || 'assets/placeholder.png'
+                      "
                       class="thumb shadow-sm"
                     />
-                    <span class="fw-medium">{{ booking.package?.title }}</span>
+                    <span class="fw-medium">{{
+                      booking?.package?.title || "Standard Shoot"
+                    }}</span>
                   </div>
                 </td>
                 <td data-label="Date">
-                  {{ booking.eventDate | date: "mediumDate" }}
+                  {{ booking?.eventDate | date: "mediumDate" }}
                 </td>
-                <td data-label="Location" class="text-muted">
-                  {{ booking.eventLocation }}
+                <td data-label="Payment">
+                  <span class="small fw-bold text-muted">
+                    <i
+                      class="bi me-1"
+                      [ngClass]="getPaymentIcon(booking?.paymentMethod)"
+                    ></i>
+                    {{ getPaymentLabel(booking?.paymentMethod) }}
+                  </span>
                 </td>
                 <td data-label="Amount" class="fw-bold">
-                  ₹{{ booking.package?.price | number }}
+                  ₹{{ booking?.package?.price || 0 | number }}
                 </td>
                 <td data-label="Status">
                   <span
                     class="status-badge"
-                    [ngClass]="getStatusClass(booking.status)"
+                    [ngClass]="getStatusClass(booking?.status)"
                   >
-                    {{ booking.status }}
+                    {{ booking?.status || "Pending" }}
                   </span>
                 </td>
               </tr>
@@ -115,7 +126,7 @@
               <th>Order ID</th>
               <th>Gear</th>
               <th>Rental Period</th>
-              <th>Daily Rate</th>
+              <th>Payment</th>
               <th>Total Amount</th>
               <th>Status</th>
             </tr>
@@ -129,29 +140,45 @@
                 <td data-label="Gear">
                   <div class="item-info">
                     <img
-                      [src]="order.Camera.images[0].url"
+                      [src]="
+                        order?.Camera?.images?.[0]?.url ||
+                        'assets/no-camera.png'
+                      "
                       alt="Gear"
                       class="thumb shadow-sm"
                     />
-                    <span class="fw-medium">{{ order.Camera.name }}</span>
+                    <span class="fw-medium">{{
+                      order?.Camera?.name || "Deleted Asset"
+                    }}</span>
                   </div>
                 </td>
                 <td data-label="Period" class="small">
-                  {{ order.rentalStartDate | date: "shortDate" }} -
-                  {{ order.rentalEndDate | date: "shortDate" }}
+                  {{ order?.rentalStartDate | date: "shortDate" }} -
+                  {{ order?.rentalEndDate | date: "shortDate" }}
                 </td>
-                <td data-label="Rate">
-                  ₹{{ order.Camera.pricePerDay | number }}
+                <td data-label="Payment">
+                  <div class="d-flex align-items-center gap-2">
+                    <i
+                      class="bi"
+                      [ngClass]="getPaymentIcon(order?.paymentMethod)"
+                      [style.color]="
+                        order?.paymentMethod === 'cod' ? '#e67e22' : '#3498db'
+                      "
+                    ></i>
+                    <span class="smaller fw-bold text-uppercase">{{
+                      getPaymentLabel(order?.paymentMethod)
+                    }}</span>
+                  </div>
                 </td>
                 <td data-label="Total" class="fw-bold">
-                  ₹{{ order.totalPrice | number }}
+                  ₹{{ order?.totalPrice || 0 | number }}
                 </td>
                 <td data-label="Status">
                   <span
                     class="status-badge"
-                    [ngClass]="getStatusClass(order.status)"
+                    [ngClass]="getStatusClass(order?.status)"
                   >
-                    {{ order.status }}
+                    {{ order?.status || "Pending" }}
                   </span>
                 </td>
               </tr>
@@ -168,4 +195,5 @@
     </section>
   </div>
 </div>
+
 <app-footer></app-footer>

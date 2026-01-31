@@ -1,104 +1,70 @@
-<div class="container-fluid p-4 bg-light min-vh-100">
-  <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid p-3 p-lg-4 bg-light min-vh-100">
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3"
+  >
     <div>
-      <h2 class="fw-bold mb-0">Order Management</h2>
-      <p class="text-muted">
+      <h2 class="fw-bold mb-0 h4">Order Management</h2>
+      <p class="text-muted small mb-0">
         Monitor revenue, confirm bookings, and view history
       </p>
     </div>
-    <button mat-flat-button color="primary" (click)="loadAllData()">
-      <mat-icon>refresh</mat-icon> Reload Data
+    <button
+      mat-flat-button
+      color="primary"
+      class="rounded-pill"
+      (click)="loadAllData()"
+      [disabled]="isLoading()"
+    >
+      <mat-icon [class.spin]="isLoading()">refresh</mat-icon> Reload Data
     </button>
   </div>
 
   <div class="row g-3 mb-4">
-    <div class="col-12 col-md-6 col-lg-3">
+    <div class="col-6 col-lg-3" *ngFor="let stat of getStats()">
       <mat-card
-        class="stat-card border-start border-primary border-4 shadow-sm"
+        class="stat-card border-0 shadow-sm rounded-4 h-100"
+        [ngClass]="stat.borderColor"
       >
-        <div class="p-3 d-flex align-items-center">
-          <div class="icon-box bg-primary-light text-primary me-3">
-            <mat-icon>payments</mat-icon>
+        <div class="p-2 p-md-3 d-flex align-items-center">
+          <div class="icon-box me-2 me-md-3" [ngClass]="stat.bgClass">
+            <mat-icon>{{ stat.icon }}</mat-icon>
           </div>
-          <div>
-            <small class="text-uppercase text-muted fw-bold"
-              >Total Revenue</small
+          <div class="overflow-hidden">
+            <small
+              class="text-uppercase text-muted fw-bold d-block text-truncate smaller"
+              >{{ stat.label }}</small
             >
-            <h3 class="mb-0 fw-bold">₹{{ totalRevenue() | number }}</h3>
-          </div>
-        </div>
-      </mat-card>
-    </div>
-
-    <div class="col-12 col-md-6 col-lg-3">
-      <mat-card
-        class="stat-card border-start border-warning border-4 shadow-sm"
-      >
-        <div class="p-3 d-flex align-items-center">
-          <div class="icon-box bg-warning-light text-warning me-3">
-            <mat-icon>hourglass_empty</mat-icon>
-          </div>
-          <div>
-            <small class="text-uppercase text-muted fw-bold">Pending</small>
-            <h3 class="mb-0 fw-bold">{{ pendingOrders().length }}</h3>
-          </div>
-        </div>
-      </mat-card>
-    </div>
-
-    <div class="col-12 col-md-6 col-lg-3">
-      <mat-card
-        class="stat-card border-start border-success border-4 shadow-sm"
-      >
-        <div class="p-3 d-flex align-items-center">
-          <div class="icon-box bg-success-light text-success me-3">
-            <mat-icon>task_alt</mat-icon>
-          </div>
-          <div>
-            <small class="text-uppercase text-muted fw-bold">Confirmed</small>
-            <h3 class="mb-0 fw-bold">{{ confirmedOrders().length }}</h3>
-          </div>
-        </div>
-      </mat-card>
-    </div>
-
-    <div class="col-12 col-md-6 col-lg-3">
-      <mat-card class="stat-card border-start border-danger border-4 shadow-sm">
-        <div class="p-3 d-flex align-items-center">
-          <div class="icon-box bg-danger-light text-danger me-3">
-            <mat-icon>cancel</mat-icon>
-          </div>
-          <div>
-            <small class="text-uppercase text-muted fw-bold">Cancelled</small>
-            <h3 class="mb-0 fw-bold">{{ cancelledOrders().length }}</h3>
+            <h3 class="mb-0 fw-bold h5 text-truncate">{{ stat.value }}</h3>
           </div>
         </div>
       </mat-card>
     </div>
   </div>
 
-  <mat-card class="shadow-sm border-0 overflow-hidden">
+  <mat-card class="shadow-sm border-0 rounded-4 overflow-hidden">
     <div
       class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white"
     >
-      <h5 class="mb-0 fw-bold">Full Transaction History</h5>
-      <span class="badge bg-dark">{{ allOrders().length }} Total Records</span>
+      <h5 class="mb-0 fw-bold h6">Transaction History</h5>
+      <span class="badge bg-dark rounded-pill"
+        >{{ allOrders().length }} Records</span
+      >
     </div>
 
-    <div class="table-responsive">
-      <table mat-table [dataSource]="allOrders()" class="w-100">
+    <div class="d-none d-lg-block table-responsive">
+      <table mat-table [dataSource]="allOrders()" class="w-100 modern-table">
         <ng-container matColumnDef="orderId">
           <th mat-header-cell *matHeaderCellDef>Order ID</th>
           <td mat-cell *matCellDef="let o">
-            <span class="fw-medium text-primary">#{{ o.id }}</span>
+            <span class="fw-bold text-primary">#{{ o.id }}</span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="client">
           <th mat-header-cell *matHeaderCellDef>Client</th>
           <td mat-cell *matCellDef="let o">
-            <div class="d-flex flex-column">
-              <span class="fw-bold">{{ o.user?.name }}</span>
+            <div class="d-flex flex-column py-2">
+              <span class="fw-bold text-dark">{{ o.user?.name }}</span>
               <small class="text-muted">{{ o.user?.email }}</small>
             </div>
           </td>
@@ -106,7 +72,7 @@
 
         <ng-container matColumnDef="gear">
           <th mat-header-cell *matHeaderCellDef>Gear</th>
-          <td mat-cell *matCellDef="let o">
+          <td mat-cell *matCellDef="let o" class="text-muted">
             {{ o.Camera?.name || "Asset Deleted" }}
           </td>
         </ng-container>
@@ -121,61 +87,108 @@
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let o">
-            <span [ngClass]="'status-pill ' + o.status">
-              {{ o.status | uppercase }}
-            </span>
+            <span class="status-pill shadow-sm" [ngClass]="o.status">{{
+              o.status | uppercase
+            }}</span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="date">
-          <th mat-header-cell *matHeaderCellDef>Booking Date</th>
-          <td mat-cell *matCellDef="let o">
-            {{ o.createdAt | date : "mediumDate" }}
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let o" class="text-muted small">
+            {{ o.createdAt | date: "mediumDate" }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let o" class="text-end">
+          <td mat-cell *matCellDef="let o" class="text-end pe-3">
             <button mat-icon-button [matMenuTriggerFor]="menu">
-              <mat-icon>more_vert</mat-icon>
+              <mat-icon>more_horiz</mat-icon>
             </button>
-            <mat-menu #menu="matMenu">
-              <button
-                mat-menu-item
-                (click)="updateStatus(o.id, 'confirmed')"
-                [disabled]="o.status === 'confirmed'"
-              >
-                <mat-icon class="text-success">check_circle</mat-icon>
-                <span>Confirm Order</span>
-              </button>
-              <button
-                mat-menu-item
-                (click)="updateStatus(o.id, 'cancelled')"
-                [disabled]="o.status === 'cancelled'"
-              >
-                <mat-icon class="text-danger">block</mat-icon>
-                <span>Cancel Order</span>
-              </button>
+            <mat-menu #menu="matMenu" class="modern-menu">
+              <ng-container
+                *ngTemplateOutlet="menuActions; context: { order: o }"
+              ></ng-container>
             </mat-menu>
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+          class="bg-light"
+        ></tr>
         <tr
           mat-row
           *matRowDef="let row; columns: displayedColumns"
           class="order-row"
         ></tr>
       </table>
+    </div>
 
-      <div
-        *ngIf="allOrders().length === 0 && !isLoading()"
-        class="text-center p-5"
-      >
-        <mat-icon class="text-muted fs-1">inventory_2</mat-icon>
-        <p class="text-muted">No orders found in the system history.</p>
+    <div class="d-lg-none bg-light p-2">
+      <div class="row g-2">
+        <div class="col-12 col-md-6" *ngFor="let o of allOrders()">
+          <div
+            class="mobile-order-card bg-white p-3 rounded-4 shadow-sm border position-relative"
+          >
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="fw-bold text-primary">#{{ o.id }}</span>
+              <span class="status-pill mini" [ngClass]="o.status">{{
+                o.status
+              }}</span>
+            </div>
+            <div class="mb-2">
+              <div class="fw-bold text-dark">{{ o.user?.name }}</div>
+              <div class="text-muted small text-truncate">
+                {{ o.user?.email }}
+              </div>
+            </div>
+            <div
+              class="d-flex justify-content-between align-items-center border-top pt-2 mt-2"
+            >
+              <div class="small text-muted">
+                {{ o.Camera?.name || "Asset Deleted" }}
+              </div>
+              <div class="fw-bold text-dark">₹{{ o.totalPrice | number }}</div>
+            </div>
+            <div class="d-flex justify-content-end mt-2">
+              <button
+                mat-stroked-button
+                color="primary"
+                class="btn-sm rounded-pill"
+                [matMenuTriggerFor]="menuMobile"
+              >
+                Manage <mat-icon class="ms-1">expand_more</mat-icon>
+              </button>
+              <mat-menu #menuMobile="matMenu"
+                ><ng-container
+                  *ngTemplateOutlet="menuActions; context: { order: o }"
+                ></ng-container
+              ></mat-menu>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </mat-card>
 </div>
+
+<ng-template #menuActions let-o="order">
+  <button
+    mat-menu-item
+    (click)="updateStatus(o.id, 'confirmed')"
+    [disabled]="o.status === 'confirmed'"
+  >
+    <mat-icon class="text-success">check_circle</mat-icon>
+    <span>Confirm Order</span>
+  </button>
+  <button
+    mat-menu-item
+    (click)="updateStatus(o.id, 'cancelled')"
+    [disabled]="o.status === 'cancelled'"
+  >
+    <mat-icon class="text-danger">block</mat-icon> <span>Cancel Order</span>
+  </button>
+</ng-template>

@@ -1,76 +1,180 @@
-<section class="studio-wrapper">
-  <div class="container-fluid px-3 px-md-5 mt-5">
-    <header class="gallery-header">
+<section class="studio-gallery">
+  <!-- Hero Header Section -->
+  <div class="container-fluid hero-section">
+    <div class="hero-content">
+      <span class="label">Our Portfolio</span>
       <h1 class="title">STUDIO <span class="outline">GALLERY</span></h1>
-    </header>
 
-    <nav class="filter-nav">
-      @for (cat of ['all', 'photo', 'video', 'album']; track cat) {
-      <button [class.active]="activeFilter() === cat" (click)="setFilter(cat)">
-        {{ cat | uppercase }}
-      </button>
-      }
-    </nav>
+      <!-- Filter Navigation -->
+      <nav class="filter-nav">
+        @for (cat of ["all", "photo", "video", "reel"]; track cat) {
+          <button
+            [class.active]="activeFilter() === cat"
+            (click)="setFilter(cat)"
+          >
+            {{ (cat === "reel" ? "reels" : cat) | uppercase }}
+          </button>
+        }
+      </nav>
+    </div>
+  </div>
 
-    <div class="gallery-grid">
-      @for (item of filteredItems(); track item.id) {
-      <div
-        class="grid-card"
-        #itemRef
-        [ngClass]="item.size"
-        (click)="openLightbox(item)"
-      >
-        <div class="card-inner">
-          <img [src]="item.url" [alt]="item.title" loading="lazy" />
-          @if (item.type !== 'photo') {
-          <div class="media-icon">
-            <i
-              [class]="
-                item.type === 'video'
-                  ? 'bi bi-play-circle-fill'
-                  : 'bi bi-journal-album'
-              "
-            ></i>
-          </div>
-          }
-          <div class="card-overlay">
-            <div class="info">
-              <span class="category">{{ item.category }}</span>
-              <h3 class="name">{{ item.title }}</h3>
+  <!-- Gallery Grid Section -->
+  <div class="gallery-section">
+    <div class="container-fluid">
+      <div class="gallery-grid">
+        @for (item of filteredItems(); track item.id) {
+          <div
+            class="grid-item"
+            [ngClass]="item.size"
+            (click)="openLightbox(item)"
+          >
+            <div class="item-wrapper">
+              <!-- Image/Thumbnail -->
+              <img
+                [src]="
+                  item.mediaType === 'photo'
+                    ? item.url
+                    : item.thumbnailUrl || item.url
+                "
+                [alt]="item.title"
+                class="item-image"
+                loading="lazy"
+              />
+
+              <!-- Media Type Badge -->
+              @if (item.mediaType !== "photo") {
+                <div class="media-badge">
+                  @if (item.mediaType === "video") {
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                  }
+                  @if (item.mediaType === "reel") {
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm0 2c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zm-2 4h4v8h-4V8z"
+                      />
+                    </svg>
+                  }
+                </div>
+              }
+
+              <!-- Hover Overlay -->
+              <div class="item-overlay">
+                <div class="overlay-content">
+                  <span class="category-tag">{{ item.category }}</span>
+                  <p class="item-title">{{ item.title }}</p>
+                  <div class="view-btn">
+                    <span>View</span>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
+
+      <!-- Load More Button -->
+      @if (hasMore()) {
+        <div class="load-more-section">
+          <button class="load-more-btn" (click)="loadMore()">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <span>LOAD MORE</span>
+          </button>
+        </div>
       }
     </div>
+  </div>
 
-    @if (hasMore()) {
-    <div class="extend-container text-center mt-5">
-      <button class="extend-btn" (click)="loadMore()">
-        <i class="bi bi-plus-circle-dotted"></i>
-        <span>EXTEND GALLERY</span>
+  <!-- Lightbox Modal -->
+  @if (selectedItem()) {
+    <div class="lightbox-overlay" (click)="closeLightbox()">
+      <button class="lightbox-close" (click)="closeLightbox()">
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
       </button>
-    </div>
-    }
-  </div>
 
-  <div class="lightbox" *ngIf="selectedItem()" (click)="closeLightbox()">
-    <button class="close-btn">✕</button>
-    <div class="lightbox-content" (click)="$event.stopPropagation()">
-      <ng-container [ngSwitch]="selectedItem()?.type">
-        <video
-          *ngSwitchCase="'video'"
-          controls
-          autoplay
-          [src]="selectedItem()?.videoUrl"
-        ></video>
-        <img
-          *ngSwitchDefault
-          [src]="selectedItem()?.url"
-          alt="Fullscreen view"
-        />
-      </ng-container>
+      <div class="lightbox-container" (click)="$event.stopPropagation()">
+        <div class="lightbox-media">
+          @switch (selectedItem()?.mediaType) {
+            @case ("video") {
+              <div class="video-wrapper">
+                <video
+                  controls
+                  autoplay
+                  playsinline
+                  [src]="selectedItem()?.url"
+                ></video>
+              </div>
+            }
+            @case ("reel") {
+              <div class="reel-wrapper">
+                <video
+                  controls
+                  autoplay
+                  playsinline
+                  loop
+                  [src]="selectedItem()?.url"
+                ></video>
+              </div>
+            }
+            @default {
+              <img [src]="selectedItem()?.url" [alt]="selectedItem()?.title" />
+            }
+          }
+        </div>
+
+        <div class="lightbox-info">
+          <span class="lightbox-category">{{ selectedItem()?.category }}</span>
+          <h2 class="lightbox-title">{{ selectedItem()?.title }}</h2>
+        </div>
+      </div>
     </div>
-  </div>
+  }
 </section>
+
 <app-footer></app-footer>

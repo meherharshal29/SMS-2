@@ -1,128 +1,147 @@
-<section class="rental-frame-section py-5">
-  <div class="container">
-    <div class="row mb-4 align-items-center">
-      <div class="col-md-7 col-12 text-center text-md-start">
-        <p class="sub-title mb-1">PREMIUM SELECTION</p>
-        <h2 class="main-title">Explore Our Frame</h2>
+<section class="rental-collection">
+  <div class="collection-container">
+    <!-- Header -->
+    <header class="collection-header">
+      <div class="header-content">
+        <p class="header-subtitle">PREMIUM SELECTION</p>
+        <h2 class="header-title">Full Rental Collection</h2>
       </div>
-      <div class="col-md-5 col-12 text-center text-md-end mt-3 mt-md-0">
-        <a routerLink="/rental-all-item" class="browse-link">
-          View Full Catalog <i class="bi bi-arrow-right ms-2"></i>
+      <div class="header-action">
+        <a routerLink="/rental-all-item" class="catalog-link">
+          View Full Catalog
+          <i class="bi bi-arrow-right"></i>
         </a>
       </div>
-    </div>
+    </header>
 
-    <div class="filter-wrapper mb-5">
-      <div class="filter-scroll">
+    <!-- Category Filters -->
+    <nav class="category-filters">
+      <div class="filters-scroll">
         <button
-          class="filter-tab"
-          [class.active]="selectedCategory() === null"
+          class="filter-button"
+          [class.is-active]="selectedCategory() === null"
           (click)="fetchData(null)"
+          type="button"
         >
           All Gear
         </button>
 
         @for (cat of categories(); track cat.id) {
           <button
-            class="filter-tab"
-            [class.active]="selectedCategory() === cat.id"
+            class="filter-button"
+            [class.is-active]="selectedCategory() === cat.id"
             (click)="fetchData(cat.id)"
+            type="button"
           >
             {{ cat.name }}
           </button>
         }
       </div>
-    </div>
+    </nav>
 
-    <div class="rental-grid-frame">
+    <!-- Products Grid -->
+    <div class="products-grid-wrapper">
       @if (isLoading()) {
-        <div class="loader-frame">
+        <!-- Loading State -->
+        <div class="loading-state">
           <div class="spinner-grow text-dark" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
         </div>
       } @else if (error()) {
-        <div class="col-12 text-center py-5">
-          <p class="text-danger">{{ error() }}</p>
+        <!-- Error State -->
+        <div class="error-state">
+          <p class="error-message">{{ error() }}</p>
           <button
-            class="btn btn-outline-dark"
+            class="retry-button"
             (click)="fetchData(selectedCategory())"
+            type="button"
           >
             Retry
           </button>
         </div>
       } @else {
-        <div class="row g-4 transition-container">
+        <!-- Products Grid -->
+        <div class="products-grid">
           @for (item of rentals(); track item.id) {
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-              <div class="gear-card">
-                <div class="image-box">
-                  <div class="badge-overlay">
-                    @if (item.discount) {
-                      <span class="discount-tag">-{{ item.discount }}%</span>
-                    }
-                    <button
-                      class="heart-btn"
-                      (click)="onWishlist($event, item)"
-                    >
-                      <i class="bi bi-heart"></i>
-                    </button>
-                  </div>
-
-                  <img
-                    [src]="
-                      item.displayImage ||
-                      'https://placehold.co/600x600?text=No+Image'
-                    "
-                    [alt]="item.name"
-                    [routerLink]="['/camera', item.id]"
-                    class="img-fluid"
-                  />
-
-                  <div class="action-bar">
-                    <button class="add-btn" (click)="onAddToCart($event, item)">
-                      <i class="bi bi-plus-lg me-2"></i> QUICK ADD
-                    </button>
-                  </div>
+            <article class="product-card">
+              <!-- Image Section -->
+              <div class="card-image">
+                <!-- Badges -->
+                <div class="card-badges">
+                  @if (item.discount) {
+                    <span class="badge-discount">-{{ item.discount }}%</span>
+                  }
+                  <button
+                    class="badge-wishlist"
+                    (click)="onWishlist($event, item)"
+                    type="button"
+                    [attr.aria-label]="'Add ' + item.name + ' to wishlist'"
+                  >
+                    <i
+                      [class]="
+                        item.isWishlisted ? 'bi bi-heart-fill' : 'bi bi-heart'
+                      "
+                    ></i>
+                  </button>
                 </div>
 
-                <div class="info-box pt-3">
-                  <p class="brand">{{ item.brand }}</p>
-                  <h4 class="name" [routerLink]="['/camera', item.id]">
-                    {{ item.name }}
-                  </h4>
+                <!-- Product Image -->
+                <img
+                  [src]="
+                    item.displayImage ||
+                    'https://placehold.co/600x600?text=No+Image'
+                  "
+                  [alt]="item.name"
+                  [routerLink]="['/camera', item.id]"
+                  class="product-image"
+                  loading="lazy"
+                />
+              </div>
 
-                  <div
-                    class="price-row d-flex align-items-center justify-content-between"
-                  >
-                    <div class="price-details">
-                      <span class="price">
-                        ₹{{ item.pricePerDay | number: "1.0-0" }}
-                        <small>/day</small>
+              <!-- Product Info -->
+              <div class="card-content">
+                <p class="product-brand">{{ item.brand }}</p>
+                <h3 class="product-name" [routerLink]="['/camera', item.id]">
+                  {{ item.name }}
+                </h3>
+
+                <div class="product-footer">
+                  <div class="price-group">
+                    <span class="price-current">
+                      ₹{{ item.pricePerDay | number: "1.0-0" }}
+                      <small>/Day</small>
+                    </span>
+                    @if (item.original_price) {
+                      <span class="price-original">
+                        ₹{{ item.original_price | number: "1.0-0" }}
                       </span>
-                      @if (item.original_price) {
-                        <span
-                          class="old-price ms-2 text-decoration-line-through text-muted small"
-                        >
-                          ₹{{ item.original_price | number: "1.0-0" }}
-                        </span>
-                      }
-                    </div>
-
-                    <button
-                      class="btn-cart-icon"
-                      (click)="onAddToCart($event, item)"
-                      title="Add to Cart"
-                    >
-                      <i class="bi bi-cart-plus"></i>
-                    </button>
+                    }
                   </div>
+
+                  <button
+                    class="add-to-cart"
+                    (click)="onAddToCart($event, item)"
+                    type="button"
+                    [attr.aria-label]="'Add ' + item.name + ' to cart'"
+                  >
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
                 </div>
               </div>
-            </div>
+            </article>
           } @empty {
-            <div class="col-12 text-center py-5">
-              <p class="text-muted">No items found in this category.</p>
+            <!-- Empty State -->
+            <div class="empty-state">
+              <i class="bi bi-box-seam empty-icon"></i>
+              <p class="empty-message">No items found in this category.</p>
+              <button
+                class="view-all-button"
+                (click)="fetchData(null)"
+                type="button"
+              >
+                View All Items
+              </button>
             </div>
           }
         </div>

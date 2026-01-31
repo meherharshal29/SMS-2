@@ -1,126 +1,136 @@
-.admin-container {
-    padding: 40px;
-    max-width: 1400px;
-    margin: 0 auto;
-    font-family: 'Montserrat', sans-serif;
+@use "sass:color";
 
-    .header-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
+// --- Theme Variables ---
+$primary: #6366f1;
+$success: #10b981;
+$danger: #f43f5e;
+$warning: #f59e0b;
+$table-head-bg: #f8fafc;
+$bg-body: #f8fafc;
+$text-muted: #64748b;
+$text-dark: #1e293b;
 
-        .page-title {
-            font-weight: 800;
-            font-size: 2rem;
-            margin: 0;
-        }
-
-        .subtitle {
-            color: #64748b;
-            margin: 0;
-        }
-    }
+// --- Main Wrapper ---
+.admin-wrapper {
+    background-color: $bg-body;
+    font-family: 'Montserrat', sans-serif; // Ensures consistent typography
 }
 
-.table-card {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid #f1f5f9;
-}
-
-.client-info,
-.package-cell,
-.event-info {
-    display: flex;
-    flex-direction: column;
-    padding: 12px 0;
-
-    .name,
-    .title {
-        font-weight: 700;
-        color: #1e293b;
-    }
-
-    .subtext,
-    .price {
-        font-size: 0.85rem;
-        color: #64748b;
-    }
-}
-
-.package-cell {
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-
-    .pkg-thumb {
-        width: 50px;
-        height: 50px;
-        border-radius: 8px;
-        object-fit: cover;
-    }
-}
-
-.event-info {
-    .info-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.85rem;
-
-        mat-icon {
-            font-size: 18px;
-            width: 18px;
-            height: 18px;
-            color: #94a3b8;
-        }
-    }
-
-    .requirements {
-        margin-top: 4px;
-        color: #a78bfa;
-        font-size: 0.75rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-}
-
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
+// --- Utility Classes ---
+.smaller {
     font-size: 0.75rem;
-    font-weight: 700;
+}
+
+// --- Header Card ---
+.header-card {
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+}
+
+// --- Status Badge Logic ---
+// Applied to both Desktop table and Mobile cards
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 800;
     text-transform: uppercase;
+    display: inline-block;
+    letter-spacing: 0.5px;
 
     &.status-pending {
-        background: #fef9c3;
-        color: #854d0e;
+        background: rgba($warning, 0.1);
+        color: color.adjust($warning, $lightness: -15%);
     }
 
     &.status-confirmed {
-        background: #dcfce7;
-        color: #166534;
+        background: rgba($primary, 0.1);
+        color: color.adjust($primary, $lightness: -15%);
     }
 
     &.status-completed {
-        background: #e0f2fe;
-        color: #075985;
+        background: rgba($success, 0.1);
+        color: color.adjust($success, $lightness: -15%);
     }
 
     &.status-cancelled {
-        background: #fee2e2;
-        color: #991b1b;
+        background: rgba($danger, 0.1);
+        color: color.adjust($danger, $lightness: -15%);
     }
 }
 
-.animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
+// --- Mobile Card Dynamic Borders ---
+// Colors the left-border of the card based on the booking status
+.border-pending {
+    border-left-color: $warning !important;
+}
+
+.border-confirmed {
+    border-left-color: $primary !important;
+}
+
+.border-completed {
+    border-left-color: $success !important;
+}
+
+.border-cancelled {
+    border-left-color: $danger !important;
+}
+
+// --- Material Table Customization ---
+.table-card {
+    .mat-mdc-header-cell {
+        background: $table-head-bg;
+        color: $text-muted;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 1px;
+        padding: 20px !important;
+        border-bottom: 2px solid #edf2f7;
+    }
+
+    .mat-mdc-cell {
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .table-row {
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: #fbfcfe;
+        }
+    }
+}
+
+// --- Special Requirements Box ---
+.bg-primary-soft {
+    background: rgba($primary, 0.06);
+    border: 1px dashed rgba($primary, 0.2);
+}
+
+// --- Animations ---
+// Sync/Refresh Rotation
+.sync-spin {
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Smooth Fade-in for content
+.admin-wrapper {
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 @keyframes fadeIn {
@@ -133,4 +143,25 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+// --- Component Specifics ---
+.pkg-info {
+    line-height: 1.2;
+}
+
+.card {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+// Fix for Material Icons alignment
+mat-icon.fs-6 {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
 }

@@ -3,59 +3,249 @@
 /* ==========================================================================
    VARIABLES & DESIGN SYSTEM
    ========================================================================== */
+
+// Colors
 $text-dark: #1a1a1a;
 $text-muted: #7a7a7a;
+$text-light: #9a9a9a;
 $bg-card: #f5f5f5;
 $accent-red: #ff4d4d;
 $white: #ffffff;
 $border-light: #eeeeee;
 $skeleton-bg: #f0f0f0;
+
+// Transitions
 $transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: all 0.2s ease;
+
+// Breakpoints
+$breakpoint-xs: 480px;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+$breakpoint-xxl: 1400px;
+
+// Spacing
+$spacing-xs: 8px;
+$spacing-sm: 16px;
+$spacing-md: 24px;
+$spacing-lg: 32px;
+$spacing-xl: 48px;
+$spacing-xxl: 64px;
 
 /* ==========================================================================
-   MAIN LAYOUT
+   MIXINS
    ========================================================================== */
-.rental-catalog {
-    background-color: $white;
-    padding-top: 80px;
 
-    .sub-title {
-        letter-spacing: 3px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: $text-muted;
-        text-transform: uppercase;
-        margin-bottom: 8px;
+@mixin respond-to($breakpoint) {
+    @media (min-width: $breakpoint) {
+        @content;
     }
+}
 
-    .main-title {
-        font-weight: 800;
-        font-size: 2.5rem;
-        color: $text-dark;
-        letter-spacing: -1px;
-    }
+@mixin card-hover {
+    transition: $transition-smooth;
 
-    .title-underline {
-        width: 60px;
-        height: 3px;
-        background: $text-dark;
-        margin: 1.5rem auto 0;
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
 }
 
 /* ==========================================================================
-   CATEGORY FILTER BAR
+   MAIN LAYOUT
    ========================================================================== */
+
+.rental-catalog {
+    background-color: $white;
+    padding: $spacing-xl 0;
+    min-height: 100vh;
+
+    @include respond-to($breakpoint-sm) {
+        padding: $spacing-xxl 0;
+    }
+
+    @include respond-to($breakpoint-lg) {
+        padding: 80px 0;
+    }
+
+    .container {
+        padding-left: $spacing-sm;
+        padding-right: $spacing-sm;
+        max-width: 100%;
+
+        @include respond-to($breakpoint-sm) {
+            padding-left: $spacing-md;
+            padding-right: $spacing-md;
+        }
+
+        @include respond-to($breakpoint-lg) {
+            max-width: 1140px;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        @include respond-to($breakpoint-xl) {
+            max-width: 1320px;
+        }
+
+        @include respond-to($breakpoint-xxl) {
+            max-width: 1400px;
+        }
+    }
+}
+
+/* ==========================================================================
+   HEADER SECTION
+   ========================================================================== */
+
+.catalog-header {
+    margin-bottom: $spacing-lg;
+
+    @include respond-to($breakpoint-md) {
+        margin-bottom: $spacing-xl;
+    }
+
+    @include respond-to($breakpoint-lg) {
+        margin-bottom: 50px;
+    }
+
+    .header-content {
+        text-align: center;
+        max-width: 100%;
+        margin: 0 auto;
+
+        @include respond-to($breakpoint-md) {
+            max-width: 700px;
+        }
+
+        @include respond-to($breakpoint-lg) {
+            max-width: 800px;
+        }
+    }
+
+    .sub-title {
+        letter-spacing: 2px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: $text-muted;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+        display: block;
+
+        @include respond-to($breakpoint-sm) {
+            font-size: 0.7rem;
+            letter-spacing: 2.5px;
+            margin-bottom: 8px;
+        }
+
+        @include respond-to($breakpoint-md) {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+        }
+    }
+
+    .main-title {
+        font-weight: 800;
+        font-size: 1.75rem;
+        color: $text-dark;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        margin: 0;
+        padding: 0 $spacing-sm;
+
+        @include respond-to($breakpoint-xs) {
+            font-size: 2rem;
+            letter-spacing: -0.75px;
+        }
+
+        @include respond-to($breakpoint-sm) {
+            font-size: 2.25rem;
+            letter-spacing: -0.75px;
+        }
+
+        @include respond-to($breakpoint-md) {
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            padding: 0;
+        }
+
+        @include respond-to($breakpoint-lg) {
+            font-size: 2.75rem;
+        }
+    }
+
+    .title-underline {
+        width: 50px;
+        height: 3px;
+        background: $text-dark;
+        margin: $spacing-sm auto 0;
+
+        @include respond-to($breakpoint-sm) {
+            width: 60px;
+            margin: 20px auto 0;
+        }
+
+        @include respond-to($breakpoint-md) {
+            margin: 24px auto 0;
+        }
+    }
+}
+
+/* ==========================================================================
+   FILTER SECTION
+   ========================================================================== */
+
+.filter-section {
+    margin-bottom: $spacing-lg;
+
+    @include respond-to($breakpoint-md) {
+        margin-bottom: $spacing-xl;
+    }
+
+    @include respond-to($breakpoint-lg) {
+        margin-bottom: 50px;
+    }
+}
+
 .filter-wrapper {
     border-bottom: 1px solid $border-light;
-    margin-bottom: 50px;
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 15px;
+        width: 30px;
+        background: linear-gradient(to left, $white, transparent);
+        pointer-events: none;
+
+        @include respond-to($breakpoint-md) {
+            display: none;
+        }
+    }
 
     .filter-scroll {
         display: flex;
-        gap: 30px;
+        gap: 20px;
         overflow-x: auto;
+        overflow-y: hidden;
         padding-bottom: 15px;
         scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+
+        @include respond-to($breakpoint-sm) {
+            gap: 24px;
+        }
+
+        @include respond-to($breakpoint-md) {
+            gap: 30px;
+            justify-content: center;
+        }
 
         &::-webkit-scrollbar {
             display: none;
@@ -66,14 +256,25 @@ $transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 .filter-tab {
     background: transparent;
     border: none;
-    padding: 8px 0;
-    font-size: 0.95rem;
+    padding: 8px 4px;
+    font-size: 0.85rem;
     font-weight: 600;
     color: $text-muted;
     white-space: nowrap;
     position: relative;
     cursor: pointer;
     transition: $transition-smooth;
+    flex-shrink: 0;
+
+    @include respond-to($breakpoint-sm) {
+        font-size: 0.9rem;
+        padding: 8px 6px;
+    }
+
+    @include respond-to($breakpoint-md) {
+        font-size: 0.95rem;
+        padding: 8px 0;
+    }
 
     &::after {
         content: '';
@@ -97,19 +298,70 @@ $transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
         }
     }
+
+    &:focus-visible {
+        outline: 2px solid $text-dark;
+        outline-offset: 4px;
+        border-radius: 2px;
+    }
+}
+
+/* ==========================================================================
+   PRODUCTS GRID
+   ========================================================================== */
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-sm;
+
+    @include respond-to($breakpoint-xs) {
+        gap: $spacing-md;
+    }
+
+    @include respond-to($breakpoint-sm) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: $spacing-md;
+    }
+
+    @include respond-to($breakpoint-md) {
+        grid-template-columns: repeat(3, 1fr);
+        gap: $spacing-lg;
+    }
+
+    @include respond-to($breakpoint-lg) {
+        grid-template-columns: repeat(4, 1fr);
+        gap: $spacing-md;
+    }
+
+    @include respond-to($breakpoint-xl) {
+        gap: $spacing-lg;
+    }
+
+    .grid-item {
+        width: 100%;
+        min-width: 0; // Prevents grid blowout
+    }
 }
 
 /* ==========================================================================
    PRODUCT CARD
    ========================================================================== */
+
 .product-card {
-    margin-bottom: 30px;
     background: $white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 
     &:hover {
         .cart-text-overlay {
             opacity: 1;
-            // transform: translateY(0);
+            transform: translateY(0);
+        }
+
+        .product-img-cover {
+            transform: scale(1.05);
         }
     }
 
@@ -119,7 +371,12 @@ $transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         overflow: hidden;
         cursor: pointer;
         background-color: $bg-card;
-        border-radius: 8px;
+        border-radius: 6px;
+        flex-shrink: 0;
+
+        @include respond-to($breakpoint-sm) {
+            border-radius: 8px;
+        }
 
         .product-img-cover {
             width: 100%;
@@ -130,116 +387,272 @@ $transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
         .wishlist-btn {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 10px;
+            right: 10px;
             z-index: 5;
             background: $white;
             color: #d1d1d1;
             border: none;
-            width: 38px;
-            height: 38px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: $transition-smooth;
+            cursor: pointer;
+
+            @include respond-to($breakpoint-sm) {
+                width: 36px;
+                height: 36px;
+                top: 12px;
+                right: 12px;
+            }
+
+            @include respond-to($breakpoint-md) {
+                width: 38px;
+                height: 38px;
+                top: 15px;
+                right: 15px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            i {
+                font-size: 0.9rem;
+
+                @include respond-to($breakpoint-md) {
+                    font-size: 1rem;
+                }
+            }
 
             &:hover {
                 color: $accent-red;
+                transform: scale(1.1);
+            }
+
+            &:focus-visible {
+                outline: 2px solid $accent-red;
+                outline-offset: 2px;
             }
         }
 
         .cart-text-overlay {
             position: absolute;
             bottom: 0;
+            left: 0;
+            right: 0;
             width: 100%;
-            background: rgba($text-dark, 0.9);
+            background: rgba($text-dark, 0.92);
             color: $white;
             text-align: center;
-            padding: 18px 0;
+            padding: 12px 8px;
             font-weight: 700;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
             opacity: 0;
             transform: translateY(100%);
             transition: $transition-smooth;
+            cursor: pointer;
+
+            @include respond-to($breakpoint-sm) {
+                padding: 14px 12px;
+                font-size: 0.75rem;
+                letter-spacing: 1.8px;
+            }
+
+            @include respond-to($breakpoint-md) {
+                padding: 18px 0;
+                font-size: 0.8rem;
+                letter-spacing: 2px;
+            }
+
+            &:active {
+                background: rgba($text-dark, 1);
+            }
         }
     }
-}
 
-.product-details {
-    .brand-label {
-        font-size: 0.7rem;
-        color: $text-muted;
-        font-weight: 700;
-        letter-spacing: 1.5px;
-        margin-top: 15px;
-        display: block;
-    }
-
-    .product-name {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: $text-dark;
-        margin: 5px 0 15px;
-        cursor: pointer;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        transition: color 0.2s ease;
-
-        &:hover {
-            color: color.adjust($text-dark, $lightness: 25%);
-        }
-    }
-}
-
-.footer-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .price-box {
+    .product-details {
+        padding-top: $spacing-sm;
         display: flex;
-        align-items: baseline;
+        flex-direction: column;
+        flex-grow: 1;
 
-        .currency {
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-right: 2px;
+        @include respond-to($breakpoint-md) {
+            padding-top: 15px;
         }
 
-        .amount {
-            font-weight: 800;
-            font-size: 1.4rem;
-        }
-
-        .period {
-            font-size: 0.85rem;
+        .brand-label {
+            font-size: 0.65rem;
             color: $text-muted;
-            margin-left: 4px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            display: block;
+            margin-bottom: 4px;
+
+            @include respond-to($breakpoint-sm) {
+                font-size: 0.68rem;
+                letter-spacing: 1.4px;
+                margin-bottom: 5px;
+            }
+
+            @include respond-to($breakpoint-md) {
+                font-size: 0.7rem;
+                letter-spacing: 1.5px;
+            }
         }
-    }
 
-    .icon-cart-btn {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        border: 1px solid #e5e5e5;
-        background: transparent;
-        color: $text-dark;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: $transition-smooth;
+        .product-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: $text-dark;
+            margin: 0 0 $spacing-sm;
+            cursor: pointer;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.2s ease;
+            min-height: 2.6em;
 
-        &:hover {
-            background: $text-dark;
-            color: $white;
-            border-color: $text-dark;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            @include respond-to($breakpoint-sm) {
+                font-size: 1.05rem;
+            }
+
+            @include respond-to($breakpoint-md) {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+
+            @include respond-to($breakpoint-lg) {
+                font-size: 1.15rem;
+            }
+
+            @include respond-to($breakpoint-xl) {
+                font-size: 1.2rem;
+            }
+
+            &:hover {
+                color: color.adjust($text-dark, $lightness: 25%);
+            }
+        }
+
+        .footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            gap: $spacing-xs;
+
+            .price-box {
+                display: flex;
+                align-items: baseline;
+                flex-wrap: wrap;
+                gap: 1px;
+
+                .currency {
+                    font-weight: 700;
+                    font-size: 0.9rem;
+
+                    @include respond-to($breakpoint-sm) {
+                        font-size: 1rem;
+                    }
+
+                    @include respond-to($breakpoint-md) {
+                        font-size: 1.1rem;
+                    }
+                }
+
+                .amount {
+                    font-weight: 800;
+                    font-size: 1.15rem;
+                    color: $text-dark;
+
+                    @include respond-to($breakpoint-sm) {
+                        font-size: 1.25rem;
+                    }
+
+                    @include respond-to($breakpoint-md) {
+                        font-size: 1.3rem;
+                    }
+
+                    @include respond-to($breakpoint-lg) {
+                        font-size: 1.35rem;
+                    }
+
+                    @include respond-to($breakpoint-xl) {
+                        font-size: 1.4rem;
+                    }
+                }
+
+                .period {
+                    font-size: 0.75rem;
+                    color: $text-muted;
+                    margin-left: 3px;
+
+                    @include respond-to($breakpoint-sm) {
+                        font-size: 0.8rem;
+                    }
+
+                    @include respond-to($breakpoint-md) {
+                        font-size: 0.85rem;
+                        margin-left: 4px;
+                    }
+                }
+            }
+
+            .icon-cart-btn {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                border: 1px solid #e5e5e5;
+                background: transparent;
+                color: $text-dark;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: $transition-smooth;
+                cursor: pointer;
+                flex-shrink: 0;
+
+                @include respond-to($breakpoint-sm) {
+                    width: 38px;
+                    height: 38px;
+                }
+
+                @include respond-to($breakpoint-md) {
+                    width: 42px;
+                    height: 42px;
+                }
+
+                i {
+                    font-size: 1rem;
+
+                    @include respond-to($breakpoint-md) {
+                        font-size: 1.1rem;
+                    }
+                }
+
+                &:hover {
+                    background: $text-dark;
+                    color: $white;
+                    border-color: $text-dark;
+                    transform: translateY(-3px);
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                }
+
+                &:active {
+                    transform: translateY(-1px);
+                }
+
+                &:focus-visible {
+                    outline: 2px solid $text-dark;
+                    outline-offset: 2px;
+                }
+            }
         }
     }
 }
@@ -247,43 +660,103 @@ $transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 /* ==========================================================================
    SKELETON LOADING (SHIMMER EFFECT)
    ========================================================================== */
+
 .skeleton-card {
-    margin-bottom: 30px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 
     .skeleton-image {
         aspect-ratio: 1 / 1;
-        border-radius: 8px;
-        margin-bottom: 15px;
+        border-radius: 6px;
+        flex-shrink: 0;
+
+        @include respond-to($breakpoint-sm) {
+            border-radius: 8px;
+        }
+    }
+
+    .skeleton-content {
+        padding-top: $spacing-sm;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        @include respond-to($breakpoint-md) {
+            padding-top: 15px;
+        }
     }
 
     .skeleton-brand {
-        height: 12px;
+        height: 10px;
         width: 30%;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         border-radius: 4px;
+
+        @include respond-to($breakpoint-sm) {
+            height: 11px;
+            margin-bottom: 9px;
+        }
+
+        @include respond-to($breakpoint-md) {
+            height: 12px;
+            margin-bottom: 10px;
+        }
     }
 
     .skeleton-name {
-        height: 24px;
-        width: 75%;
-        margin-bottom: 20px;
+        height: 20px;
+        width: 85%;
+        margin-bottom: 8px;
         border-radius: 4px;
+
+        @include respond-to($breakpoint-sm) {
+            height: 22px;
+            margin-bottom: $spacing-sm;
+        }
+
+        @include respond-to($breakpoint-md) {
+            height: 24px;
+            margin-bottom: 20px;
+        }
     }
 
     .skeleton-footer {
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        gap: $spacing-xs;
 
         .skeleton-price {
-            height: 28px;
+            height: 24px;
             width: 45%;
             border-radius: 4px;
+
+            @include respond-to($breakpoint-sm) {
+                height: 26px;
+            }
+
+            @include respond-to($breakpoint-md) {
+                height: 28px;
+            }
         }
 
         .skeleton-button {
-            height: 42px;
-            width: 42px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
+            flex-shrink: 0;
+
+            @include respond-to($breakpoint-sm) {
+                width: 38px;
+                height: 38px;
+            }
+
+            @include respond-to($breakpoint-md) {
+                width: 42px;
+                height: 42px;
+            }
         }
     }
 }
@@ -317,15 +790,87 @@ $transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ==========================================================================
-   EMPTY STATE & UTILITIES
+   EMPTY STATE
    ========================================================================== */
-.no-results {
-    padding: 60px 0;
 
-    i {
+.empty-state {
+    grid-column: 1 / -1;
+    padding: $spacing-xl 0;
+    text-align: center;
+
+    @include respond-to($breakpoint-md) {
+        padding: $spacing-xxl 0;
+    }
+
+    .empty-content {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
         color: #d1d1d1;
+        display: block;
+        margin-bottom: $spacing-md;
+
+        @include respond-to($breakpoint-md) {
+            font-size: 4rem;
+            margin-bottom: $spacing-lg;
+        }
+    }
+
+    .empty-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: $text-dark;
+        margin-bottom: $spacing-sm;
+
+        @include respond-to($breakpoint-md) {
+            font-size: 1.5rem;
+        }
+    }
+
+    .empty-description {
+        color: $text-muted;
+        font-size: 0.95rem;
+        margin-bottom: $spacing-md;
+
+        @include respond-to($breakpoint-md) {
+            font-size: 1rem;
+        }
+    }
+
+    .btn-clear-filters {
+        background: transparent;
+        border: 2px solid $text-dark;
+        color: $text-dark;
+        padding: 10px 24px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: $transition-smooth;
+
+        @include respond-to($breakpoint-md) {
+            padding: 12px 28px;
+            font-size: 0.95rem;
+        }
+
+        &:hover {
+            background: $text-dark;
+            color: $white;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $text-dark;
+            outline-offset: 4px;
+        }
     }
 }
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
 
 .transition-fade {
     animation: fadeInUp 0.6s ease-out;
@@ -340,5 +885,34 @@ $transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   UTILITIES & ACCESSIBILITY
+   ========================================================================== */
+
+// Focus visible for keyboard navigation
+*:focus-visible {
+    outline: 2px solid $text-dark;
+    outline-offset: 2px;
+}
+
+// Smooth scrolling
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }

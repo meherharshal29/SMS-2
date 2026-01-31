@@ -1,0 +1,330 @@
+<div class="container-fluid bg-light min-vh-100">
+  <div class="row justify-content-start">
+    <div class="col-lg-11 col-xl-10">
+      <mat-tab-group
+        class="bg-white shadow-sm rounded-4 overflow-hidden mb-5 p-2 p-md-3"
+        animationDuration="200ms"
+      >
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="me-2">photo_library</mat-icon>Photos
+          </ng-template>
+          <div class="p-3 p-md-4">
+            <div
+              class="upload-zone text-center py-5 border-dashed rounded-4 mb-4"
+              (click)="pInput.click()"
+            >
+              <input
+                type="file"
+                #pInput
+                multiple
+                accept="image/*"
+                (change)="onPhotoSelect($event)"
+                class="d-none"
+              />
+              <mat-icon class="display-4 text-primary opacity-50"
+                >cloud_upload</mat-icon
+              >
+              <h5 class="mt-2 fw-bold">Click to Select Photos</h5>
+              <p class="text-muted small">Selection limit: Max 4 photos</p>
+            </div>
+
+            @if (photoPreviews.length) {
+              <div class="row g-3 animate-fade-in">
+                @for (p of photoPreviews; track $index) {
+                  <div class="col-sm-6 col-md-3">
+                    <div
+                      class="card border-0 shadow-sm rounded-3 overflow-hidden"
+                    >
+                      <img [src]="p" class="object-fit-cover" height="160" />
+                      <div class="p-3">
+                        <mat-form-field
+                          appearance="outline"
+                          class="w-100 mb-2 small-field"
+                        >
+                          <mat-label>Title</mat-label>
+                          <input
+                            matInput
+                            [(ngModel)]="photoTitles[$index]"
+                            placeholder="Ex: Summer Shoot"
+                          />
+                        </mat-form-field>
+                        <mat-form-field
+                          appearance="outline"
+                          class="w-100 small-field"
+                        >
+                          <mat-label>Category</mat-label>
+                          <mat-select [(ngModel)]="photoCats[$index]">
+                            <mat-option value="Fashion">Fashion</mat-option>
+                            <mat-option value="Portrait">Portrait</mat-option>
+                            <mat-option value="Wedding">Wedding</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                }
+                <div class="col-12 text-center mt-4">
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    class="rounded-pill px-5 py-2"
+                    (click)="submitPhotos()"
+                    [disabled]="loading"
+                  >
+                    @if (loading) {
+                      <mat-icon class="spinner">sync</mat-icon>
+                    }
+                    Confirm & Upload Photos
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="me-2">videocam</mat-icon>Videos/Reels
+          </ng-template>
+          <div class="p-3 p-md-4">
+            <div
+              class="upload-zone text-center py-5 border-dashed rounded-4 mb-4"
+              (click)="vInput.click()"
+            >
+              <input
+                type="file"
+                #vInput
+                multiple
+                accept="video/*"
+                (change)="onVideoSelect($event)"
+                class="d-none"
+              />
+              <mat-icon class="display-4 text-info opacity-50"
+                >movie_filter</mat-icon
+              >
+              <h5 class="mt-2 fw-bold">Click to Select Videos</h5>
+              <p class="text-muted small">Selection limit: Max 2 videos</p>
+            </div>
+
+            @if (videoFiles.length) {
+              <div class="row g-3 animate-fade-in justify-content-center">
+                @for (v of videoFiles; track $index) {
+                  <div class="col-md-5">
+                    <div class="card p-3 bg-white border-0 shadow-sm rounded-3">
+                      <div class="d-flex align-items-center mb-3">
+                        <mat-icon class="text-info me-2">videocam</mat-icon>
+                        <span class="text-truncate fw-bold">{{ v.name }}</span>
+                      </div>
+                      <mat-form-field appearance="outline" class="w-100 mb-2">
+                        <mat-label>Video Title</mat-label>
+                        <input matInput [(ngModel)]="videoTitles[$index]" />
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Format Type</mat-label>
+                        <mat-select [(ngModel)]="isReel[$index]">
+                          <mat-option value="false"
+                            >Cinematic Video (16:9)</mat-option
+                          >
+                          <mat-option value="true"
+                            >Instagram Reel (9:16)</mat-option
+                          >
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                }
+                <div class="col-12 text-center mt-4">
+                  <button
+                    mat-flat-button
+                    color="accent"
+                    class="rounded-pill px-5 py-2"
+                    (click)="submitVideos()"
+                    [disabled]="loading"
+                  >
+                    Upload Selected Videos
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+
+      <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div
+          class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-center p-3 p-md-4 border-bottom"
+        >
+          <div class="mb-3 mb-md-0">
+            <h5 class="mb-0 fw-bold h4">Portfolio Library</h5>
+            <p class="text-muted small mb-0">
+              Manage your studio's visible gallery items
+            </p>
+          </div>
+          <button
+            mat-flat-button
+            color="warn"
+            class="rounded-pill px-4"
+            *ngIf="selection.hasValue()"
+            (click)="deleteBulk()"
+          >
+            <mat-icon>delete_sweep</mat-icon> Delete Selected ({{
+              selection.selected.length
+            }})
+          </button>
+        </div>
+
+        <div class="table-responsive d-none d-md-block">
+          <table mat-table [dataSource]="dataSource" class="w-100">
+            <ng-container matColumnDef="select">
+              <th mat-header-cell *matHeaderCellDef class="ps-4">
+                <mat-checkbox
+                  (change)="$event ? toggleAll() : null"
+                  [checked]="selection.hasValue() && isAllSelected()"
+                ></mat-checkbox>
+              </th>
+              <td mat-cell *matCellDef="let row" class="ps-4">
+                <mat-checkbox
+                  (click)="$event.stopPropagation()"
+                  (change)="$event ? selection.toggle(row) : null"
+                  [checked]="selection.isSelected(row)"
+                ></mat-checkbox>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="preview">
+              <th mat-header-cell *matHeaderCellDef>Preview</th>
+              <td mat-cell *matCellDef="let el">
+                <img
+                  [src]="el.mediaType === 'photo' ? el.url : el.thumbnailUrl"
+                  class="rounded-3 my-2 shadow-sm object-fit-cover"
+                  width="55"
+                  height="55"
+                />
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Media Type</th>
+              <td mat-cell *matCellDef="let el">
+                <span
+                  class="badge rounded-pill"
+                  [ngClass]="{
+                    'bg-primary-soft text-primary': el.mediaType === 'photo',
+                    'bg-info-soft text-info': el.mediaType === 'video',
+                    'bg-dark-soft text-dark': el.mediaType === 'reel',
+                  }"
+                  >{{ el.mediaType | uppercase }}</span
+                >
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef>Title</th>
+              <td mat-cell *matCellDef="let el" class="fw-bold">
+                {{ el.title }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Category</th>
+              <td mat-cell *matCellDef="let el">{{ el.category }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="text-end pe-4">
+                Actions
+              </th>
+              <td mat-cell *matCellDef="let el" class="text-end pe-4">
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteSingle(el.id)"
+                  matTooltip="Delete Item"
+                >
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              class="table-row"
+            ></tr>
+          </table>
+        </div>
+
+        <div class="d-md-none p-3 bg-light">
+          @for (el of dataSource.data; track el.id) {
+            <div
+              class="card border-0 shadow-sm mb-3 rounded-4 overflow-hidden position-relative animate-fade-in"
+            >
+              <div
+                class="card-selection position-absolute top-0 start-0 p-2 z-1"
+              >
+                <mat-checkbox
+                  (change)="$event ? selection.toggle(el) : null"
+                  [checked]="selection.isSelected(el)"
+                ></mat-checkbox>
+              </div>
+              <div class="row g-0 align-items-center">
+                <div class="col-4">
+                  <img
+                    [src]="el.mediaType === 'photo' ? el.url : el.thumbnailUrl"
+                    class="w-100 object-fit-cover"
+                    style="height: 120px"
+                  />
+                </div>
+                <div class="col-8">
+                  <div class="p-3">
+                    <div
+                      class="d-flex justify-content-between align-items-start mb-1"
+                    >
+                      <h6
+                        class="mb-0 fw-bold text-truncate"
+                        style="max-width: 140px"
+                      >
+                        {{ el.title }}
+                      </h6>
+                      <span
+                        class="badge rounded-pill smaller-badge"
+                        [ngClass]="{
+                          'bg-primary-soft text-primary':
+                            el.mediaType === 'photo',
+                          'bg-info-soft text-info': el.mediaType === 'video',
+                        }"
+                        >{{ el.mediaType }}</span
+                      >
+                    </div>
+                    <p class="text-muted smaller mb-2">{{ el.category }}</p>
+                    <div class="d-flex justify-content-end">
+                      <button
+                        mat-button
+                        color="warn"
+                        class="btn-sm px-2"
+                        (click)="deleteSingle(el.id)"
+                      >
+                        <mat-icon class="fs-6">delete</mat-icon> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (dataSource.data.length === 0) {
+          <div class="text-center py-5">
+            <mat-icon class="display-1 text-muted opacity-25"
+              >collections</mat-icon
+            >
+            <p class="text-muted">Your gallery is currently empty.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

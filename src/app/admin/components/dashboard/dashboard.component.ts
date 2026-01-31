@@ -1,49 +1,14 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  inject,
-  signal,
-  computed,
-  effect,
-  PLATFORM_ID
-} from '@angular/core';
-import {
-  CommonModule,
-  DecimalPipe,
-  UpperCasePipe,
-  isPlatformBrowser
-} from '@angular/common';
+import { Component, OnInit, OnDestroy, inject, signal, computed, PLATFORM_ID } from '@angular/core';
+import { CommonModule, DecimalPipe, UpperCasePipe, isPlatformBrowser } from '@angular/common';
 import { Subject, finalize, takeUntil } from 'rxjs';
-
-// Services
 import { AdminService } from '../../services/admin/admin.service';
 import { CameraService } from '../../services/camera/camera.service';
-
-// Angular Material Imports
-import { MatTableModule } from '@angular/material/table';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MaterialModule } from '../../../shared/material/material.module';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [
-    CommonModule,
-    DecimalPipe,
-    UpperCasePipe,
-    MatTableModule,
-    MatCardModule,
-    MatIconModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatTooltipModule
-  ],
+  imports: [CommonModule, DecimalPipe, UpperCasePipe, MaterialModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -58,54 +23,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private readonly backendUrl = 'http://localhost:5000';
   private notificationSound?: HTMLAudioElement;
 
-  /* ==========================================================================
-      STATE MANAGEMENT (SIGNALS)
-     ========================================================================== */
+  /* --- Signals (State) --- */
   readonly adminUser = this.adminService.currentAdmin;
   readonly stats = this.adminService.dashboardStats;
-
   private _ordersRaw = signal<any[]>([]);
+
   readonly totalCameras = signal<number>(0);
   readonly isLoading = signal<boolean>(true);
   readonly isUpdating = signal<boolean>(false);
-
-  // Animation Signal: ID of row to flash yellow on update or new arrival
   readonly highlightedOrderId = signal<number | null>(null);
 
-  /* ==========================================================================
-      REACTIVE COMPUTED LOGIC
-     ========================================================================== */
-
-  // Limits the view to the 10 most recent entries in the table
+  /* --- Computed Logic --- */
   readonly recentOrders = computed(() => this._ordersRaw().slice(0, 10));
-
-  // Reactive count of all orders in the system
   readonly totalOrdersCount = computed(() => this._ordersRaw().length);
 
-  // Material Table Column Definition
-  readonly displayedColumns: string[] = [
-    'select',
-    'gear',
-    'client',
-    'amount',
-    'status',
-    'complete',
-    'actions'
-  ];
+  // Financial Badges
+  readonly monthlyRevenue = computed(() => this.stats()?.monthlyRevenue || 0);
 
-  /* ==========================================================================
-      REAL-TIME PUSH HANDLING (CONSTRUCTOR)
-     ========================================================================== */
+  // Logistics Badges
+  readonly deliveredCount = computed(() => this.stats()?.rentals?.delivered || 0);
+  readonly cancelledOrdersCount = computed(() => this.stats()?.rentals?.cancelled || 0);
+
+  // UPDATED: Added 'payment' to displayed columns
+  readonly displayedColumns: string[] = ['select', 'gear', 'client', 'payment', 'amount', 'status', 'complete', 'actions'];
+
   constructor() {
-    // Initialize sound safely for SSR
     if (isPlatformBrowser(this.platformId)) {
       this.notificationSound = new Audio('assets/sounds/notification.mp3');
     }
   }
 
-  /* ==========================================================================
-      LIFECYCLE HOOKS
-     ========================================================================== */
   ngOnInit(): void {
     this.refreshAllData();
     this.fetchCameraCount();
@@ -116,17 +63,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /* ==========================================================================
-      DATA OPERATIONS
-     ========================================================================== */
+  /* --- Data Operations --- */
 
   refreshAllData(): void {
     this.isLoading.set(true);
     this.adminService.getDashboard()
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => this.isLoading.set(false))
-      )
+      .pipe(takeUntil(this.destroy$), finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
           if (res.success && res.orders) {
@@ -137,143 +79,113 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }));
             this._ordersRaw.set(processed);
           }
-        },
-        error: (err) => console.error('Error fetching dashboard data:', err)
+        }
       });
   }
 
-  private handleRealTimeIncoming(order: any): void {
-    // Check if order already exists to prevent duplicates from socket/REST overlap
-    const exists = this._ordersRaw().some(o => o.id === order.id);
-    if (exists) return;
-
-    const processed = {
-      ...order,
-      isNew: true, // Triggers the Blinking Green Dot UI
-      Camera: this.resolveImages(order.Camera)
-    };
-
-    // Push new order to the start of the signal array
-    this._ordersRaw.update(prev => [processed, ...prev]);
-
-    // Play sound and trigger the UI flash
-    this.playAlert();
-    this.triggerFlash(order.id);
-  }
-
-  /**
-   * Automatic Fulfillment Toggle (Delivered <-> Confirmed)
-   */
   toggleComplete(orderId: number, event: any): void {
     const newStatus = event.checked ? 'delivered' : 'confirmed';
     this.updateStatus(orderId, newStatus);
   }
 
   updateStatus(orderId: number, status: string): void {
+    const normalizedStatus = status.toLowerCase();
     this.isUpdating.set(true);
-    this.adminService.updateOrderStatus(orderId, status)
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => this.isUpdating.set(false))
-      )
+
+    this.adminService.updateOrderStatus(orderId, normalizedStatus)
+      .pipe(takeUntil(this.destroy$), finalize(() => this.isUpdating.set(false)))
       .subscribe({
         next: (res) => {
           if (res.success) {
-            // Optimistic Local Update for smooth UI
             this._ordersRaw.update(orders =>
-              orders.map(o => o.id === orderId ? { ...o, status } : o)
+              orders.map(o => o.id === orderId ? { ...o, status: normalizedStatus } : o)
             );
             this.triggerFlash(orderId);
+            if (normalizedStatus === 'delivered') this.playAlert();
           }
-        },
-        error: (err) => console.error('Error updating order status:', err)
+        }
       });
   }
 
+  /* --- UI Helpers --- */
 
-  // 2. Total Cancelled Orders
-  readonly cancelledOrdersCount = computed(() =>
-    this._ordersRaw().filter(o => o.status === 'cancelled').length
-  );
-  /* ==========================================================================
-      UI HELPERS
-     ========================================================================== */
+  getStatusClass(status: string): string {
+    const s = status?.toLowerCase() || '';
+    switch (s) {
+      case 'delivered': return 'status-delivered';
+      case 'shipped': return 'status-shipped';
+      case 'confirmed':
+      case 'confirm': return 'status-confirmed';
+      case 'cancel':
+      case 'cancelled': return 'status-cancelled';
+      default: return 'status-pending';
+    }
+  }
+
+  // NEW: Helper for Payment Icons
+  getPaymentIcon(method: string): string {
+    const m = method?.toLowerCase() || '';
+    switch (m) {
+      case 'cod': return 'payments';
+      case 'upi': return 'qr_code_2';
+      case 'card': return 'credit_card';
+      case 'net_banking':
+      case 'netbanking': return 'account_balance';
+      default: return 'help_outline';
+    }
+  }
+
+  // NEW: Helper for Payment Labels
+  getPaymentLabel(method: string): string {
+    const m = method?.toLowerCase() || '';
+    return m === 'cod' ? 'CASH' : m.toUpperCase().replace('_', ' ');
+  }
+
+  private resolveImages(camera: any) {
+    if (!camera?.images) return camera;
+    return {
+      ...camera,
+      images: camera.images.map((img: any) => ({
+        ...img,
+        url: img.url.startsWith('http') ? img.url : `${this.backendUrl}/${img.url.replace(/\\/g, '/')}`
+      }))
+    };
+  }
 
   private triggerFlash(id: number): void {
     this.highlightedOrderId.set(id);
-    setTimeout(() => {
-      // Clean up "isNew" flag and highlight after animation finishes
-      this._ordersRaw.update(orders =>
-        orders.map(o => o.id === id ? { ...o, isNew: false } : o)
-      );
-      this.highlightedOrderId.set(null);
-    }, 2500);
+    setTimeout(() => this.highlightedOrderId.set(null), 2000);
   }
 
   private checkIfRecent(date: string): boolean {
     if (!date) return false;
     const diff = (new Date().getTime() - new Date(date).getTime()) / (1000 * 60);
-    return diff < 5; // Newer than 5 minutes
+    return diff < 5;
   }
 
   private playAlert(): void {
-    if (this.notificationSound) {
-      this.notificationSound.play().catch(() => {
-        console.warn('Audio blocked. Interaction required.');
-      });
-    }
-  }
-
-  private resolveImages(camera: any) {
-    if (!camera) return null;
-    return {
-      ...camera,
-      images: camera.images?.map((img: any) => ({
-        ...img,
-        url: img.url.startsWith('http')
-          ? img.url
-          : `${this.backendUrl}/${img.url.replace(/\\/g, '/')}`
-      }))
-    };
-  }
-
-  getStatusClass(status: string): string {
-    const s = status?.toLowerCase() || '';
-    if (s.includes('deliver')) return 'status-delivered';
-    if (s.includes('confirm')) return 'status-confirmed';
-    if (s.includes('cancel')) return 'status-cancelled';
-    if (s.includes('ship')) return 'status-shipped';
-    return 'status-pending';
+    this.notificationSound?.play().catch(() => { });
   }
 
   fetchCameraCount(): void {
-    this.cameraService.getAllCameras()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          if (res.success) this.totalCameras.set(res.data.length);
-        }
-      });
+    this.cameraService.getAllCameras().subscribe(res => {
+      if (res.success) this.totalCameras.set(res.data.length);
+    });
   }
 
   exportToCSV(): void {
     const orders = this._ordersRaw();
-    const headers = 'ID,Asset,Client,Price,Status\n';
+    // UPDATED: Added Payment to headers
+    const headers = 'ID,Asset,Client,Payment,Price,Status,Date\n';
     const rows = orders.map(o =>
-      `${o.id},"${o.Camera?.name || 'N/A'}","${o.user?.name || 'N/A'}",${o.totalPrice},${o.status}`
+      `${o.id},"${o.Camera?.name}","${o.user?.name}","${o.paymentMethod?.toUpperCase()}",${o.totalPrice},${o.status.toUpperCase()},${o.createdAt}`
     ).join('\n');
 
-    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([headers + rows], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
-
-    if (isPlatformBrowser(this.platformId)) {
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', `logistics-report-${new Date().getTime()}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url); // Clean up memory
-    }
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Logistics_Report_${new Date().getTime()}.csv`;
+    link.click();
   }
 }

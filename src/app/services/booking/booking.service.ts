@@ -11,10 +11,12 @@ export interface Booking {
   eventDate: string;
   eventLocation: string;
   specialRequirements?: string;
-  status: 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
+  // Standardized Statuses
+  status: 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled' | 'delivered';
+  // Added Payment Method for Financial History
+  paymentMethod: 'upi' | 'card' | 'net_banking' | 'cod';
   userId: number;
   packageId: number;
-  // Note: These keys must match the 'as' aliases in your associations.js
   user?: {
     id: number;
     name: string;
@@ -28,7 +30,7 @@ export interface Booking {
     title: string;
     price: number;
     coverImage: string;
-    images?: Array<{ url: string }>; // Nested images from PackageImage
+    images?: Array<{ url: string }>;
   };
   createdAt?: string;
 }
@@ -39,10 +41,8 @@ export interface Booking {
 export class BookingService {
   private apiUrl = `${environment.apiUrl}/bookings`;
   private http = inject(HttpClient);
+  private readonly backendUrl = environment.apiUrl.replace('/api', '');
 
-  /**
-   * Helper to build Authorization headers
-   */
   private getAuthHeaders() {
     const token = localStorage.getItem('token');
     return {
@@ -52,9 +52,6 @@ export class BookingService {
     };
   }
 
-  /**
-   * Error Handler
-   */
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred!';
     if (error.error instanceof ErrorEvent) {
@@ -67,9 +64,6 @@ export class BookingService {
 
   // --- USER OPERATIONS ---
 
-  /** * Submit a new booking request 
-   * @param bookingData { packageId, eventDate, eventLocation, specialRequirements }
-   */
   createBooking(bookingData: Partial<Booking>): Observable<{ success: boolean; data: Booking; message: string }> {
     return this.http.post<{ success: boolean; data: Booking; message: string }>(
       `${this.apiUrl}/book`,
@@ -78,28 +72,38 @@ export class BookingService {
     ).pipe(catchError(this.handleError));
   }
 
-  /** * Get personal booking history for the logged-in client
-   */
   getMyBookings(): Observable<{ success: boolean; data: Booking[] }> {
     return this.http.get<{ success: boolean; data: Booking[] }>(
       `${this.apiUrl}/my-bookings`,
       this.getAuthHeaders()
-    ).pipe(catchError(this.handleError));
+    ).pipe(
+      map(res => {
+        if (res.success && res.data) {
+          res.data.forEach(b => this.fixBookingImages(b));
+        }
+        return res;
+      }),
+      catchError(this.handleError)
+    );
   }
 
   // --- ADMIN OPERATIONS ---
 
-  /** * Fetch all bookings across the platform (Master Dashboard)
-   */
   getAllBookings(): Observable<{ success: boolean; data: Booking[] }> {
     return this.http.get<{ success: boolean; data: Booking[] }>(
       `${this.apiUrl}/all`,
       this.getAuthHeaders()
-    ).pipe(catchError(this.handleError));
+    ).pipe(
+      map(res => {
+        if (res.success && res.data) {
+          res.data.forEach(b => this.fixBookingImages(b));
+        }
+        return res;
+      }),
+      catchError(this.handleError)
+    );
   }
 
-  /** * Update the status of a booking (Confirmed, Completed, etc.)
-   */
   updateBookingStatus(id: number, status: string): Observable<{ success: boolean; message: string }> {
     return this.http.put<{ success: boolean; message: string }>(
       `${this.apiUrl}/status/${id}`,
@@ -108,12 +112,30 @@ export class BookingService {
     ).pipe(catchError(this.handleError));
   }
 
-  /** * Delete a booking record permanently
-   */
   deleteBooking(id: number): Observable<{ success: boolean; message: string }> {
     return this.http.delete<{ success: boolean; message: string }>(
       `${this.apiUrl}/${id}`,
       this.getAuthHeaders()
     ).pipe(catchError(this.handleError));
+  }
+
+  // --- HELPERS ---
+
+  private fixBookingImages(booking: Booking): void {
+    if (booking.package) {
+      if (booking.package.coverImage) {
+        booking.package.coverImage = this.formatUrl(booking.package.coverImage);
+      }
+      if (booking.package.images) {
+        booking.package.images.forEach(img => img.url = this.formatUrl(img.url));
+      }
+    }
+  }
+
+  private formatUrl(path: string): string {
+    if (!path) return 'assets/placeholder.png';
+    if (path.startsWith('http')) return path;
+    const cleanPath = path.replace(/\\/g, '/');
+    return `${this.backendUrl}/${cleanPath.startsWith('/') ? cleanPath.substring(1) : cleanPath}`;
   }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 // --- Interfaces ---
 
@@ -49,7 +50,7 @@ export interface ApiResponse<T> {
 })
 export class PackageService {
   // Update this port if your backend runs on 3000 or 8080
-  private apiUrl = 'http://localhost:5000/api/packages';
+  private apiUrl = `${environment.apiUrl}/packages`;;
 
   constructor(private http: HttpClient) { }
 

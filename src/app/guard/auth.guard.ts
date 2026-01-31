@@ -1,33 +1,34 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
-import { map, take } from 'rxjs';
+import { map, of, catchError, take } from 'rxjs';
 import { AuthService } from '../auth/services/auth.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // If already logged in in memory, allow access
-  if (authService.isLoggedIn()) return true;
+  // 1. Check synchronous state first to speed up navigation
+  if (authService.isLoggedIn()) {
+    return true;
+  }
 
-  // Otherwise, wait for the background sync to finish before deciding
+  // 2. If state is unknown, sync with the server
   return authService.syncProfile().pipe(
     take(1),
     map(res => {
-      if (res && res.success) return true;
-      router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });
-      return false;
+      if (res && res.success) {
+        return true;
+      }
+
+      // 3. Not authenticated: Redirect to login with returnUrl
+      // This creates a UrlTree, which is the proper way to redirect in a guard
+      return router.createUrlTree(['/auth/login'], {
+        queryParams: { returnUrl: state.url }
+      });
+    }),
+    catchError(() => {
+      // 4. Handle API errors (like 401 Unauthorized) by redirecting to login
+      return of(router.createUrlTree(['/auth/login']));
     })
   );
-};
-
-export const guestGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-
-  if (authService.isLoggedIn()) {
-    router.navigate(['/auth/profile']);
-    return false;
-  }
-  return true;
 };

@@ -1,159 +1,330 @@
-<div class="admin-container">
-  <div class="header-row">
-    <div>
-      <h1 class="page-title">Shoot Management</h1>
-      <p class="subtitle">Review and manage photography session bookings</p>
-    </div>
-    <div class="header-actions">
-      <button
-        mat-stroked-button
-        color="primary"
-        (click)="loadAllBookings()"
-        [disabled]="isLoading"
-      >
-        <mat-icon [class.spinner]="isLoading">refresh</mat-icon>
-        {{ isLoading ? "Loading..." : "Refresh List" }}
-      </button>
-    </div>
-  </div>
-
-  @if (isLoading) {
-    <div class="loading-overlay">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </div>
-  }
-
-  <div class="table-card animate-fade-in">
-    <table mat-table [dataSource]="bookings" class="w-100">
-      <ng-container matColumnDef="client">
-        <th mat-header-cell *matHeaderCellDef>Client Details</th>
-        <td mat-cell *matCellDef="let b">
-          <div class="client-info">
-            <span class="name">{{ b.user?.name || "N/A" }}</span>
-            <span class="subtext"
-              ><i class="bi bi-envelope small"></i> {{ b.user?.email }}</span
-            >
-            <span class="subtext"
-              ><i class="bi bi-telephone small"></i> {{ b.user?.phone }}</span
-            >
+<div class="admin-wrapper bg-light min-vh-100">
+  <div class="container-fluid">
+    <div class="row justify-content-start mb-4">
+      <div class="col-12 col-xl-11">
+        <div
+          class="bg-white p-4 rounded-4 shadow-sm border d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start gap-3"
+        >
+          <div>
+            <h1 class="h2 fw-bold text-dark m-0">Shoot Management</h1>
+            <p class="text-muted m-0 small">
+              Review and manage photography session bookings
+            </p>
           </div>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="package">
-        <th mat-header-cell *matHeaderCellDef>Selected Package</th>
-        <td mat-cell *matCellDef="let b">
-          <div class="package-cell">
-            <img
-              [src]="b.package?.coverImage"
-              class="pkg-thumb"
-              alt="Package Cover"
-            />
-            <div class="pkg-info">
-              <span class="title">{{ b.package?.title }}</span
-              ><br />
-              <span class="price fw-bold">₹{{ b.package?.price | number }}</span>
-            </div>
-          </div>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="event">
-        <th mat-header-cell *matHeaderCellDef>Event & Requirements</th>
-        <td mat-cell *matCellDef="let b">
-          <div class="event-info">
-            <div class="info-item">
-              <mat-icon>event</mat-icon>
-              <span>{{ b.eventDate | date: "mediumDate" }}</span>
-            </div>
-            <div class="info-item">
-              <mat-icon>place</mat-icon>
-              <span>{{ b.eventLocation }}</span>
-            </div>
-
-            @if (b.specialRequirements) {
-              <div
-                class="requirements"
-                [matTooltip]="b.specialRequirements"
-                matTooltipPosition="above"
+          <div class="header-actions">
+            <button
+              mat-flat-button
+              color="primary"
+              class="rounded-pill px-4"
+              (click)="loadAllBookings()"
+              [disabled]="isLoading()"
+            >
+              <mat-icon class="me-2" [class.sync-spin]="isLoading()"
+                >refresh</mat-icon
               >
-                <mat-icon>note_alt</mat-icon>
-                <span>View Special Requests</span>
-              </div>
-            }
+              {{ isLoading() ? "Syncing..." : "Sync List" }}
+            </button>
           </div>
-        </td>
-      </ng-container>
+        </div>
+      </div>
+    </div>
 
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let b">
-          <span class="status-badge" [ngClass]="getStatusClass(b.status)">
-            {{ b.status }}
-          </span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let b">
-          <button
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            aria-label="Action Menu"
-          >
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #menu="matMenu" xPosition="before">
-            <button
-              mat-menu-item
-              (click)="updateStatus(b.id, 'Confirmed')"
-              [disabled]="b.status === 'Confirmed'"
-            >
-              <mat-icon color="primary">check_circle</mat-icon>
-              <span>Confirm Shoot</span>
-            </button>
-            <button
-              mat-menu-item
-              (click)="updateStatus(b.id, 'Completed')"
-              [disabled]="b.status === 'Completed'"
-            >
-              <mat-icon color="accent">task_alt</mat-icon>
-              <span>Mark Completed</span>
-            </button>
-            <button
-              mat-menu-item
-              (click)="updateStatus(b.id, 'Cancelled')"
-              [disabled]="b.status === 'Cancelled'"
-            >
-              <mat-icon color="warn">cancel</mat-icon>
-              <span>Cancel Booking</span>
-            </button>
-            <mat-divider></mat-divider>
-            <button mat-menu-item (click)="onDelete(b.id)">
-              <mat-icon class="text-danger">delete_outline</mat-icon>
-              <span>Delete Record</span>
-            </button>
-          </mat-menu>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns"
-        class="element-row"
-      ></tr>
-    </table>
-
-    @if (bookings.length === 0 && !isLoading) {
-      <div class="no-data">
-        <mat-icon>event_busy</mat-icon>
-        <p>No bookings found in the system.</p>
-        <button mat-button color="primary" (click)="loadAllBookings()">
-          Try Refreshing
-        </button>
+    @if (isLoading()) {
+      <div class="row justify-content-center mb-3">
+        <div class="col-12 col-xl-11">
+          <mat-progress-bar
+            mode="indeterminate"
+            class="rounded-pill"
+          ></mat-progress-bar>
+        </div>
       </div>
     }
+
+    <div class="row justify-content-start">
+      <div class="col-12 col-xl-11">
+        <div
+          class="d-none d-lg-block table-card bg-white shadow-sm rounded-4 overflow-hidden border"
+        >
+          <table mat-table [dataSource]="bookings()" class="w-100">
+            <ng-container matColumnDef="client">
+              <th mat-header-cell *matHeaderCellDef class="ps-4">
+                Client Details
+              </th>
+              <td mat-cell *matCellDef="let b" class="ps-4">
+                <div class="py-3">
+                  <span class="d-block fw-bold text-dark">{{
+                    b.user?.name || "N/A"
+                  }}</span>
+                  <span class="d-block text-muted smaller"
+                    ><i class="bi bi-envelope me-1"></i
+                    >{{ b.user?.email }}</span
+                  >
+                  <span class="d-block text-muted smaller fw-medium mt-1"
+                    ><i class="bi bi-phone me-1"></i>{{ b.user?.phone }}</span
+                  >
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="package">
+              <th mat-header-cell *matHeaderCellDef>Selected Package</th>
+              <td mat-cell *matCellDef="let b">
+                <div class="d-flex align-items-center gap-3">
+                  <img
+                    [src]="b.package?.coverImage"
+                    class="rounded-3 border shadow-sm"
+                    width="45"
+                    height="45"
+                    style="object-fit: cover"
+                  />
+                  <div>
+                    <span class="d-block fw-bold small text-dark">{{
+                      b.package?.title
+                    }}</span>
+                    <span class="text-primary fw-bold smaller"
+                      >₹{{ b.package?.price | number }}</span
+                    >
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="event">
+              <th mat-header-cell *matHeaderCellDef>Event & Location</th>
+              <td mat-cell *matCellDef="let b">
+                <div class="smaller text-muted">
+                  <div class="mb-1">
+                    <mat-icon class="fs-6 align-middle text-secondary"
+                      >calendar_today</mat-icon
+                    >
+                    {{ b.eventDate | date: "mediumDate" }}
+                  </div>
+                  <div
+                    class="text-truncate d-block"
+                    style="max-width: 180px"
+                    [matTooltip]="b.eventLocation"
+                  >
+                    <mat-icon class="fs-6 align-middle text-secondary"
+                      >location_on</mat-icon
+                    >
+                    {{ b.eventLocation }}
+                  </div>
+                  <div
+                    class="d-flex align-items-center mt-2 bg-light p-2 rounded-3 border-dashed"
+                    style="max-width: 280px"
+                    [matTooltip]="b.specialRequirements"
+                    matTooltipPosition="above"
+                  >
+                    <mat-icon
+                      class="fs-6 align-middle text-primary me-2"
+                      style="min-width: 18px"
+                    >
+                      description
+                    </mat-icon>
+
+                    <span
+                      class="text-truncate d-block smaller text-dark fw-medium"
+                    >
+                      {{ b.specialRequirements || "No special requirements" }}
+                    </span>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let b">
+                <span
+                  class="status-badge"
+                  [ngClass]="getStatusClass(b.status)"
+                  >{{ b.status }}</span
+                >
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="text-center">
+                Manage
+              </th>
+              <td mat-cell *matCellDef="let b" class="text-center">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon class="text-muted">more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" class="rounded-3 shadow-sm">
+                  <button mat-menu-item (click)="updateStatus(b.id, 'Pending')">
+                    <mat-icon class="text-warning">history</mat-icon>Set Pending
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="updateStatus(b.id, 'Confirmed')"
+                  >
+                    <mat-icon color="primary">check_circle_outline</mat-icon
+                    >Confirm Shoot
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="updateStatus(b.id, 'Completed')"
+                  >
+                    <mat-icon color="accent">task_alt</mat-icon>Mark Completed
+                  </button>
+                  <mat-divider></mat-divider>
+                  <button
+                    mat-menu-item
+                    (click)="updateStatus(b.id, 'Cancelled')"
+                    class="text-danger"
+                  >
+                    <mat-icon>block</mat-icon>Cancel Booking
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              class="table-row"
+            ></tr>
+          </table>
+        </div>
+
+        <div class="d-lg-none">
+          @for (b of bookings(); track b.id) {
+            <div
+              class="card border-0 shadow-sm rounded-4 mb-3 overflow-hidden bg-white border-start border-4"
+              [ngClass]="'border-' + b.status.toLowerCase()"
+            >
+              <div
+                class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light bg-opacity-50"
+              >
+                <span
+                  class="status-badge"
+                  [ngClass]="getStatusClass(b.status)"
+                  >{{ b.status }}</span
+                >
+                <span class="fw-bold text-primary smaller">#{{ b.id }}</span>
+              </div>
+
+              <div class="p-3">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <img
+                    [src]="b.package?.coverImage"
+                    class="rounded-4 border shadow-sm"
+                    width="65"
+                    height="65"
+                    style="object-fit: cover"
+                  />
+                  <div>
+                    <h6 class="m-0 fw-bold text-dark">
+                      {{ b.package?.title }}
+                    </h6>
+                    <p class="m-0 text-primary fw-bold small">
+                      ₹{{ b.package?.price | number }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 mb-3 border border-light">
+                  <div class="small fw-bold text-dark mb-1">
+                    {{ b.user?.name }}
+                  </div>
+                  <div class="smaller text-muted mb-1">
+                    <i class="bi bi-envelope me-1"></i>{{ b.user?.email }}
+                  </div>
+                  <div class="smaller text-muted">
+                    <i class="bi bi-telephone me-1"></i>{{ b.user?.phone }}
+                  </div>
+                </div>
+
+                <div class="row g-0 mb-3 border-top pt-3">
+                  <div class="col-6 border-end">
+                    <div class="smaller text-muted fw-bold">EVENT DATE</div>
+                    <div class="small text-dark fw-medium">
+                      {{ b.eventDate | date: "mediumDate" }}
+                    </div>
+                  </div>
+                  <div class="col-6 ps-3">
+                    <div class="smaller text-muted fw-bold">LOCATION</div>
+                    <div class="small text-truncate text-dark fw-medium">
+                      {{ b.eventLocation }}
+                    </div>
+                  </div>
+                </div>
+
+                @if (b.specialRequirements) {
+                  <div
+                    class="bg-primary-soft p-2 rounded-3 mb-3 border border-primary border-opacity-10"
+                  >
+                    <div
+                      class="smaller fw-bold text-primary mb-1 d-flex align-items-center"
+                    >
+                      <mat-icon
+                        class="fs-6 me-1"
+                        style="height: 16px; width: 16px"
+                        >note_alt</mat-icon
+                      >
+                      SPECIAL REQUIREMENTS
+                    </div>
+                    <div class="smaller text-dark fst-italic">
+                      {{ b.specialRequirements }}
+                    </div>
+                  </div>
+                }
+
+                <div
+                  class="d-flex justify-content-between align-items-center pt-2 border-top"
+                >
+                  <div class="smaller text-muted d-flex align-items-center">
+                    <mat-icon class="fs-6 align-middle me-1">place</mat-icon>
+                    <span class="text-truncate" style="max-width: 160px">{{
+                      b.eventLocation
+                    }}</span>
+                  </div>
+                  <button
+                    mat-mini-fab
+                    color="basic"
+                    class="shadow-none border bg-white"
+                    [matMenuTriggerFor]="mMenu"
+                  >
+                    <mat-icon>settings</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              <mat-menu #mMenu="matMenu">
+                <button mat-menu-item (click)="updateStatus(b.id, 'Pending')">
+                  Set Pending
+                </button>
+                <button mat-menu-item (click)="updateStatus(b.id, 'Confirmed')">
+                  Confirm
+                </button>
+                <button mat-menu-item (click)="updateStatus(b.id, 'Completed')">
+                  Complete
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="updateStatus(b.id, 'Cancelled')"
+                  class="text-danger"
+                >
+                  Cancel
+                </button>
+              </mat-menu>
+            </div>
+          }
+        </div>
+
+        @if (bookings().length === 0 && !isLoading()) {
+          <div class="text-center py-5 bg-white rounded-4 border shadow-sm">
+            <mat-icon
+              class="text-muted opacity-25"
+              style="font-size: 60px; width: 60px; height: 60px"
+              >event_busy</mat-icon
+            >
+            <h5 class="mt-3 text-muted fw-bold">No bookings found</h5>
+          </div>
+        }
+      </div>
+    </div>
   </div>
 </div>

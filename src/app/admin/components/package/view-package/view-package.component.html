@@ -1,102 +1,176 @@
-<div class="dashboard-wrapper">
-  <div class="dashboard-header">
+<div class="dashboard-wrapper" [class.is-loading]="isLoading">
+  <header
+    class="dashboard-header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3"
+  >
     <div class="title-group">
-      <h1 class="main-title">Photography Collections</h1>
-      <p class="subtitle">
-        You have {{ packages.length }} active packages in your catalog
+      <h1 class="main-title text-dark fw-bold h3 m-0">
+        Photography Collections
+      </h1>
+      <p class="subtitle text-muted m-0 small">
+        Catalog: <strong>{{ packages.length }}</strong> active collections
       </p>
     </div>
-    <button class="add-btn" routerLink="/admin/add-package">
-      <i class="material-icons">add_a_photo</i>
+    <button
+      mat-flat-button
+      color="primary"
+      class="rounded-pill px-4 shadow-sm"
+      routerLink="/admin/add-package"
+    >
+      <mat-icon class="me-2">add_a_photo</mat-icon>
       <span>Add New Package</span>
     </button>
+  </header>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-mini-card p-3 rounded-4 border bg-white shadow-sm">
+        <small class="text-muted d-block smaller fw-bold">TOTAL ASSETS</small>
+        <span class="h4 fw-bold m-0 text-indigo">{{ packages.length }}</span>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-mini-card p-3 rounded-4 border bg-white shadow-sm">
+        <small class="text-muted d-block smaller fw-bold">STATUS</small>
+        <span class="h4 fw-bold m-0 text-success small">LIVE</span>
+      </div>
+    </div>
   </div>
 
-  <div class="stats-ribbon">
-    <div class="stat-card">
-      <span class="stat-label">Total Collections</span>
-      <span class="stat-value">{{ packages.length }}</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">Categories</span>
-      <span class="stat-value">Niche Based</span>
-    </div>
-  </div>
-
-  <div class="content-card">
-    <div class="table-container">
-      <table class="modern-table">
-        <thead>
+  <div class="content-container position-relative">
+    <div
+      class="d-none d-lg-block bg-white rounded-4 shadow-sm border overflow-hidden"
+    >
+      <table class="table table-hover align-middle mb-0 modern-table">
+        <thead class="bg-light">
           <tr>
-            <th class="col-img">Preview</th>
-            <th class="col-info">Package Details</th>
-            <th class="col-cat">Category</th>
-            <th class="col-price">Investment</th>
-            <th class="col-action">Actions</th>
+            <th class="ps-4 py-3 smaller text-muted fw-bold">PREVIEW</th>
+            <th class="py-3 smaller text-muted fw-bold">COLLECTION DETAILS</th>
+            <th class="py-3 smaller text-muted fw-bold">CATEGORY</th>
+            <th class="py-3 smaller text-muted fw-bold text-end">INVESTMENT</th>
+            <th class="py-3 smaller text-muted fw-bold text-center">ACTIONS</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let pkg of packages" class="table-row">
-            <td>
-              <div class="img-frame">
+            <td class="ps-4">
+              <div class="img-frame border rounded shadow-sm">
                 <img
                   [src]="pkg.coverImage || 'assets/placeholder.jpg'"
                   [alt]="pkg.title"
+                  class="img-fluid"
                 />
               </div>
             </td>
             <td>
-              <div class="pkg-info">
-                <span class="pkg-name">{{ pkg.title }}</span>
-                <span class="pkg-id">ID: #{{ pkg.id }}</span>
-              </div>
+              <div class="fw-bold text-dark smaller">{{ pkg.title }}</div>
+              <div class="text-muted smaller">ID: #{{ pkg.id }}</div>
             </td>
             <td>
-              <span class="cat-pill" [attr.data-category]="pkg.category">{{
-                pkg.category
+              <span class="cat-pill smaller">{{
+                pkg.category || "Niche Based"
               }}</span>
             </td>
-            <td>
-              <div class="price-box">
-                <span class="currency">₹</span>
-                <span class="amount">{{ pkg.price | number }}</span>
-              </div>
+            <td class="text-end fw-bold text-dark pe-4">
+              ₹{{ pkg.price | number }}
             </td>
             <td>
-              <div class="action-group">
+              <div class="d-flex justify-content-center gap-2">
                 <button
-                  class="icon-btn edit"
+                  mat-icon-button
+                  class="sm-btn text-primary bg-light"
                   [routerLink]="['/admin/edit-package', pkg.id]"
-                  title="Edit Package"
                 >
-                  <i class="material-icons">edit_note</i>
+                  <mat-icon>edit_note</mat-icon>
                 </button>
                 <button
-                  class="icon-btn delete"
+                  mat-icon-button
+                  class="sm-btn text-danger bg-light"
                   (click)="deletePackage(pkg.id)"
-                  title="Remove Package"
                 >
-                  <i class="material-icons">delete_outline</i>
+                  <mat-icon>delete_outline</mat-icon>
                 </button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
 
-      <div *ngIf="!isLoading && packages.length === 0" class="empty-ui">
-        <i class="material-icons">photo_library</i>
-        <h3>No packages available</h3>
-        <p>Start by adding your professional photography services here.</p>
-        <button class="outline-btn" routerLink="/admin/add-package">
-          Create First Package
-        </button>
-      </div>
-
-      <div *ngIf="isLoading" class="loading-overlay">
-        <div class="custom-loader"></div>
-        <p>Syncing gallery...</p>
+    <div class="d-lg-none">
+      <div class="row g-2">
+        <div class="col-6 col-sm-6" *ngFor="let pkg of packages">
+          <div
+            class="mobile-pkg-card h-100 bg-white rounded-4 shadow-sm border overflow-hidden d-flex flex-column"
+          >
+            <div class="card-img-box position-relative" style="height: 100px">
+              <img
+                [src]="pkg.coverImage || 'assets/placeholder.jpg'"
+                class="w-100 h-100 object-fit-cover"
+              />
+              <span
+                class="badge bg-dark bg-opacity-75 position-absolute top-0 end-0 m-2 smaller"
+                >₹{{ pkg.price | number }}</span
+              >
+            </div>
+            <div class="p-2 flex-grow-1 d-flex flex-column">
+              <div class="fw-bold text-dark text-truncate mb-1 smaller">
+                {{ pkg.title }}
+              </div>
+              <div
+                class="text-primary fw-bold text-uppercase mb-2"
+                style="font-size: 0.6rem"
+              >
+                {{ pkg.category }}
+              </div>
+              <div
+                class="d-flex justify-content-between mt-auto pt-2 border-top"
+              >
+                <button
+                  mat-icon-button
+                  class="sm-btn text-primary"
+                  [routerLink]="['/admin/edit-package', pkg.id]"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  class="sm-btn text-danger"
+                  (click)="deletePackage(pkg.id)"
+                >
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <div
+      *ngIf="!isLoading && packages.length === 0"
+      class="empty-ui text-center py-5"
+    >
+      <mat-icon
+        class="text-muted opacity-25"
+        style="font-size: 4rem; width: 4rem; height: 4rem"
+        >photo_library</mat-icon
+      >
+      <h3 class="h6 fw-bold mt-2">No collections found</h3>
+      <button
+        mat-stroked-button
+        color="primary"
+        class="rounded-pill mt-2 smaller"
+        routerLink="/admin/add-package"
+      >
+        Create Package
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="update-overlay animate-fade-in" *ngIf="isUpdating">
+  <div class="glass-loader p-3 text-center rounded-4 shadow-lg bg-white">
+    <div class="custom-loader mb-2"></div>
+    <p class="m-0 smaller fw-bold">Processing Gallery...</p>
   </div>
 </div>

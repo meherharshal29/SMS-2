@@ -1,8 +1,6 @@
-/* --- Imports --- */
 @use 'sass:color';
-/* Required for color functions */
 
-/* --- Design Tokens --- */
+/* --- Design Tokens & Variables --- */
 $primary-purple: #4318ff;
 $bg-light-blue: #f4f7fe;
 $text-dark-navy: #1b2559;
@@ -17,49 +15,43 @@ $border-color: #e0e5f2;
     font-family: 'DM Sans', sans-serif;
 }
 
-/* --- Main Layout --- */
+/* --- Main Layout Container --- */
 .dashboard-container {
-    padding: 30px;
+    padding: 24px;
     background-color: $bg-light-blue;
     min-height: 100vh;
 
     @media(max-width: 768px) {
-        padding: 15px;
+        padding: 12px;
     }
 }
 
 /* --- Header Section --- */
-.title-group {
-    h2 {
-        font-size: 24px;
-        letter-spacing: -0.5px;
-        color: $text-dark-navy;
+.btn-add {
+    border-radius: 50px !important; // Rounded pill style
+    background-color: $primary-purple !important;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba($primary-purple, 0.2);
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba($primary-purple, 0.3);
     }
 }
 
-.btn-add {
-    border-radius: 12px;
-    padding: 0 24px;
-    height: 48px;
-    font-weight: 500;
-    box-shadow: 0 4px 10px rgba($primary-purple, 0.2);
-    background-color: $primary-purple !important;
-}
-
-/* --- Search Section --- */
+/* --- Search Bar --- */
 .search-box {
     background: $white;
     padding: 10px 20px;
-    border-radius: 30px;
-    display: inline-flex;
+    border-radius: 12px;
+    display: flex;
     align-items: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-    width: 100%;
-    max-width: 400px;
-    transition: box-shadow 0.2s;
+    transition: all 0.3s ease;
 
     &:focus-within {
-        box-shadow: 0 4px 20px rgba($primary-purple, 0.15);
+        border-color: $primary-purple;
+        box-shadow: 0 4px 20px rgba($primary-purple, 0.1);
     }
 
     mat-icon {
@@ -80,120 +72,148 @@ $border-color: #e0e5f2;
     }
 }
 
-/* --- Table Card --- */
+/* --- Desktop Table Design --- */
 .custom-table-card {
     background: $white;
     border-radius: 20px;
     overflow: hidden;
     border: none;
-}
 
-/* --- Angular Material Table Overrides --- */
-table.mat-mdc-table {
-    background: transparent;
+    .product-img {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
 
-    /* Header */
-    tr.mat-mdc-header-row {
-        background: #f7f9fb !important;
-        height: 50px;
-
+    table.mat-mdc-table {
         th.mat-mdc-header-cell {
+            background: #f7f9fb;
             color: $text-muted;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid $border-color;
-            padding-top: 15px;
-            padding-bottom: 15px;
+            padding: 16px !important;
         }
-    }
 
-    /* Rows */
-    tr.mat-mdc-row {
-        height: 80px;
-        transition: all 0.2s ease;
-        cursor: pointer;
+        td.mat-mdc-cell {
+            padding: 12px 16px !important;
+            border-bottom: 1px solid $border-color;
+        }
 
-        &:hover {
-            background-color: rgba($primary-purple, 0.02);
+        tr.element-row {
+            cursor: pointer;
+            transition: background 0.2s;
 
-            .action-btn {
-                opacity: 1;
+            &:hover {
+                background-color: rgba($primary-purple, 0.02);
+            }
+
+            &.expanded-row {
+                background-color: rgba($primary-purple, 0.04);
             }
         }
+    }
+}
 
-        &.expanded-row {
-            background-color: rgba($primary-purple, 0.03);
+/* --- Mobile Card Stack --- */
+.mobile-camera-card {
+    border: 1px solid $border-color;
+    transition: transform 0.2s ease;
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    .mobile-img {
+        width: 65px;
+        height: 65px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+}
+
+/* --- Expansion & Technical Details --- */
+.example-element-detail {
+    display: block; // Vertical flow for responsiveness
+    overflow: hidden;
+}
+
+.detail-container {
+    background-color: #fafbff;
+    border-bottom: 1px solid $border-color;
+    box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.05);
+
+    .detail-header {
+        font-size: 13px;
+        text-transform: uppercase;
+        font-weight: 800;
+        color: $text-dark-navy;
+        margin-bottom: 16px;
+        border-left: 4px solid $primary-purple;
+        padding-left: 12px;
+    }
+}
+
+.spec-item {
+    .label {
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .value {
+        font-size: 12px;
+        color: $text-dark-navy;
+    }
+}
+
+/* --- Gallery Grid --- */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+
+    .gallery-item {
+        aspect-ratio: 1 / 1;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid $border-color;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+
+            &:hover {
+                transform: scale(1.15);
+            }
         }
     }
-
-    /* Cells */
-    td.mat-mdc-cell {
-        border-bottom: 1px solid $border-color;
-        color: $text-dark-navy;
-        font-size: 14px;
-    }
 }
 
-/* --- Column Specific Styles --- */
-
-/* Image */
-.product-img {
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-    object-fit: cover;
-    border: 1px solid $border-color;
-}
-
-/* Text Colors */
-.text-dark-navy {
-    color: $text-dark-navy;
-}
-
-.price-text {
-    color: $success-green;
-}
-
-/* Badges */
+/* --- Badges & Actions --- */
 .custom-badge {
-    padding: 6px 14px;
+    padding: 5px 12px;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     display: inline-block;
 }
 
 .brand-badge {
-    background-color: $bg-light-blue;
+    background-color: rgba($primary-purple, 0.1);
     color: $primary-purple;
 }
 
 .status-active {
     background-color: rgba($success-green, 0.1);
     color: $success-green;
-
-    &::before {
-        content: '●';
-        margin-right: 6px;
-        font-size: 8px;
-    }
 }
 
-/* Action Buttons */
 .action-btn {
-    width: 35px;
-    height: 35px;
-    line-height: 35px;
-    opacity: 0.6;
-    transition: all 0.2s;
-
-    mat-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-    }
+    opacity: 0.7;
 
     &:hover {
         opacity: 1;
@@ -207,108 +227,49 @@ table.mat-mdc-table {
     &.delete-btn:hover {
         color: $error-red;
     }
+}
 
-    &.expand-btn:hover {
-        color: $text-dark-navy;
+/* --- Animations --- */
+.live-ping {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+
+    .dot {
+        background: $success-green;
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 2;
+        border: 2px solid $white;
+    }
+
+    .echo {
+        position: absolute;
+        background: $success-green;
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        animation: ping 1.5s infinite;
     }
 }
 
-/* --- Expanded Detail Section --- */
-tr.detail-row-placeholder {
-    height: 0;
-}
-
-.example-element-detail {
-    overflow: hidden;
-    display: flex;
-}
-
-.detail-container {
-    width: 100%;
-    padding: 30px 40px;
-    background-color: #fafbff;
-    box-shadow: inset 0 6px 10px -8px rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid $border-color;
-}
-
-.detail-header {
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-    color: $text-dark-navy;
-    margin-bottom: 20px;
-    border-bottom: 2px solid rgba($primary-purple, 0.1);
-    padding-bottom: 10px;
-    display: inline-block;
-}
-
-/* Specifications Grid */
-.spec-item {
-    background: $white;
-    padding: 12px 16px;
-    border-radius: 10px;
-    border: 1px solid rgba($text-muted, 0.15);
-    height: 100%;
-
-    .label {
-        display: block;
-        font-size: 10px;
-        text-transform: uppercase;
-        color: $text-muted;
-        font-weight: 700;
-        margin-bottom: 4px;
+@keyframes ping {
+    0% {
+        transform: scale(1);
+        opacity: 1;
     }
 
-    .value {
-        font-size: 14px;
-        font-weight: 600;
-        color: $text-dark-navy;
-    }
-
-    &.description {
-        background: transparent;
-        border: none;
-        padding: 0;
-
-        .value {
-            font-weight: 400;
-            line-height: 1.6;
-            /* FIXED: Replaced deprecated lighten() with color.adjust() */
-            color: color.adjust($text-dark-navy, $lightness: 20%);
-        }
+    100% {
+        transform: scale(3.5);
+        opacity: 0;
     }
 }
 
-/* Gallery Grid */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 10px;
-
-    .gallery-item {
-        aspect-ratio: 1;
-        border-radius: 8px;
-        overflow: hidden;
-        cursor: pointer;
-        border: 1px solid $border-color;
-
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-
-            &:hover {
-                transform: scale(1.1);
-            }
-        }
-    }
-}
-
-/* Bootstrap Overrides / Utilities */
-.border-start-lg {
-    @media (min-width: 992px) {
-        border-left: 1px solid $border-color;
-    }
+/* --- Utilities --- */
+.smaller {
+    font-size: 0.75rem;
 }

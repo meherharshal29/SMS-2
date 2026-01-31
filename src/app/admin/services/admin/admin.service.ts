@@ -13,13 +13,28 @@ export interface AdminUser {
   role: 'admin';
 }
 
+/** * Matches the updated Backend Controller structure 
+ * Tracks Gear Rentals and Package Bookings separately
+ */
 export interface DashboardData {
   totalRevenue: number;
-  activeRentals: number;
+  monthlyRevenue: number;         // Fixes TS2339
+  pendingPaymentRevenue: number;  // Tracks "Expected" money
   totalUsers: number;
+  totalGear: number;
   totalOrders: number;
-  onlineUsers: number;
-  cancelledCount: number;
+  rentals: {
+    confirmed: number;
+    delivered: number;
+    shipped: number;
+    pending: number;
+    cancelled: number;
+  };
+  bookings: {
+    confirmed: number;
+    pending: number;
+    cancelled: number;
+  };
 }
 
 export interface ManagedUser {
@@ -43,7 +58,6 @@ export class AdminService implements OnDestroy {
 
   private authUrl = `${environment.apiUrl}/auth/admin`;
   private adminUrl = `${environment.apiUrl}/admin`;
-
   private pollingSub?: Subscription;
 
   // --- Reactive State Management (Signals) ---
@@ -90,6 +104,7 @@ export class AdminService implements OnDestroy {
 
   private startPolling(): void {
     if (isPlatformBrowser(this.platformId) && !this.pollingSub) {
+      // Refresh analytics every 30 seconds
       this.pollingSub = interval(30000).subscribe(() => {
         if (this._isLoggedIn()) {
           this.getDashboard().subscribe();
@@ -134,6 +149,7 @@ export class AdminService implements OnDestroy {
   logout(): void {
     this.stopPolling();
 
+    // Trigger backend logout to update isOnline status
     this.http.post(`${this.adminUrl}/logout`, {}).pipe(
       catchError(() => of(null))
     ).subscribe();
@@ -153,7 +169,9 @@ export class AdminService implements OnDestroy {
   getDashboard(): Observable<any> {
     return this.http.get<any>(`${this.adminUrl}/dashboard`).pipe(
       tap(res => {
-        if (res.success) this._dashboardStats.set(res.stats);
+        if (res.success) {
+          this._dashboardStats.set(res.stats);
+        }
       }),
       catchError(() => of({ success: false }))
     );
@@ -162,7 +180,10 @@ export class AdminService implements OnDestroy {
   updateOrderStatus(orderId: number, status: string): Observable<any> {
     return this.http.put<any>(`${this.adminUrl}/order-status/${orderId}`, { status }).pipe(
       tap(res => {
-        if (res.success) this.getDashboard().subscribe();
+        // Refresh revenue and counts immediately after a status change (e.g. Delivered)
+        if (res.success) {
+          this.getDashboard().subscribe();
+        }
       })
     );
   }
@@ -171,6 +192,7 @@ export class AdminService implements OnDestroy {
     return this.http.get<any>(`${this.adminUrl}/users`).pipe(
       tap(res => {
         if (res.success) {
+          // Sort online users to the top
           const processed = res.users.sort((a: ManagedUser, b: ManagedUser) =>
             (b.isOnline === a.isOnline) ? 0 : b.isOnline ? 1 : -1
           );

@@ -1,307 +1,613 @@
+// wedding-packages.component.scss
 @use "sass:color";
 
-// --- Variables ---
+// ============================================
+// VARIABLES
+// ============================================
 $primary-dark: #010f1c;
-$accent-purple: #a78bfa; // Your Shofy purple
+$accent-purple: #a78bfa;
 $text-gray: #55585b;
+$text-light: #888;
 $white: #ffffff;
 $bg-light: #fcfcfc;
-$border-light: rgba(0, 0, 0, 0.05);
+$border-light: #e5e5e5;
+$shadow-subtle: rgba(0, 0, 0, 0.06);
 $transition: all 0.3s ease;
 
-// --- Shared Section Styles ---
-.courses-section,
+// Spacing
+$spacing-xs: 8px;
+$spacing-sm: 12px;
+$spacing-md: 20px;
+$spacing-lg: 40px;
+$spacing-xl: 60px;
+
+// Breakpoints
+$breakpoint-xs: 480px;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// ============================================
+// WEDDING SECTION - MAIN CONTAINER
+// ============================================
 .wedding-section {
-    padding: 60px 0;
-    font-family: 'Inter', sans-serif;
+    padding: $spacing-xl 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background-color: $bg-light;
 
-    .header-row {
-        margin-bottom: 40px;
-
-        .sub-title {
-            color: $accent-purple;
-            font-weight: 700;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .main-title {
-            font-size: 32px;
-            font-weight: 900;
-            color: $primary-dark;
-            line-height: 1.1;
-            letter-spacing: -1px;
-            margin-top: 5px;
-        }
-
-        .title-underline {
-            width: 50px;
-            height: 3px;
-            background: $accent-purple;
-            margin-top: 12px;
-        }
+    .container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 15px;
     }
 }
 
-// --- Common Button Styles ---
+// ============================================
+// HEADER SECTION
+// ============================================
+.header-row {
+    margin-bottom: $spacing-lg;
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: $spacing-md;
+        flex-wrap: wrap;
+    }
+
+    .title-wrapper {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .sub-title {
+        color: $accent-purple;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .main-title {
+        font-size: clamp(24px, 5vw, 32px);
+        font-weight: 900;
+        color: $primary-dark;
+        line-height: 1.2;
+        letter-spacing: -0.5px;
+        margin: 5px 0 0;
+    }
+
+    .title-underline {
+        width: 50px;
+        height: 3px;
+        background: $accent-purple;
+        margin-top: $spacing-sm;
+        border-radius: 2px;
+    }
+
+    .action-wrapper {
+        flex-shrink: 0;
+    }
+}
+
+// ============================================
+// ACTION BUTTON
+// ============================================
 .action-btn {
     padding: 10px 24px;
     border-radius: 6px;
     font-weight: 600;
     font-size: 0.9rem;
-    transition: $transition;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: $spacing-xs;
     text-decoration: none;
+    white-space: nowrap;
+    line-height: 1.5;
+    transition: opacity 0.2s ease;
 
     &.outline {
-        border: 1.5px solid #eee;
+        border: 1.5px solid $border-light;
         color: $primary-dark;
-
-        &:hover {
-            background-color: $primary-dark;
-            color: $white;
-            border-color: $primary-dark;
-        }
+        background: $white;
     }
 
-    &.outline-dark {
-        border: 2px solid $primary-dark;
-        color: $primary-dark;
+    i {
+        font-size: 1.2rem;
+    }
 
-        &:hover {
-            background-color: $primary-dark;
-            color: $white;
-        }
+    // Subtle opacity change only
+    &:active {
+        opacity: 0.7;
     }
 }
 
-// --- Wedding Minimal Card ---
+// ============================================
+// PACKAGES GRID
+// ============================================
+.packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: $spacing-lg;
+}
+
+.package-item {
+    width: 100%;
+}
+
+// ============================================
+// MINIMAL CARD - NO HOVER EFFECTS
+// ============================================
 .minimal-card {
     background: $white;
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
-    transition: $transition;
     border: 1px solid $border-light;
+    width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px $shadow-subtle;
 
-    &:hover {
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    // Only opacity change on active (tap/click)
+    &:active {
+        opacity: 0.9;
+    }
+}
 
-        .overlay {
-            opacity: 1;
+// ============================================
+// CARD IMAGE SECTION
+// ============================================
+.card-img-wrapper {
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+    position: relative;
+    background: #f5f5f5;
+
+    .card-img {
+        height: 100%;
+        width: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .category-tag {
+        position: absolute;
+        top: $spacing-sm;
+        left: $spacing-sm;
+        background: rgba($white, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: $primary-dark;
+        z-index: 2;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+}
+
+// ============================================
+// CARD INFO SECTION
+// ============================================
+.card-info {
+    padding: $spacing-md;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .package-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $primary-dark;
+        margin: 0 0 $spacing-md;
+        line-height: 1.4;
+
+        // Single line with ellipsis
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    .card-footer {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: $spacing-sm;
+    }
+
+    .price-box {
+        flex: 1;
+    }
+
+    .price-label {
+        font-size: 0.7rem;
+        color: $text-light;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .price-value {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: $accent-purple;
+        display: block;
+        line-height: 1;
+    }
+
+    .arrow-icon {
+        font-size: 1.2rem;
+        color: $text-light;
+        flex-shrink: 0;
+    }
+}
+
+// ============================================
+// EMPTY STATE
+// ============================================
+.empty-state {
+    text-align: center;
+    padding: $spacing-xl 0;
+    color: $text-gray;
+
+    i {
+        font-size: 4rem;
+        color: $text-light;
+        margin-bottom: $spacing-md;
+        opacity: 0.5;
+    }
+
+    p {
+        font-size: 1.1rem;
+        margin: 0;
+    }
+}
+
+// ============================================
+// RESPONSIVE BREAKPOINTS
+// ============================================
+
+// Extra Large Devices (1200px and up)
+@media (min-width: $breakpoint-xl) {
+    .packages-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+// Large Devices (992px to 1199px)
+@media (max-width: $breakpoint-lg ) and (min-width: $breakpoint-md) {
+    .packages-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+// Medium Devices (768px to 991px) - Tablets
+@media (max-width: $breakpoint-md ) and (min-width: $breakpoint-sm) {
+    .wedding-section {
+        padding: 50px 0;
+    }
+
+    .packages-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .card-img-wrapper {
+        height: 220px;
+    }
+
+    .header-row {
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .title-wrapper {
+            width: 100%;
+        }
+
+        .action-wrapper {
+            width: 100%;
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    }
+}
+
+// Small Devices (576px to 767px) - Large Phones
+@media (max-width: $breakpoint-sm ) and (min-width: $breakpoint-xs) {
+    .wedding-section {
+        padding: $spacing-lg 0;
+
+        .container {
+            padding: 0 20px;
+        }
+    }
+
+    .header-row {
+        margin-bottom: 30px;
+        text-align: center;
+
+        .header-content {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title-wrapper {
+            width: 100%;
+        }
+
+        .title-underline {
+            margin: $spacing-sm auto 0;
+        }
+
+        .action-wrapper {
+            width: 100%;
+            margin-top: $spacing-md;
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 12px 24px;
+            }
+        }
+    }
+
+    .packages-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .card-img-wrapper {
+        height: 200px;
+    }
+
+    .card-info {
+        padding: 16px;
+
+        .package-title {
+            font-size: 1rem;
+        }
+
+        .price-value {
+            font-size: 1.2rem;
+        }
+    }
+}
+
+// Extra Small Devices (Less than 576px) - Mobile
+@media (max-width: $breakpoint-xs ) {
+    .wedding-section {
+        padding: 30px 0;
+
+        .container {
+            padding: 0 16px;
+        }
+    }
+
+    .header-row {
+        margin-bottom: 24px;
+        text-align: center;
+
+        .header-content {
+            flex-direction: column;
+            align-items: center;
+            gap: $spacing-md;
+        }
+
+        .title-wrapper {
+            width: 100%;
+        }
+
+        .sub-title {
+            font-size: 11px;
+        }
+
+        .main-title {
+            font-size: 22px;
+            letter-spacing: -0.3px;
+        }
+
+        .title-underline {
+            margin: 10px auto 0;
+            width: 40px;
+        }
+
+        .action-wrapper {
+            width: 100%;
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 11px 20px;
+                font-size: 0.85rem;
+            }
+        }
+    }
+
+    .packages-grid {
+        grid-template-columns: 1fr;
+        gap: $spacing-md;
+    }
+
+    .card-img-wrapper {
+        height: 220px;
+
+        .category-tag {
+            font-size: 0.65rem;
+            padding: 5px 12px;
+        }
+    }
+
+    .card-info {
+        padding: 16px;
+
+        .package-title {
+            font-size: 0.95rem;
+        }
+
+        .price-label {
+            font-size: 0.65rem;
+        }
+
+        .price-value {
+            font-size: 1.15rem;
+        }
+
+        .arrow-icon {
+            font-size: 1rem;
+        }
+    }
+}
+
+// Very Small Devices (Less than 360px)
+@media (max-width: 359px) {
+    .wedding-section {
+        padding: 24px 0;
+    }
+
+    .header-row {
+        .main-title {
+            font-size: 20px;
         }
     }
 
     .card-img-wrapper {
         height: 200px;
-        overflow: hidden;
-        position: relative;
-
-        .card-img {
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            transition: transform 0.6s ease;
-        }
-
-        .category-tag {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba($white, 0.95);
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: $primary-dark;
-            z-index: 2;
-        }
-
-        .overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity $transition;
-            z-index: 1;
-
-            span {
-                color: $white;
-                border: 1px solid $white;
-                padding: 6px 14px;
-                font-size: 0.8rem;
-                border-radius: 4px;
-            }
-        }
     }
 
     .card-info {
-        padding: 20px;
-
-        h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: $primary-dark;
-            margin-bottom: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .price-label {
-            font-size: 0.7rem;
-            color: #888;
-            text-transform: uppercase;
+        .package-title {
+            font-size: 0.9rem;
         }
 
         .price-value {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: $accent-purple;
+            font-size: 1.1rem;
+        }
+    }
+
+    .action-btn {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+
+        i {
+            font-size: 1rem;
         }
     }
 }
 
-// --- Course Card ---
-.course-card {
-    background: $white;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: $transition;
-    border: 1px solid $border-light;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-
-    &:hover {
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
-    }
-
-    .image-box {
-        position: relative;
+// ============================================
+// LANDSCAPE ORIENTATION (Mobile)
+// ============================================
+@media (max-width: $breakpoint-md ) and (orientation: landscape) {
+    .card-img-wrapper {
         height: 180px;
-        overflow: hidden;
-
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .category-tag {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: $primary-dark;
-            color: $white;
-            padding: 4px 10px;
-            font-size: 10px;
-            font-weight: 700;
-            border-radius: 4px;
-        }
     }
 
-    .content-box {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-
-        .course-title {
-            font-size: 17px;
-            font-weight: 700;
-            color: $primary-dark;
-            line-height: 1.4;
-            margin-bottom: 10px;
-            min-height: 48px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .meta-row {
-            font-size: 12px;
-            color: $text-gray;
-            margin-bottom: 12px;
-            display: flex;
-            gap: 12px;
-
-            i {
-                color: $accent-purple;
-            }
-        }
-
-        .footer-row {
-            margin-top: auto;
-            padding-top: 12px;
-            border-top: 1px solid #f2f2f2;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-            .price {
-                font-size: 18px;
-                font-weight: 800;
-                color: $primary-dark;
-            }
-
-            .enroll-btn {
-                background: none;
-                border: none;
-                color: $accent-purple;
-                font-weight: 700;
-                font-size: 12px;
-                text-transform: uppercase;
-                cursor: pointer;
-
-                &:hover {
-                    color: $primary-dark;
-                }
-            }
-        }
-    }
-}
-
-// --- Global Utilities & Animations ---
-.slide-in {
-    opacity: 0;
-    animation: fadeUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-}
-
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (max-width: 767px) {
-
-    .courses-section,
     .wedding-section {
-        padding: 40px 0;
-
-        .header-row {
-            text-align: center;
-        }
-
-        .title-underline {
-            margin: 10px auto 0;
-        }
+        padding: 30px 0;
     }
+}
+
+// ============================================
+// ACCESSIBILITY
+// ============================================
+
+// Focus states for keyboard navigation
+.minimal-card:focus-visible,
+.action-btn:focus-visible {
+    outline: 3px solid $accent-purple;
+    outline-offset: 2px;
+    border-radius: 12px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+    .minimal-card {
+        border: 2px solid $primary-dark;
+    }
+
+    .action-btn.outline {
+        border-width: 2px;
+    }
+}
+
+// Reduced motion for accessibility
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
+
+// ============================================
+// PRINT STYLES
+// ============================================
+@media print {
+    .wedding-section {
+        background: $white;
+        padding: 20px 0;
+    }
+
+    .action-btn {
+        display: none;
+    }
+
+    .minimal-card {
+        break-inside: avoid;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+    }
+
+    .packages-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}
+
+// ============================================
+// DARK MODE SUPPORT (Optional)
+// ============================================
+@media (prefers-color-scheme: dark) {
+    // Uncomment if you want to support dark mode
+    /*
+  .wedding-section {
+    background-color: #1a1a1a;
+  }
+
+  .minimal-card {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+
+  .main-title,
+  .package-title {
+    color: #ffffff;
+  }
+
+  .action-btn.outline {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #ffffff;
+  }
+  */
 }

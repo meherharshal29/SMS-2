@@ -1,5 +1,6 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:5000/api', // Matches your backend server configuration 
+    // Use port 10000 to match your backend server's local configuration
+    apiUrl: 'http://localhost:10000/api',
     featureFlag: true
 };

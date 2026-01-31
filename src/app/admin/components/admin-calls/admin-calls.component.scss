@@ -1,45 +1,48 @@
-@use "sass:color"; // Import the color module
+@use "sass:color";
 
-// Variables
-$primary: #8b5cf6;
+$primary: #6366f1;
 $success: #10b981;
 $danger: #ef4444;
 $warning: #f59e0b;
-
-.card {
-    background: #ffffff;
-}
 
 .smaller {
     font-size: 0.75rem;
 }
 
-// ============================================
-// STATUS BADGES (Soft Theme - Updated Logic)
-// ============================================
+// --- Status Badge Logic ---
 .status-badge {
-    padding: 6px 14px;
+    padding: 6px 12px;
     border-radius: 8px;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 800;
     text-transform: uppercase;
     display: inline-block;
 
-    // We use color.adjust with a negative lightness to replace darken()
     &.pending {
-        background: rgba($warning, 0.12);
+        background: rgba($warning, 0.1);
         color: color.adjust($warning, $lightness: -15%);
     }
 
     &.called {
-        background: rgba($success, 0.12);
+        background: rgba($success, 0.1);
         color: color.adjust($success, $lightness: -15%);
     }
 
     &.cancelled {
-        background: rgba($danger, 0.12);
+        background: rgba($danger, 0.1);
         color: color.adjust($danger, $lightness: -15%);
     }
+}
+
+// --- Table Customization ---
+.mat-mdc-header-cell {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    padding: 16px !important;
 }
 
 .subject-tag {
@@ -47,27 +50,25 @@ $warning: #f59e0b;
     color: #475569;
     padding: 4px 10px;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
-// ============================================
-// MATERIAL TABLE OVERRIDES
-// ============================================
-.mat-mdc-header-cell {
-    background: #f8fafc;
-    color: #64748b;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
+// --- Responsive Borders ---
+.border-success {
+    border-left-color: $success !important;
 }
 
-.mat-mdc-row:hover {
-    background-color: #fcfcfc;
+.border-warning {
+    border-left-color: $warning !important;
 }
 
-// Custom helper for the Refresh button container
-.bg-primary-soft {
-    background: rgba($primary, 0.1);
+.card {
+    transition: transform 0.2s;
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 10px;
+    }
 }

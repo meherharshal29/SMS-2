@@ -1,66 +1,75 @@
-<section class="rental-catalog py-5">
+<section class="rental-catalog">
   <div class="container">
-    <div class="row mb-5 justify-content-center">
-      <div class="col-lg-8 text-center">
+    <!-- Header Section -->
+    <div class="catalog-header">
+      <div class="header-content">
         <p class="sub-title">PREMIUM GEAR</p>
         <h2 class="main-title">Full Rental Collection</h2>
         <div class="title-underline"></div>
       </div>
     </div>
 
-    <div class="row mb-5">
-      <div class="col-12">
-        <div class="filter-wrapper">
-          <div class="filter-scroll">
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <div class="filter-wrapper">
+        <div class="filter-scroll">
+          <button
+            class="filter-tab"
+            [class.active]="selectedCategory() === null"
+            (click)="loadGear(null)"
+          >
+            All Gear
+          </button>
+          @for (cat of categories(); track cat.id) {
             <button
               class="filter-tab"
-              [class.active]="selectedCategory() === null"
-              (click)="loadGear(null)"
+              [class.active]="selectedCategory() === cat.id"
+              (click)="loadGear(cat.id)"
             >
-              All Gear
+              {{ cat.name }}
             </button>
-            @for (cat of categories(); track cat.id) {
-              <button
-                class="filter-tab"
-                [class.active]="selectedCategory() === cat.id"
-                (click)="loadGear(cat.id)"
-              >
-                {{ cat.name }}
-              </button>
-            }
-          </div>
+          }
         </div>
       </div>
     </div>
 
-    <div class="row g-4 transition-fade">
+    <!-- Products Grid -->
+    <div class="products-grid">
       @if (isLoading()) {
+        <!-- Skeleton Loader -->
         @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <div class="grid-item">
             <div class="skeleton-card">
               <div class="skeleton-image shimmer"></div>
-              <div class="skeleton-brand shimmer"></div>
-              <div class="skeleton-name shimmer"></div>
-              <div class="skeleton-footer">
-                <div class="skeleton-price shimmer"></div>
-                <div class="skeleton-button shimmer"></div>
+              <div class="skeleton-content">
+                <div class="skeleton-brand shimmer"></div>
+                <div class="skeleton-name shimmer"></div>
+                <div class="skeleton-footer">
+                  <div class="skeleton-price shimmer"></div>
+                  <div class="skeleton-button shimmer"></div>
+                </div>
               </div>
             </div>
           </div>
         }
-
       } @else {
+        <!-- Product Cards -->
         @for (item of rentals(); track item.id) {
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="product-card">
+          <div class="grid-item">
+            <article class="product-card">
               <div class="image-wrapper" [routerLink]="['/camera', item.id]">
-                <button class="wishlist-btn" (click)="onWishlist($event, item)">
+                <button
+                  class="wishlist-btn"
+                  (click)="onWishlist($event, item)"
+                  aria-label="Add to wishlist"
+                >
                   <i class="bi bi-heart-fill"></i>
                 </button>
                 <img
                   [src]="getPrimaryImage(item)"
                   [alt]="item.name"
                   class="product-img-cover"
+                  loading="lazy"
                 />
                 <div
                   class="cart-text-overlay"
@@ -70,7 +79,7 @@
                 </div>
               </div>
 
-              <div class="product-details pt-3">
+              <div class="product-details">
                 <span class="brand-label">{{ item.brand | uppercase }}</span>
                 <h3 class="product-name" [routerLink]="['/camera', item.id]">
                   {{ item.name }}
@@ -85,23 +94,24 @@
                   <button
                     class="icon-cart-btn"
                     (click)="onAddToCart($event, item)"
+                    aria-label="Add to cart"
                   >
                     <i class="bi bi-cart-plus"></i>
                   </button>
                 </div>
               </div>
-            </div>
+            </article>
           </div>
-
         } @empty {
-          <div class="col-12 text-center py-5">
-            <div class="no-results">
-              <i class="bi bi-search mb-3 d-block display-4 text-muted"></i>
-              <p class="text-muted">No items found in this category.</p>
-              <button
-                class="btn btn-outline-dark mt-2"
-                (click)="loadGear(null)"
-              >
+          <!-- Empty State -->
+          <div class="empty-state">
+            <div class="empty-content">
+              <i class="bi bi-search empty-icon"></i>
+              <h3 class="empty-title">No items found</h3>
+              <p class="empty-description">
+                No products match your selected category.
+              </p>
+              <button class="btn-clear-filters" (click)="loadGear(null)">
                 Clear Filters
               </button>
             </div>

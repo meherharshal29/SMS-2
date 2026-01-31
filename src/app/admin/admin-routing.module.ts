@@ -25,6 +25,8 @@ import { adminGuard } from '../guard/admin-auth.guard';
 import { AdminBookingsComponent } from './components/shoot/admin-booking/admin-booking.component';
 import { AdminCallsComponent } from './components/admin-calls/admin-calls.component';
 import { AdminNewsletterComponent } from './components/admin-newsletter/admin-newsletter/admin-newsletter.component';
+import { AdminGalleryComponent } from './components/admin-gallery/admin-gallery.component';
+import { HeroManagementComponent } from './components/hero-management/hero-management.component';
 
 const routes: Routes = [
   {
@@ -118,6 +120,8 @@ const routes: Routes = [
         title: 'Newsletter | Admin'
 
       },
+      { path: 'admin-gallary', component: AdminGalleryComponent },
+      { path: 'admin-hero', component: HeroManagementComponent },
 
 
       // --- Default Redirect ---

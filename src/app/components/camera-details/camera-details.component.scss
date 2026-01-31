@@ -8,7 +8,7 @@ $dark: #1d1d1f;
 $gray-text: #86868b;
 $border-color: #d2d2d7;
 $bg-light: #f5f5f7;
-$gold: #ffb400; // Classic Golden Color
+$gold: #ffb400; // Professional Golden Yellow
 $white: #ffffff;
 $shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -42,7 +42,7 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 }
 
-.breadcrumb {
+.custom-breadcrumb {
     margin-bottom: 30px;
     font-size: 14px;
     font-weight: 500;
@@ -56,12 +56,7 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
     }
 
-    .sep {
-        margin: 0 10px;
-        color: $gray-text;
-    }
-
-    .current {
+    .breadcrumb-item.active {
         color: $gray-text;
     }
 }
@@ -84,32 +79,24 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 .gallery-column {
     .main-frame {
         position: relative;
-        background: $bg-light;
+        background: #ffffff;
         border-radius: 24px;
         overflow: hidden;
-        aspect-ratio: 4/3;
+        height: 500px;
         display: flex;
         align-items: center;
         justify-content: center;
+        border: 1px solid #f0f0f2;
 
-        .img-main {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            transition: transform 0.5s ease;
+        @media (max-width: 768px) {
+            height: 350px;
         }
 
-        .status-badge {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba($white, 0.9);
-            color: $success;
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        .img-main {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain; // Ensures camera is fully visible without cropping
+            transition: transform 0.5s ease;
         }
     }
 
@@ -117,10 +104,18 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         gap: 12px;
         margin-top: 20px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        scrollbar-width: none; // Hide for clean look
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
 
         .thumb-item {
             width: 80px;
             height: 80px;
+            flex-shrink: 0;
             border-radius: 12px;
             border: 2px solid transparent;
             overflow: hidden;
@@ -142,84 +137,28 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 }
 
+/* ==========================================================================
+   PRODUCT INFO
+   ========================================================================== */
 .info-column {
-    .brand-label {
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: $gray-text;
-        font-weight: 600;
-        font-size: 13px;
-    }
-
-    .product-title {
-        font-size: 42px;
-        font-weight: 700;
-        margin: 8px 0 20px;
-        letter-spacing: -1px;
+    .ls-1 {
+        letter-spacing: 1px;
     }
 
     .price-box {
         background: $bg-light;
         padding: 24px;
         border-radius: 18px;
-        margin-bottom: 40px;
-
-        .price-tag {
-            font-size: 36px;
-            font-weight: 700;
-
-            .currency {
-                font-size: 20px;
-                vertical-align: super;
-                margin-right: 4px;
-            }
-
-            .period {
-                font-size: 16px;
-                color: $gray-text;
-                font-weight: 400;
-            }
-        }
-
-        .security-note {
-            font-size: 13px;
-            color: $gray-text;
-            margin-top: 8px;
-        }
+        margin-bottom: 30px;
     }
 
-    .cta-actions {
-        display: flex;
-        gap: 15px;
-
+    .cta-group {
         button {
-            flex: 1;
-            padding: 18px;
-            border-radius: 14px;
-            font-weight: 600;
-            cursor: pointer;
             transition: $transition-smooth;
-        }
-
-        .btn-primary {
-            background: $primary;
-            color: $white;
-            border: none;
 
             &:hover:not(:disabled) {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 15px rgba($primary, 0.3);
             }
-
-            &:disabled {
-                background: $border-color;
-                cursor: not-allowed;
-            }
-        }
-
-        .btn-secondary {
-            background: $white;
-            border: 1px solid $border-color;
         }
     }
 }
@@ -228,32 +167,14 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
    TECHNICAL SPECIFICATIONS
    ========================================================================== */
 .specs-section {
-    padding: 80px 0;
-    border-top: 1px solid $border-color;
+    .spec-card {
+        transition: $transition-smooth;
+        border: 1px solid transparent;
 
-    .specs-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 24px;
-
-        .spec-card {
-            padding: 24px;
-            background: $bg-light;
-            border-radius: 20px;
-
-            .spec-label {
-                font-size: 12px;
-                color: $gray-text;
-                text-transform: uppercase;
-                display: block;
-                margin-bottom: 8px;
-            }
-
-            .spec-value {
-                font-size: 18px;
-                font-weight: 600;
-                color: $dark;
-            }
+        &:hover {
+            background: #ffffff !important;
+            border-color: $border-color;
+            box-shadow: $shadow;
         }
     }
 }
@@ -261,158 +182,63 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 /* ==========================================================================
    REVIEWS & GOLDEN STAR SELECTION
    ========================================================================== */
-.reviews-section {
-    padding: 80px 0;
-    border-top: 1px solid $border-color;
+.stars-static span {
+    color: #e5e5e7;
 
-    .reviews-layout {
-        display: grid;
-        grid-template-columns: 380px 1fr;
-        gap: 60px;
-
-        @media (max-width: 992px) {
-            grid-template-columns: 1fr;
-        }
+    &.fill {
+        color: $gold;
     }
 }
 
 .review-form-card {
-    padding: 32px;
-    border-radius: 24px;
-    background: $white;
-    border: 1px solid $border-color;
-    height: fit-content;
+    .star-label {
+        color: #e5e5e7;
+        cursor: pointer;
+        transition: color 0.2s;
+        padding: 0 2px;
+    }
 
+    // Golden star hover logic
     .stars-interactive {
         display: flex;
-        flex-direction: row-reverse; // REQUIRED for golden highlight logic
+        flex-direction: row-reverse;
         justify-content: flex-end;
-        margin-bottom: 25px;
 
-        input {
-            display: none;
-        }
-
-        label {
-            font-size: 36px;
-            color: #e5e5e7;
-            cursor: pointer;
-            transition: color 0.2s;
-            padding: 0 4px;
-
-            // Hover and checked state logic
-            &:hover,
-            &:hover~label,
-            input:checked~label {
-                color: $gold; // Golden selected color
-            }
-        }
-    }
-
-    textarea {
-        width: 100%;
-        padding: 16px;
-        border: 1px solid $border-color;
-        border-radius: 12px;
-        min-height: 140px;
-        margin-bottom: 20px;
-        font-family: inherit;
-
-        &:focus {
-            outline: none;
-            border-color: $primary;
-        }
-    }
-
-    .btn-submit {
-        width: 100%;
-        padding: 14px;
-        background: $dark;
-        color: $white;
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        cursor: pointer;
-
-        &:hover {
-            opacity: 0.9;
+        .star-label:hover,
+        .star-label:hover~.star-label,
+        input:checked~.star-label {
+            color: $gold;
         }
     }
 }
 
 .review-item {
-    padding-bottom: 32px;
-    margin-bottom: 32px;
-    border-bottom: 1px solid #efeff4;
-
-    .review-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 16px;
-
-        .user-box {
-            display: flex;
-            gap: 16px;
-
-            .avatar {
-                width: 48px;
-                height: 48px;
-                background: $bg-light;
-                color: $primary;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 700;
-            }
-
-            .u-name {
-                font-weight: 700;
-            }
-
-            .u-date {
-                font-size: 13px;
-                color: $gray-text;
-            }
-        }
+    .avatar {
+        font-size: 14px;
+        letter-spacing: 0;
     }
 
-    .review-actions {
-        margin-top: 15px;
-        display: flex;
-        gap: 20px;
-
-        button {
-            background: none;
-            border: none;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-
-            &.edit-btn {
-                color: $primary;
-            }
-
-            &.delete-btn {
-                color: $danger;
-            }
-
-            &:hover {
-                text-decoration: underline;
-                opacity: 0.7;
-            }
-        }
+    p {
+        line-height: 1.6;
     }
 }
 
-.stars-static i {
-    color: #e5e5e7;
-    font-size: 16px;
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+.animate-fade {
+    animation: fadeIn 0.6s ease both;
+}
 
-    &.fill {
-        color: $gold;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 

@@ -12,7 +12,14 @@ import { LoaderComponent } from "../loader/loader.component";
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, FormsModule, DecimalPipe, NgxUiLoaderModule, FooterComponent, LoaderComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DecimalPipe,
+    NgxUiLoaderModule,
+    FooterComponent,
+    LoaderComponent
+  ],
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
@@ -27,20 +34,24 @@ export class CheckoutComponent implements OnInit {
   address = signal('');
   city = signal('');
   adharNo = signal('');
-  paymentMethod = signal<'upi' | 'card' | 'netbanking'>('upi');
+  // Added 'cod' and 'net_banking' to match your Service/Backend ENUM
+  paymentMethod = signal<'upi' | 'card' | 'net_banking' | 'cod'>('upi');
 
   // --- State Signals ---
   cartItems = signal<any[]>([]);
   cartSubtotal = signal<number>(0);
 
-  // --- Computed totals (GST Removed - Price is inclusive) ---
+  // --- Computed totals ---
   totalAmount = computed(() => this.cartSubtotal());
 
   ngOnInit() {
     this.loadCheckoutData();
-    this.loadUserSuggestions(); // Fetch saved Aadhaar/Address
+    this.loadUserSuggestions(); // Fetch saved Aadhaar/Address from User model
   }
 
+  /**
+   * Fetches the user's previously saved address and Aadhaar
+   */
   loadUserSuggestions() {
     this.orderService.getSuggestions().subscribe({
       next: (res) => {
@@ -49,10 +60,14 @@ export class CheckoutComponent implements OnInit {
           this.city.set(res.data.city || '');
           this.adharNo.set(res.data.adharNo || '');
         }
-      }
+      },
+      error: (err) => console.error('Error fetching suggestions', err)
     });
   }
 
+  /**
+   * Loads items currently in the user's cart
+   */
   loadCheckoutData() {
     this.cartService.getUserCart().subscribe({
       next: (res) => {
@@ -70,9 +85,13 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+  /**
+   * Validates form and submits the order
+   */
   confirmAndPay() {
-    if (!this.address() || !this.city()) {
-      this.toast.warning('Please provide shipping details');
+    // 1. Validation Logic
+    if (!this.address().trim() || !this.city().trim()) {
+      this.toast.warning('Please provide a complete shipping address');
       return;
     }
 
@@ -81,26 +100,34 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+    // 2. Start UI Loader
     this.loader.start();
 
+    // 3. Prepare Payload
     const checkoutPayload = {
-      address: this.address(),
-      city: this.city(),
+      address: this.address().trim(),
+      city: this.city().trim(),
       adharNo: this.adharNo(),
       paymentMethod: this.paymentMethod()
     };
 
+    // 4. Submit to Backend
     this.orderService.checkout(checkoutPayload).subscribe({
       next: (res) => {
         this.loader.stop();
         if (res.success) {
-          this.toast.success('Rental confirmed! Gear reserved.');
+          const successMsg = this.paymentMethod() === 'cod'
+            ? 'Order placed! Please keep cash ready for delivery.'
+            : 'Rental confirmed! Your gear is reserved.';
+
+          this.toast.success(successMsg);
           this.router.navigate(['/order-history']);
         }
       },
       error: (err) => {
         this.loader.stop();
-        this.toast.error(err.error?.message || 'Transaction failed');
+        const errorMsg = err.error?.message || 'Transaction failed. Please try again.';
+        this.toast.error(errorMsg);
       }
     });
   }
