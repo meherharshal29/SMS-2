@@ -176,6 +176,7 @@ $breakpoint-large: 1200px;
                     font-size: 17px;
                     letter-spacing: -0.5px;
                     line-height: 1.2;
+                    white-space: nowrap;
                 }
 
                 .brand-sub {
@@ -198,7 +199,6 @@ $breakpoint-large: 1200px;
         overflow-y: auto;
         overflow-x: hidden;
 
-        // Custom Scrollbar
         &::-webkit-scrollbar {
             width: 6px;
         }
@@ -216,7 +216,6 @@ $breakpoint-large: 1200px;
             }
         }
 
-        // Section Labels
         .nav-label {
             font-size: 11px;
             text-transform: uppercase;
@@ -227,7 +226,6 @@ $breakpoint-large: 1200px;
             transition: $transition;
         }
 
-        // Navigation Items
         .nav-item {
             display: flex;
             align-items: center;
@@ -257,7 +255,6 @@ $breakpoint-large: 1200px;
                 flex: 1;
             }
 
-            // Hover State
             &:hover {
                 background: rgba(255, 255, 255, 0.06);
                 color: $white;
@@ -268,7 +265,6 @@ $breakpoint-large: 1200px;
                 }
             }
 
-            // Active State
             &.active {
                 background: rgba($accent, 0.15);
                 color: $white;
@@ -290,7 +286,6 @@ $breakpoint-large: 1200px;
                 }
             }
 
-            // Parent Item (with submenu)
             &.parent {
                 .arrow {
                     margin-left: auto;
@@ -304,7 +299,6 @@ $breakpoint-large: 1200px;
             }
         }
 
-        // Submenu Container - CRITICAL FIX
         .nav-group {
             .sub-menu {
                 overflow: hidden;
@@ -314,7 +308,6 @@ $breakpoint-large: 1200px;
                 margin-left: 8px;
                 transform: translateY(-10px);
 
-                // SHOW STATE - THIS IS THE KEY FIX
                 &.show {
                     max-height: 500px;
                     opacity: 1;
@@ -446,7 +439,6 @@ $breakpoint-large: 1200px;
     margin-left: 0;
     min-height: 100vh;
 
-    // Desktop: Account for sidebar width
     @media (min-width: $breakpoint-desktop) {
         margin-left: $sidebar-w;
 
@@ -475,7 +467,6 @@ $breakpoint-large: 1200px;
             padding: 0 16px;
         }
 
-        // Left Section
         .navbar-left {
             display: flex;
             align-items: center;
@@ -493,6 +484,7 @@ $breakpoint-large: 1200px;
                 align-items: center;
                 justify-content: center;
                 transition: all 0.2s ease;
+                flex-shrink: 0;
 
                 i {
                     font-size: 24px;
@@ -509,6 +501,51 @@ $breakpoint-large: 1200px;
                 }
             }
 
+            // --- Top Navbar Brand Identity Additions ---
+            .header-brand-group {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                .header-logo-box {
+                    width: 36px;
+                    height: 36px;
+                    background: linear-gradient(135deg, $accent, $accent-hover);
+                    border-radius: 8px;
+                    color: $white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: 800;
+                    font-size: 13px;
+                    letter-spacing: -0.5px;
+                    box-shadow: 0 3px 8px rgba($accent, 0.25);
+                    flex-shrink: 0;
+                }
+
+                .header-logo-text {
+                    display: flex;
+                    flex-direction: column;
+
+                    .header-brand-main {
+                        color: $gray-900;
+                        font-weight: 700;
+                        font-size: 15px;
+                        letter-spacing: -0.3px;
+                        line-height: 1.2;
+                        white-space: nowrap;
+                    }
+
+                    .header-brand-sub {
+                        color: $accent;
+                        font-size: 9px;
+                        font-weight: 600;
+                        letter-spacing: 1px;
+                        text-transform: uppercase;
+                    }
+                }
+            }
+
             .breadcrumb {
                 display: none;
                 align-items: center;
@@ -516,8 +553,10 @@ $breakpoint-large: 1200px;
                 font-size: 14px;
                 color: $gray-500;
 
-                @media (min-width: $breakpoint-tablet) {
+                // Hidden breadcrumbs if window is constrained, shown on wider desktops
+                @media (min-width: $breakpoint-large) {
                     display: flex;
+                    margin-left: 15px;
                 }
 
                 .breadcrumb-separator {
@@ -534,7 +573,6 @@ $breakpoint-large: 1200px;
             }
         }
 
-        // Right Section
         .navbar-right {
             .admin-badge {
                 display: flex;

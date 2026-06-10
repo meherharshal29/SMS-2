@@ -19,7 +19,7 @@ $shadow-soft: 0px 4px 15px rgba(0, 0, 0, 0.05);
    ========================================================================== */
 .dashboard-wrapper {
     min-height: 100vh;
-    padding: 1rem; // Minimal padding to remove extra space
+    padding: 1rem;
     background-color: $bg-main;
     font-family: 'Inter', system-ui, sans-serif;
 
@@ -42,7 +42,7 @@ $shadow-soft: 0px 4px 15px rgba(0, 0, 0, 0.05);
    ========================================================================== */
 .metrics-grid {
     display: grid;
-    gap: 12px; // Tight gap for compact view
+    gap: 12px;
     grid-template-columns: repeat(4, 1fr);
 
     @media (max-width: 1200px) {
@@ -50,7 +50,7 @@ $shadow-soft: 0px 4px 15px rgba(0, 0, 0, 0.05);
     }
 
     @media (max-width: 600px) {
-        grid-template-columns: repeat(2, 1fr); // Maintains 2-column grid on mobile
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -93,6 +93,11 @@ $shadow-soft: 0px 4px 15px rgba(0, 0, 0, 0.05);
         font-weight: 800;
         margin: 0;
         letter-spacing: -0.5px;
+    }
+
+    &.box-purple {
+        background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+        color: #2e3a59;
     }
 
     &.box-blue {
@@ -187,6 +192,13 @@ $shadow-soft: 0px 4px 15px rgba(0, 0, 0, 0.05);
         background: #fef3c7;
         color: #92400e;
     }
+
+    // Matches back to system backend design specs
+    &.status-returned {
+        background-color: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+    }
 }
 
 /* ==========================================================================
@@ -233,7 +245,7 @@ $shadow-soft: 0px 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .flash-success {
-    animation: rowFlash 2.5s forwards; // Flash effect for updates
+    animation: rowFlash 2.5s forwards;
 }
 
 @keyframes rowFlash {

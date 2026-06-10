@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://sms-app-a5ar.onrender.com/api', // Your live Render URL
+    apiUrl: 'https://be-sms-2.onrender.com/api', 
     featureFlag: true
 };

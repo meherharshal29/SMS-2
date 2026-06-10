@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './auth/interceptors/auth.interceptor';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+// import { environment } from '../environments/environment'; // Suggested: create an environment file
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,19 +23,18 @@ export const appConfig: ApplicationConfig = {
 
     provideHttpClient(
       withFetch(),
-      withInterceptors([authInterceptor]) // Registering the functional interceptor
+      withInterceptors([authInterceptor])
     ),
 
     provideAnimations(),
     provideToastr({
-      timeOut: 1500, // Slightly longer to appreciate the animation
+      timeOut: 1500,
       positionClass: 'toast-top-right',
       progressBar: true,
       newestOnTop: true,
       preventDuplicates: true,
       easing: 'ease-in-out',
       easeTime: 300,
-      // This allows the CSS to target the classes correctly
       toastClass: 'ngx-toastr',
       iconClasses: {
         error: 'toast-error',
@@ -45,7 +44,7 @@ export const appConfig: ApplicationConfig = {
       },
     }),
 
-    // Correcting the Image Loader Provider syntax
+    // FIX: Updated to handle Production URLs
     {
       provide: IMAGE_LOADER,
       useValue: (config: ImageLoaderConfig) => {
@@ -53,7 +52,9 @@ export const appConfig: ApplicationConfig = {
         if (src.startsWith('http')) {
           return src;
         }
-        return `http://localhost:5000/uploads/${src}`;
+        // Use a relative path or an environment variable so it works on Render
+        // Example: `https://sms-app-a5ar.onrender.com/uploads/${src}`
+        return `/uploads/${src}`;
       }
     },
 
@@ -69,6 +70,9 @@ export const appConfig: ApplicationConfig = {
 
     provideLottieOptions({
       player: () => import('lottie-web')
-    }), provideClientHydration(withEventReplay())
+    }),
+
+    // REMOVED: provideClientHydration(withEventReplay()) 
+    // This was causing the "ErrorEvent is not defined" error during build.
   ]
 };

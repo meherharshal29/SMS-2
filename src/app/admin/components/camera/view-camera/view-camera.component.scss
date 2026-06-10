@@ -1,6 +1,6 @@
 @use 'sass:color';
 
-/* --- Design Tokens & Variables --- */
+/* --- Design Tokens & Cinematic Variables --- */
 $primary-purple: #4318ff;
 $bg-light-blue: #f4f7fe;
 $text-dark-navy: #1b2559;
@@ -9,30 +9,78 @@ $success-green: #05cd99;
 $error-red: #ee5d50;
 $white: #ffffff;
 $border-color: #e0e5f2;
+$transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
 :host {
     display: block;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background-color: $bg-light-blue;
+    width: 100%;
 }
 
-/* --- Main Layout Container --- */
-.dashboard-container {
-    padding: 24px;
-    background-color: $bg-light-blue;
+/* --- Outer Main Content Wrapper --- */
+.dashboard-wrapper {
     min-height: 100vh;
+    background-color: $bg-light-blue;
+    width: 100%;
+}
 
-    @media(max-width: 768px) {
-        padding: 12px;
+/* --- Centered Layout Bounding Box Container --- */
+.dashboard-container {
+    padding: 32px 24px;
+    background-color: $bg-light-blue;
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    // Smooth intermediate tablet scaling rule logic
+    @media (max-width: 992px) {
+        padding: 24px 20px;
+        gap: 20px;
+    }
+
+    // High Density Mobile scaling rules configuration
+    @media (max-width: 768px) {
+        padding: 16px 12px; // Drop horizontal margins on ultra-narrow screens to gain maximum structural real estate
+        gap: 16px;
+        max-width: 100%;
     }
 }
 
 /* --- Header Section --- */
+.dashboard-header {
+    width: 100%;
+
+    .title-group h2 {
+        font-size: 24px;
+        letter-spacing: -0.5px;
+        color: $text-dark-navy;
+        font-weight: 800;
+
+        @media (max-width: 480px) {
+            font-size: 20px; // Drop title sizing gracefully on tiny mobile views
+        }
+    }
+}
+
 .btn-add {
-    border-radius: 50px !important; // Rounded pill style
+    border-radius: 12px !important;
     background-color: $primary-purple !important;
-    font-weight: 600;
-    box-shadow: 0 10px 20px rgba($primary-purple, 0.2);
-    transition: transform 0.2s ease;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.2px;
+    padding: 0 24px !important;
+    height: 48px !important;
+    width: 100%; // Spans clean edge-to-edge on block stacking lines layout rules
+    box-shadow: 0 10px 20px rgba($primary-purple, 0.15);
+    transition: all 0.25s $transition-smooth;
+
+    @media (min-width: 768px) {
+        width: auto; // Collapses inline cleanly only on tablet up configurations
+    }
 
     &:hover {
         transform: translateY(-2px);
@@ -40,23 +88,40 @@ $border-color: #e0e5f2;
     }
 }
 
-/* --- Search Bar --- */
+/* --- Search Field Container --- */
+.search-section {
+    width: 100%;
+}
+
 .search-box {
     background: $white;
-    padding: 10px 20px;
-    border-radius: 12px;
+    padding: 14px 20px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
-    transition: all 0.3s ease;
+    border: 1px solid rgba($border-color, 0.5) !important;
+    transition: all 0.3s $transition-smooth;
+
+    @media (max-width: 480px) {
+        padding: 12px 14px; // Compact interior padding targets
+    }
 
     &:focus-within {
-        border-color: $primary-purple;
-        box-shadow: 0 4px 20px rgba($primary-purple, 0.1);
+        border-color: rgba($primary-purple, 0.4) !important;
+        box-shadow: 0 10px 30px rgba($primary-purple, 0.05) !important;
     }
 
     mat-icon {
-        color: $text-muted;
+        color: $text-dark-navy;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
         margin-right: 12px;
+        opacity: 0.6;
+
+        @media (max-width: 360px) {
+            margin-right: 8px; // Prevent icon push rules from dropping layout sizes
+        }
     }
 
     input {
@@ -65,158 +130,292 @@ $border-color: #e0e5f2;
         width: 100%;
         color: $text-dark-navy;
         font-size: 14px;
-
-        &::placeholder {
-            color: $text-muted;
-        }
+        font-weight: 500;
+        background: transparent;
     }
 }
 
-/* --- Desktop Table Design --- */
+/* --- Desktop Pro Data Table Grid --- */
 .custom-table-card {
     background: $white;
     border-radius: 20px;
     overflow: hidden;
-    border: none;
+    border: 1px solid rgba($border-color, 0.6);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.02) !important;
 
     .product-img {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
         object-fit: cover;
+        border: 1px solid rgba($border-color, 0.4);
     }
 
     table.mat-mdc-table {
+        background: transparent;
+
         th.mat-mdc-header-cell {
             background: #f7f9fb;
             color: $text-muted;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
             padding: 16px !important;
         }
 
         td.mat-mdc-cell {
-            padding: 12px 16px !important;
-            border-bottom: 1px solid $border-color;
+            padding: 14px 16px !important;
+            border-bottom: 1px solid rgba($border-color, 0.7);
         }
 
         tr.element-row {
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background-color 0.2s $transition-smooth;
 
             &:hover {
-                background-color: rgba($primary-purple, 0.02);
+                background-color: rgba($primary-purple, 0.01);
             }
 
             &.expanded-row {
-                background-color: rgba($primary-purple, 0.04);
+                background-color: #fafbff;
             }
         }
     }
 }
 
-/* --- Mobile Card Stack --- */
-.mobile-camera-card {
-    border: 1px solid $border-color;
-    transition: transform 0.2s ease;
+/* --- 📱 Mobile Bento View Stack (All Screens Fluidity Engine) --- */
+.mobile-cards-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
 
-    &:active {
-        transform: scale(0.98);
-    }
+    .mobile-camera-card {
+        border-radius: 16px !important; // Slightly sharper corner distributions fits tight mobile matrices cleanly
+        border: 1px solid rgba($border-color, 0.5);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01) !important;
+        transition: all 0.3s $transition-smooth;
+        width: 100%;
+        overflow: hidden;
 
-    .mobile-img {
-        width: 65px;
-        height: 65px;
-        object-fit: cover;
-        flex-shrink: 0;
+        &.card-open {
+            box-shadow: 0 15px 35px rgba($text-dark-navy, 0.05) !important;
+            border-color: rgba($primary-purple, 0.15);
+        }
+
+        .interactive-header {
+            padding: 14px !important; // Dynamically fluid interior spacing boundaries 
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+
+            @media (max-width: 360px) {
+                padding: 10px !important; // Maximum optimization threshold layout parameters for iPhone SE/Mini variants
+                gap: 10px;
+            }
+        }
+
+        .mobile-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px !important;
+            flex-shrink: 0; // Absolute safety rule layout prevent image distortions
+            border: 1px solid rgba($border-color, 0.4);
+
+            @media (max-width: 360px) {
+                width: 52px; // Scale down image size safely on narrow widths
+                height: 52px;
+            }
+        }
+
+        .mobile-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: $text-dark-navy;
+            line-height: 1.3;
+            margin-bottom: 2px;
+
+            // Forces programmatic multi-line truncation safety thresholds instead of hard horizontal spill
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal;
+
+            @media (max-width: 360px) {
+                font-size: 13px; // Clean fluid micro typography
+            }
+        }
+
+        .mobile-chevron-btn {
+            color: $text-muted;
+            transition: transform 0.3s $transition-smooth;
+            flex-shrink: 0; // Lock structural scaling rules
+            margin-left: auto; // Shifts icon layout boundaries cleanly to right margin bounding frames
+
+            &.rotated {
+                transform: rotate(180deg);
+                color: $primary-purple;
+            }
+        }
+
+        .bg-expanded-light {
+            background-color: #fafbff;
+        }
+
+        .mobile-action-row {
+            margin-top: 0px;
+            padding: 12px !important;
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .mobile-btn {
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 12px !important; // Matches profile card geometry frameworks cleanly
+            height: 40px !important;
+            flex-grow: 1;
+            width: 50%;
+
+            @media (max-width: 360px) {
+                font-size: 11px;
+                height: 36px !important;
+            }
+        }
     }
 }
 
-/* --- Expansion & Technical Details --- */
-.example-element-detail {
-    display: block; // Vertical flow for responsiveness
+/* --- Core Specs Layout Expansion Nodes --- */
+.expanded-detail-td {
+    padding: 0 !important;
+}
+
+.expansion-wrapper {
     overflow: hidden;
+    display: block;
+    width: 100%;
 }
 
 .detail-container {
     background-color: #fafbff;
-    border-bottom: 1px solid $border-color;
-    box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.05);
+    width: 100%;
 
     .detail-header {
-        font-size: 13px;
+        font-size: 11px;
         text-transform: uppercase;
         font-weight: 800;
         color: $text-dark-navy;
-        margin-bottom: 16px;
-        border-left: 4px solid $primary-purple;
-        padding-left: 12px;
-    }
-}
-
-.spec-item {
-    .label {
-        font-size: 10px;
+        margin-bottom: 12px;
+        border-left: 3px solid $primary-purple;
+        padding-left: 8px;
         letter-spacing: 0.5px;
     }
-
-    .value {
-        font-size: 12px;
-        color: $text-dark-navy;
-    }
 }
 
-/* --- Gallery Grid --- */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 10px;
+.spec-bento-grid {
+    width: 100%;
 
-    .gallery-item {
-        aspect-ratio: 1 / 1;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid $border-color;
-
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-
-            &:hover {
-                transform: scale(1.15);
-            }
+    // Enforces smooth micro column flow wrap states safely across layout grids
+    @media (max-width: 400px) {
+        .col-6 {
+            width: 100% !important; // Force text components blocks stack safely if cell values overflow
         }
     }
 }
 
-/* --- Badges & Actions --- */
-.custom-badge {
-    padding: 5px 12px;
-    border-radius: 8px;
+.spec-item {
+    width: 100%;
+
+    .label {
+        font-size: 9px;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .value {
+        font-size: 13px;
+        color: $text-dark-navy;
+        word-break: break-word; // Prevents specs layout container leakage
+    }
+}
+
+/* --- Media Gallery Sub-systems --- */
+.gallery-count-badge {
     font-size: 11px;
+    background: rgba($primary-purple, 0.08);
+    color: $primary-purple;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 8px;
+    width: 100%;
+
+    @media (max-width: 480px) {
+        grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); // Dynamic responsive packing matrices grid adjustments
+        gap: 6px;
+    }
+
+    .gallery-item img.gallery-zoom {
+        transition: transform 0.4s $transition-smooth;
+
+        &:hover {
+            transform: scale(1.12);
+        }
+    }
+}
+
+/* --- Badges & Action States --- */
+.custom-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 9px;
     font-weight: 700;
     display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+
+    &.mini {
+        padding: 2px 5px;
+        font-size: 8px;
+        border-radius: 4px;
+    }
 }
 
 .brand-badge {
-    background-color: rgba($primary-purple, 0.1);
+    background-color: rgba($primary-purple, 0.07);
     color: $primary-purple;
 }
 
 .status-active {
-    background-color: rgba($success-green, 0.1);
+    background-color: rgba($success-green, 0.08);
     color: $success-green;
 }
 
+.text-success-rate {
+    color: $success-green;
+    font-size: 14px;
+    font-weight: 700;
+
+    @media (max-width: 360px) {
+        font-size: 13px;
+    }
+}
+
 .action-btn {
-    opacity: 0.7;
+    color: $text-muted;
+    transition: all 0.2s $transition-smooth;
 
     &:hover {
-        opacity: 1;
         background-color: $bg-light-blue;
     }
 
@@ -229,13 +428,14 @@ $border-color: #e0e5f2;
     }
 }
 
-/* --- Animations --- */
+/* --- Live Ping Animation --- */
 .live-ping {
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 10px;
-    height: 10px;
+    top: -3px;
+    right: -3px;
+    width: 11px;
+    height: 11px;
+    z-index: 10;
 
     .dot {
         background: $success-green;
@@ -253,23 +453,40 @@ $border-color: #e0e5f2;
         border-radius: 50%;
         width: 100%;
         height: 100%;
-        animation: ping 1.5s infinite;
+        animation: hardware-ping 1.6s infinite ease-out;
+        will-change: transform, opacity;
     }
 }
 
-@keyframes ping {
+@keyframes hardware-ping {
     0% {
         transform: scale(1);
         opacity: 1;
     }
 
     100% {
-        transform: scale(3.5);
+        transform: scale(3.2);
         opacity: 0;
     }
 }
 
-/* --- Utilities --- */
+.empty-fallback-card {
+    border: 1px solid rgba($border-color, 0.7);
+    width: 100%;
+
+    .fallback-icon {
+        font-size: 56px;
+        color: $text-muted;
+        opacity: 0.3;
+    }
+}
+
+.custom-spinner {
+    ::ng-deep circle {
+        stroke: $primary-purple !important;
+    }
+}
+
 .smaller {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
 }

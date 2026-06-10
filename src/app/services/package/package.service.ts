@@ -116,7 +116,7 @@ export class PackageService {
   private handleError(error: any) {
     let errorMessage = 'Unknown Server Error';
 
-    if (error.error instanceof ErrorEvent) {
+    if (typeof ErrorEvent !== 'undefined' && error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = `Error: ${error.error.message}`;
     } else {

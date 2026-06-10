@@ -25,8 +25,14 @@ export class CartComponent implements OnInit, OnDestroy {
   cartItems = signal<any[]>([]);
   subtotal = signal<number>(0);
 
-  securityDeposit = computed(() => Math.round(this.subtotal() * 0.2));
-  finalTotalDue = computed(() => this.subtotal() + this.securityDeposit());
+  // Track dynamic fulfillment method selection
+  fulfillmentMethod = signal<'pickup' | 'delivery'>('pickup');
+
+  // Delivery charge calculation matching your layout rules
+  deliveryCharge = computed(() => this.fulfillmentMethod() === 'delivery' ? 100 : 0);
+
+  // Auto-calculated final total due based on user selection parameters
+  finalTotalDue = computed(() => this.subtotal() + this.deliveryCharge());
 
   constructor() {
     effect(() => {
@@ -40,11 +46,14 @@ export class CartComponent implements OnInit, OnDestroy {
     this.loadCartData();
   }
 
+  setFulfillmentMethod(method: 'pickup' | 'delivery') {
+    this.fulfillmentMethod.set(method);
+  }
+
   loadCartData() {
     this.cartService.getUserCart().subscribe({
       next: (res) => {
         if (res.success) {
-          // FIX: Process image URLs for cart items
           const processedItems = res.data.map((item: any) => {
             if (item.Camera?.images) {
               item.Camera.images = item.Camera.images.map((img: any) => ({
@@ -69,7 +78,6 @@ export class CartComponent implements OnInit, OnDestroy {
         if (res.success) {
           const cartCameraIds = this.cartItems().map(i => i.cameraId);
 
-          // FIX: Process image URLs for suggested items
           const filtered = res.data
             .filter((c: any) => !cartCameraIds.includes(c.id))
             .slice(0, 3)
@@ -138,6 +146,8 @@ export class CartComponent implements OnInit, OnDestroy {
       this.toastr.error("Your cart is empty!");
       return;
     }
+    // Pass selected fulfillment state inside local storage or query state parameters if needed
+    localStorage.setItem('selectedFulfillment', this.fulfillmentMethod());
     this.router.navigate(['/checkout']);
   }
 

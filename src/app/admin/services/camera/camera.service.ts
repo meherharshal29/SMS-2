@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Observable, map } from "rxjs";
 import { environment } from "../../../../environments/environment";
+
 export interface Category {
   id: number;
   name: string;
@@ -24,7 +25,9 @@ export interface Camera {
   specifications?: any;
   images?: CameraImage[];
   categoryId: number;
-  category?: Category; // Joined from backend
+  category?: Category;
+  isNew?: boolean;
+  createdAt?: string;
 }
 
 export interface ApiResponse<T> {
@@ -32,6 +35,7 @@ export interface ApiResponse<T> {
   data: T;
   message?: string;
 }
+
 @Injectable({
   providedIn: 'root'
 })
@@ -109,9 +113,6 @@ export class CameraService {
     );
   }
 
-  /**
-   * ADD: Uses FormData for Multi-part (Text + up to 4 Images)
-   */
   addCamera(formData: FormData): Observable<ApiResponse<Camera>> {
     return this.http.post<ApiResponse<Camera>>(
       `${this.apiUrl}/add`,
@@ -120,9 +121,6 @@ export class CameraService {
     );
   }
 
-  /**
-   * UPDATE FULL: Updates details and handles image replacement via keepImages
-   */
   updateCamera(id: number, formData: FormData): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(
       `${this.apiUrl}/update-full/${id}`,
@@ -131,9 +129,6 @@ export class CameraService {
     );
   }
 
-  /**
-   * UPDATE GALLERY: Specialized method for adding/removing specific images
-   */
   updateGallery(id: number, formData: FormData): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(
       `${this.apiUrl}/update-gallery/${id}`,
@@ -142,9 +137,6 @@ export class CameraService {
     );
   }
 
-  /**
-   * SET PRIMARY: Changes which image is the main display
-   */
   setPrimaryImage(cameraId: number, imageId: number): Observable<ApiResponse<any>> {
     return this.http.patch<ApiResponse<any>>(
       `${this.apiUrl}/set-primary/${cameraId}/${imageId}`,

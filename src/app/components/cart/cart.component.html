@@ -9,148 +9,236 @@
     </div>
 
     @if (cartItems().length === 0) {
-    <div class="empty-state">
-      <div class="empty-icon"><i class="bi bi-cart-x"></i></div>
-      <h3>Your cart is empty</h3>
-      <p>Start adding equipment to your rental project</p>
-      <a routerLink="/rental-all-item" class="btn-browse">Browse Equipment</a>
-    </div>
+      <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-cart-x"></i></div>
+        <h3>Your cart is empty</h3>
+        <p>Start adding equipment to your rental project</p>
+        <a routerLink="/rental-all-item" class="btn-browse">Browse Equipment</a>
+      </div>
     } @else {
-    <div class="cart-content">
-      <div class="cart-items-section">
-        <div class="items-container">
-          @for (item of cartItems(); track item.id) {
-          <div class="cart-item">
-            <div class="item-image">
-              <img
-                [src]="item.Camera?.images?.[0]?.url || 'assets/no-camera.png'"
-                [alt]="item.Camera?.name"
-                class="cart-product-img"
-                (error)="
-                  $any($event.target).src =
-                    'https://placehold.co/600x600?text=Gear+Image'
-                "
-              />
-            </div>
+      <div class="cart-content">
+        <div class="cart-items-section">
+          <div class="items-container">
+            @for (item of cartItems(); track item.id) {
+              <div class="cart-item">
+                <div class="item-image">
+                  <img
+                    [src]="
+                      item.Camera?.images?.[0]?.url || 'assets/no-camera.png'
+                    "
+                    [alt]="item.Camera?.name"
+                    class="cart-product-img"
+                    (error)="
+                      $any($event.target).src =
+                        'https://placehold.co/600x600?text=Gear+Image'
+                    "
+                  />
+                </div>
 
-            <div class="item-details">
-              <span class="item-brand">{{ item.Camera?.brand }}</span>
-              <h3 class="item-name">{{ item.Camera?.name }}</h3>
-              <div class="item-price-mobile">
-                <span class="price-value"
-                  >₹{{ item.Camera?.pricePerDay | number }}</span
-                >
-                <span class="price-label">/day</span>
+                <div class="item-details">
+                  <span class="item-brand">{{ item.Camera?.brand }}</span>
+                  <h3 class="item-name">{{ item.Camera?.name }}</h3>
+                  <div class="item-price-mobile">
+                    <span class="price-value"
+                      >₹{{ item.Camera?.pricePerDay | number }}</span
+                    >
+                    <span class="price-label">/day</span>
+                  </div>
+                </div>
+
+                <div class="item-rate d-none d-md-block">
+                  <span class="rate-label">Daily Rate</span>
+                  <span class="rate-value"
+                    >₹{{ item.Camera?.pricePerDay | number }}</span
+                  >
+                </div>
+
+                <div class="item-quantity">
+                  <div class="quantity-stepper">
+                    <button class="qty-btn" (click)="changeQuantity(item, -1)">
+                      <i class="bi bi-dash"></i>
+                    </button>
+                    <input
+                      type="text"
+                      class="qty-input"
+                      [value]="item.quantity"
+                      readonly
+                    />
+                    <button class="qty-btn" (click)="changeQuantity(item, 1)">
+                      <i class="bi bi-plus"></i>
+                    </button>
+                  </div>
+                  <small class="rental-days"
+                    >{{ item.rentalDays }} Days Rental</small
+                  >
+                </div>
+
+                <div class="item-actions">
+                  <span class="item-total">₹{{ item.itemTotal | number }}</span>
+                  <button
+                    class="btn-remove"
+                    (click)="removeItem(item.id, item.Camera?.name)"
+                  >
+                    <i class="bi bi-trash3"></i>
+                    <span>Remove</span>
+                  </button>
+                </div>
               </div>
-            </div>
-
-            <div class="item-rate d-none d-md-block">
-              <span class="rate-label">Daily Rate</span>
-              <span class="rate-value"
-                >₹{{ item.Camera?.pricePerDay | number }}</span
-              >
-            </div>
-
-            <div class="item-quantity">
-              <div class="quantity-stepper">
-                <button class="qty-btn" (click)="changeQuantity(item, -1)">
-                  <i class="bi bi-dash"></i>
-                </button>
-                <input
-                  type="text"
-                  class="qty-input"
-                  [value]="item.quantity"
-                  readonly
-                />
-                <button class="qty-btn" (click)="changeQuantity(item, 1)">
-                  <i class="bi bi-plus"></i>
-                </button>
-              </div>
-              <small class="rental-days"
-                >{{ item.rentalDays }} Days Rental</small
-              >
-            </div>
-
-            <div class="item-actions">
-              <span class="item-total">₹{{ item.itemTotal | number }}</span>
-              <button
-                class="btn-remove"
-                (click)="removeItem(item.id, item.Camera?.name)"
-              >
-                <i class="bi bi-trash3"></i>
-                <span>Remove</span>
-              </button>
-            </div>
-          </div>
-          }
-        </div>
-
-        <div class="suggested-section">
-          <h2 class="suggested-title">Complete Your Setup</h2>
-          <div class="suggested-grid">
-            @for (suggest of suggestedGears(); track suggest.id) {
-            <div class="suggested-card">
-              <div class="suggested-image">
-                <img
-                  [src]="suggest.images?.[0]?.url || 'assets/no-camera.png'"
-                  [alt]="suggest.name"
-                  class="suggested-product-img"
-                  (error)="
-                    $any($event.target).src =
-                      'https://placehold.co/600x600?text=Gear'
-                  "
-                />
-              </div>
-              <div class="suggested-info">
-                <h4 class="suggested-name">{{ suggest.name }}</h4>
-                <span class="suggested-price"
-                  >₹{{ suggest.pricePerDay | number }}/day</span
-                >
-              </div>
-              <button class="btn-quick-add" (click)="quickAdd(suggest)">
-                <i class="bi bi-plus-lg"></i>
-                <span>Quick Add</span>
-              </button>
-            </div>
             }
           </div>
-        </div>
-      </div>
 
-      <div class="summary-section">
-        <div class="summary-card">
-          <h2 class="summary-title">Order Summary</h2>
-          <div class="summary-details mt-4">
-            <div class="summary-row">
-              <span class="summary-label">Rental Subtotal</span>
-              <span class="summary-value">₹{{ subtotal() | number }}</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">Security Deposit (20%)</span>
-              <span class="summary-value deposit"
-                >₹{{ securityDeposit() | number }}</span
-              >
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">Delivery</span>
-              <span class="summary-value free">FREE</span>
+          <div class="suggested-section">
+            <h2 class="suggested-title">Complete Your Setup</h2>
+            <div class="suggested-grid">
+              @for (suggest of suggestedGears(); track suggest.id) {
+                <div class="suggested-card">
+                  <div class="suggested-image">
+                    <img
+                      [src]="suggest.images?.[0]?.url || 'assets/no-camera.png'"
+                      [alt]="suggest.name"
+                      class="suggested-product-img"
+                      (error)="
+                        $any($event.target).src =
+                          'https://placehold.co/600x600?text=Gear'
+                      "
+                    />
+                  </div>
+                  <div class="suggested-info">
+                    <h4 class="suggested-name">{{ suggest.name }}</h4>
+                    <span class="suggested-price"
+                      >₹{{ suggest.pricePerDay | number }}/day</span
+                    >
+                  </div>
+                  <button class="btn-quick-add" (click)="quickAdd(suggest)">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Quick Add</span>
+                  </button>
+                </div>
+              }
             </div>
           </div>
-          <div class="summary-divider"></div>
-          <div class="summary-total">
+        </div>
+
+        <div class="summary-section">
+          <div class="summary-card">
+            <h2 class="summary-title">Order Summary</h2>
+
+            <div class="fulfillment-selection mb-4">
+              <span class="summary-label d-block mb-2"
+                ><i class="bi bi-sliders2-vertical text-primary me-1"></i>
+                Delivery Method</span
+              >
+              <div class="d-flex flex-column gap-2">
+                <label
+                  class="fulfillment-option p-2 rounded d-flex align-items-center justify-content-between"
+                  [class.selected]="fulfillmentMethod() === 'pickup'"
+                >
+                  <div class="d-flex align-items-center gap-2">
+                    <input
+                      type="radio"
+                      name="fulfillment"
+                      value="pickup"
+                      [checked]="fulfillmentMethod() === 'pickup'"
+                      (change)="setFulfillmentMethod('pickup')"
+                    />
+                    <span class="option-text"
+                      ><i class="bi bi-shop me-1"></i> Self Pickup
+                      (Office)</span
+                    >
+                  </div>
+                  <span class="badge bg-success">FREE</span>
+                </label>
+
+                <label
+                  class="fulfillment-option p-2 rounded d-flex align-items-center justify-content-between"
+                  [class.selected]="fulfillmentMethod() === 'delivery'"
+                >
+                  <div class="d-flex align-items-center gap-2">
+                    <input
+                      type="radio"
+                      name="fulfillment"
+                      value="delivery"
+                      [checked]="fulfillmentMethod() === 'delivery'"
+                      (change)="setFulfillmentMethod('delivery')"
+                    />
+                    <span class="option-text"
+                      ><i class="bi bi-truck me-1"></i> Home Delivery</span
+                    >
+                  </div>
+                  <span class="charge-text fw-bold">₹100</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-details">
+              <div class="summary-row">
+                <span class="summary-label">Rental Subtotal</span>
+                <span class="summary-value">₹{{ subtotal() | number }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Delivery Charge</span>
+                @if (fulfillmentMethod() === "delivery") {
+                  <span class="summary-value">₹100</span>
+                } @else {
+                  <span class="summary-value free text-success fw-bold"
+                    >FREE</span
+                  >
+                }
+              </div>
+            </div>
+
+            <div class="summary-divider"></div>
+
             <div class="total-row">
               <span class="total-label">Total Amount</span>
               <span class="total-value">₹{{ finalTotalDue() | number }}</span>
             </div>
+
+            <div class="rental-policy-notice">
+              <div class="policy-title">
+                <i class="bi bi-exclamation-triangle-fill"></i> Mandatory
+                Conditions
+              </div>
+              <ul class="policy-list list-unstyled m-0">
+                <li>
+                  <i class="bi bi-check-circle-fill text-success"></i>
+                  <span
+                    ><strong>100% Advance Payment:</strong> Complete digital
+                    clearance is strictly required before product distribution
+                    or pickup handover.</span
+                  >
+                </li>
+                <li>
+                  <i class="bi bi-check-circle-fill text-success"></i>
+                  <span
+                    ><strong>Aadhaar Card Copy:</strong> A physical xerox copy
+                    of your Aadhaar card must be submitted during gear
+                    collection.</span
+                  >
+                </li>
+                <li>
+                  <i class="bi bi-x-circle-fill text-danger"></i>
+                  <span
+                    ><strong>Damage &amp; Shortage Policy:</strong> Do not
+                    damage the gears. Any operational shortages or equipment
+                    breakage penalties are assessed directly by the office
+                    management based on standard market valuation metrics.</span
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <button class="btn-checkout" (click)="onProceedToPayment()">
+              <span>Checkout</span>
+              <i class="bi bi-arrow-right"></i>
+            </button>
           </div>
-          <button class="btn-checkout" (click)="onProceedToPayment()">
-            <span>Checkout</span>
-            <i class="bi bi-arrow-right"></i>
-          </button>
         </div>
       </div>
-    </div>
     }
   </div>
 </div>
+
 <app-footer></app-footer>

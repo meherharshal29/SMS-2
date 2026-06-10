@@ -10,7 +10,7 @@
           <i class="bi bi-list"></i>
         </button>
         <h2 class="logo-text m-0" routerLink="/">
-          SMART<span class="text-brand">MEDIA</span>
+          SMART<span class="text-brand">MEDIA</span>SOLUTION
         </h2>
       </div>
 
@@ -23,6 +23,16 @@
               routerLinkActive="active"
               [routerLinkActiveOptions]="{ exact: true }"
               >Home</a
+            >
+          </li>
+
+          <!-- Added Live option for Desktop -->
+          <li>
+            <a
+              class="nav-item-link"
+              routerLink="/live"
+              routerLinkActive="active"
+              >Live</a
             >
           </li>
 
@@ -174,6 +184,9 @@
       <p class="menu-label">Main Menu</p>
       <ul class="mobile-nav-list list-unstyled">
         <li><a routerLink="/" (click)="toggleMobile()">Home</a></li>
+
+        <!-- Added Live option for Mobile Menu Drawer -->
+        <li><a routerLink="/live" (click)="toggleMobile()">Live</a></li>
 
         @for (item of navData; track item.label) {
           <li>

@@ -1,24 +1,22 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ToastrService } from 'ngx-toastr';
 import { Router, RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { Subject, takeUntil } from 'rxjs';
 
-// Material Imports
+// Material Core UI Blocks Modules
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-// Import Service and Interfaces
-import { CameraService, Camera, CameraImage } from '../../../services/camera/camera.service';
+// Service & Model Contracts Mappings
+import { CameraService, Camera } from '../../../services/camera/camera.service';
 
-// Interface for parsed specs (Local helper)
 interface CameraSpecifications {
   resolution?: string;
   sensor?: string;
@@ -33,36 +31,36 @@ interface CameraSpecifications {
   imports: [
     CommonModule,
     RouterModule,
+    CurrencyPipe,
     MatTableModule,
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,
     MatCardModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatChipsModule
+    MatTooltipModule
   ],
   templateUrl: './view-camera.component.html',
   styleUrls: ['./view-camera.component.scss'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed,void', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
+      state('collapsed, void', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
       state('expanded', style({ height: '*', visibility: 'visible' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
 })
-export class ViewCameraComponent implements OnInit {
-  private cameraService = inject(CameraService);
-  private toastr = inject(ToastrService);
-  private router = inject(Router);
+export class ViewCameraComponent implements OnInit, OnDestroy {
+  private readonly cameraService = inject(CameraService);
+  private readonly toastr = inject(ToastrService);
+  private readonly router = inject(Router);
+  private readonly destroy$ = new Subject<void>();
 
-  // Columns to display
-  displayedColumns: string[] = ['image', 'name', 'brand', 'price', 'status', 'actions'];
+  // Layout Columns Config Table Mappings
+  readonly displayedColumns: string[] = ['image', 'name', 'brand', 'price', 'status', 'actions'];
 
   cameras: Camera[] = [];
-  allCameras: Camera[] = []; // Backup for client-side search
+  allCameras: Camera[] = [];
   expandedElement: Camera | null = null;
   loading = true;
 
@@ -70,45 +68,52 @@ export class ViewCameraComponent implements OnInit {
     this.loadCameras();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   loadCameras(): void {
     this.loading = true;
-    this.cameraService.getAllCameras().subscribe({
-      next: (res) => {
-        // The service returns ApiResponse<Camera[]>
-        const rawData = res.data || [];
+    this.cameraService.getAllCameras()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          const rawData = res.data || [];
 
-        // Post-process: Parse JSON specifications if needed
-        this.allCameras = rawData.map(camera => {
-          let parsedSpecs = {};
-          if (typeof camera.specifications === 'string') {
-            try {
-              parsedSpecs = JSON.parse(camera.specifications);
-            } catch (e) {
-              parsedSpecs = {};
+          // Parse specification strings into JSON objects
+          this.allCameras = rawData.map(camera => {
+            let parsedSpecs: CameraSpecifications = {};
+            if (typeof camera.specifications === 'string') {
+              try {
+                parsedSpecs = JSON.parse(camera.specifications);
+              } catch (e) {
+                parsedSpecs = {};
+              }
+            } else {
+              parsedSpecs = camera.specifications || {};
             }
-          } else {
-            parsedSpecs = camera.specifications || {};
+
+            return {
+              ...camera,
+              isNew: this.checkIfRecent(camera.createdAt),
+              specifications: parsedSpecs
+            };
+          });
+
+          this.cameras = [...this.allCameras];
+          this.loading = false;
+
+          if (this.cameras.length === 0) {
+            this.toastr.info('No cameras found in inventory.');
           }
-
-          return {
-            ...camera,
-            specifications: parsedSpecs
-          };
-        });
-
-        this.cameras = [...this.allCameras];
-        this.loading = false;
-
-        if (this.cameras.length === 0) {
-          this.toastr.info('No cameras found in inventory.');
+        },
+        error: (err) => {
+          this.loading = false;
+          this.toastr.error('Failed to load cameras from production environment servers.');
+          console.error(err);
         }
-      },
-      error: (err) => {
-        this.loading = false;
-        this.toastr.error('Failed to load cameras');
-        console.error(err);
-      }
-    });
+      });
   }
 
   onSearch(event: Event): void {
@@ -127,35 +132,29 @@ export class ViewCameraComponent implements OnInit {
     );
   }
 
-  /**
-   * Navigate to Edit Page
-   */
   editCamera(id: number): void {
     this.router.navigate(['/admin/edit-camera', id]);
   }
 
-  /**
-   * Delete Logic
-   */
   deleteCamera(camera: Camera): void {
     if (!confirm(`Are you sure you want to delete "${camera.name}"? This cannot be undone.`)) {
       return;
     }
 
-    this.loading = true; // Show loading while deleting
-    this.cameraService.deleteCamera(camera.id).subscribe({
-      next: () => {
-        this.toastr.success('Camera deleted successfully');
-        this.loadCameras(); // Reload to refresh list
-      },
-      error: (err) => {
-        this.loading = false;
-        this.toastr.error(err.error?.message || 'Delete failed');
-      }
-    });
+    this.loading = true;
+    this.cameraService.deleteCamera(camera.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.toastr.success('Camera asset deleted successfully');
+          this.loadCameras();
+        },
+        error: (err) => {
+          this.loading = false;
+          this.toastr.error(err.error?.message || 'Delete operation failed.');
+        }
+      });
   }
-
-  // --- Display Helpers ---
 
   getPrimaryImage(camera: Camera): string {
     if (!camera.images || camera.images.length === 0) {
@@ -165,9 +164,9 @@ export class ViewCameraComponent implements OnInit {
     return primary ? primary.url : camera.images[0].url;
   }
 
-  handleImageError(event: any) {
-    // Fallback if image fails to load
-    event.target.src = 'https://placehold.co/100x100?text=No+Img';
+  handleImageError(event: Event): void {
+    const element = event.target as HTMLImageElement;
+    element.src = 'https://placehold.co/100x100?text=No+Img';
   }
 
   getSpec(camera: Camera, key: string): string {
@@ -177,5 +176,11 @@ export class ViewCameraComponent implements OnInit {
 
   toggleRow(camera: Camera): void {
     this.expandedElement = this.expandedElement === camera ? null : camera;
+  }
+
+  private checkIfRecent(dateString?: string): boolean {
+    if (!dateString) return false;
+    const diffInMinutes = (new Date().getTime() - new Date(dateString).getTime()) / (1000 * 60);
+    return diffInMinutes < 5;
   }
 }

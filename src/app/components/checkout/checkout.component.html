@@ -6,31 +6,75 @@
       <div class="col-lg-8">
         <div class="card checkout-card p-4 shadow-sm border-0">
           <h2 class="section-title mb-4">
-            <i class="bi bi-shield-check text-primary me-2"></i> Verification &
-            Shipping
+            <i class="bi bi-shield-check text-primary me-2"></i> Verification
+            &amp; Delivery Logistics
           </h2>
+
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <label class="form-label fw-bold"
+                >Select Choice Mode <span class="text-danger">*</span></label
+              >
+              <div class="fulfillment-toggle-row">
+                <div
+                  class="toggle-option"
+                  [class.active]="fulfillmentMethod() === 'pickup'"
+                  (click)="changeFulfillmentMethod('pickup')"
+                >
+                  <i class="bi bi-shop"></i>
+                  <div class="text-start">
+                    <p class="option-title mb-0">Self Pickup</p>
+                    <small class="text-muted"
+                      >Collect directly from main office</small
+                    >
+                  </div>
+                  <span class="ms-auto badge bg-success text-uppercase"
+                    >Free</span
+                  >
+                </div>
+
+                <div
+                  class="toggle-option"
+                  [class.active]="fulfillmentMethod() === 'delivery'"
+                  (click)="changeFulfillmentMethod('delivery')"
+                >
+                  <i class="bi bi-truck"></i>
+                  <div class="text-start">
+                    <p class="option-title mb-0">Home Delivery</p>
+                    <small class="text-muted"
+                      >Direct doorstep shipping distribution</small
+                    >
+                  </div>
+                  <span class="ms-auto fw-bold price-tag">+ ₹100</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div class="row g-3">
             <div class="col-md-12">
               <label class="form-label fw-bold"
-                >Aadhaar Card Number (12 Digits)</label
+                >Aadhaar Card Number (12 Digits)
+                <span class="text-danger">*</span></label
               >
               <input
                 type="text"
-                class="form-control shadow-none"
+                class="form-control shadow-none font-monospace"
                 maxlength="12"
                 [ngModel]="adharNo()"
                 (ngModelChange)="adharNo.set($event)"
                 placeholder="0000 0000 0000"
               />
-              <small class="text-muted">
-                <i class="bi bi-info-circle"></i> This is required for security
-                verification during gear handover.
+              <small class="text-muted d-block mt-2">
+                <i class="bi bi-info-circle"></i> Compulsory requirement. A
+                physical Xerox copy must also be submitted upon handover checks.
               </small>
             </div>
 
             <div class="col-md-6">
-              <label class="form-label fw-bold">City</label>
+              <label class="form-label fw-bold"
+                >City <span class="text-danger">*</span></label
+              >
               <input
                 type="text"
                 class="form-control shadow-none"
@@ -41,41 +85,30 @@
             </div>
 
             <div class="col-md-12">
-              <label class="form-label fw-bold">Full Delivery Address</label>
+              <label class="form-label fw-bold">
+                {{
+                  fulfillmentMethod() === "pickup"
+                    ? "Office Handover / Billing Address"
+                    : "Full Delivery Destination Address"
+                }}
+                <span class="text-danger">*</span>
+              </label>
               <textarea
                 class="form-control shadow-none"
                 rows="3"
                 [ngModel]="address()"
                 (ngModelChange)="address.set($event)"
-                placeholder="House no, Building name, Street, Landmark..."
+                placeholder="House no, Building name, Street address detail, Landmark structures..."
               ></textarea>
             </div>
           </div>
 
           <h2 class="section-title mt-5 mb-4">
-            <i class="bi bi-credit-card text-primary me-2"></i> Select Payment
-            Method
+            <i class="bi bi-credit-card text-primary me-2"></i> Select Secure
+            Payment Mode <span class="text-danger">*</span>
           </h2>
 
           <div class="payment-grid">
-            <div
-              class="payment-option"
-              [class.active]="paymentMethod() === 'upi'"
-              (click)="paymentMethod.set('upi')"
-            >
-              <i class="bi bi-qr-code-scan"></i>
-              <span>UPI / QR</span>
-            </div>
-
-            <div
-              class="payment-option"
-              [class.active]="paymentMethod() === 'card'"
-              (click)="paymentMethod.set('card')"
-            >
-              <i class="bi bi-credit-card-2-front"></i>
-              <span>Debit/Credit Card</span>
-            </div>
-
             <div
               class="payment-option"
               [class.active]="paymentMethod() === 'cod'"
@@ -83,6 +116,16 @@
             >
               <i class="bi bi-cash-stack"></i>
               <span>Cash on Delivery</span>
+            </div>
+
+            <div class="payment-option coming-soon">
+              <div class="disabled-lock-layer">
+                <span class="coming-soon-badge">
+                  <i class="bi bi-lock-fill"></i> Coming Soon
+                </span>
+              </div>
+              <i class="bi bi-credit-card-2-front"></i>
+              <span>Online Payment</span>
             </div>
           </div>
         </div>
@@ -93,36 +136,47 @@
           class="card summary-card p-4 shadow-sm border-0 sticky-top"
           style="top: 100px"
         >
-          <h4 class="mb-4">Order Summary</h4>
+          <h4 class="mb-4 fw-bold">Order Checkout Summary</h4>
 
           <div class="summary-details">
             <div class="d-flex justify-content-between mb-2">
               <span class="text-muted">Rental Subtotal</span>
-              <span class="fw-medium">₹{{ cartSubtotal() | number }}</span>
+              <span class="fw-bold text-dark"
+                >₹{{ cartSubtotal() | number }}</span
+              >
             </div>
 
             <div class="d-flex justify-content-between mb-2">
               <span class="text-muted">Delivery Charges</span>
-              <span class="text-success fw-bold">FREE</span>
+              @if (fulfillmentMethod() === "delivery") {
+                <span class="fw-bold text-dark">₹100</span>
+              } @else {
+                <span class="text-success fw-bold text-uppercase">Free</span>
+              }
             </div>
 
             <div class="d-flex justify-content-between mb-2">
-              <span class="text-muted small">GST (Inclusive)</span>
+              <span class="text-muted small"
+                >Tax Assessment (GST Inclusive)</span
+              >
               <span class="text-muted small">₹0</span>
             </div>
 
             <hr class="my-3" />
 
-            <div class="d-flex justify-content-between mb-4">
-              <span class="fw-bold">Grand Total</span>
-              <span class="fw-bold text-primary h4 mb-0"
+            <div class="d-flex justify-content-between mb-4 align-items-center">
+              <span
+                class="fw-bold text-dark text-uppercase tracking-wider small"
+                >Grand Total Due</span
+              >
+              <span class="fw-black text-primary h3 mb-0 font-monospace"
                 >₹{{ totalAmount() | number }}</span
               >
             </div>
           </div>
 
           <button
-            class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm"
+            class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm mb-3"
             (click)="confirmAndPay()"
           >
             <i
@@ -133,28 +187,44 @@
             ></i>
             {{
               paymentMethod() === "cod"
-                ? " PLACE ORDER (CASH)"
-                : " CONFIRM & PAY NOW"
+                ? " PLACE RENTAL ORDER"
+                : " CONFIRM &amp; SECURE PAY"
             }}
           </button>
 
-          <div class="mt-4 p-3 bg-light border border-info-subtle rounded-3">
+          <div class="mt-2 p-3 border rounded-3 policy-notice-card">
             <div class="d-flex gap-2">
-              <i class="bi bi-info-circle-fill text-primary"></i>
-              <p class="small mb-0 text-dark">
-                <strong *ngIf="paymentMethod() === 'cod'">COD Policy:</strong>
-                {{
-                  paymentMethod() === "cod"
-                    ? "Please ensure you have the exact amount ready upon delivery. Our agent will verify your Aadhaar before handover."
-                    : "Your payment is processed through a secure gateway. You will receive a booking confirmation email instantly."
-                }}
-              </p>
+              <i class="bi bi-exclamation-octagon-fill text-warning mt-1"></i>
+              <div class="small text-dark">
+                <p class="fw-bold mb-1 text-uppercase text-dark tracking-wide">
+                  Mandatory Rental Disclaimers:
+                </p>
+                <ul class="ps-3 m-0 policy-bullets">
+                  <li class="mb-1">
+                    <strong>Advance Clearance:</strong> Full advance digital
+                    payment must be cleared before any equipment handover
+                    distribution takes effect.
+                  </li>
+                  <li class="mb-1">
+                    <strong>Physical Identity Check:</strong> Bringing and
+                    submitting a physical Xerox copy of your
+                    <strong>Aadhaar Card</strong> is mandatory during pickup or
+                    delivery verification.
+                  </li>
+                  <li class="mb-0">
+                    <strong>Damage Penalties:</strong> Keep the equipment clean
+                    and pristine. Any shortage, parts loss, or structural
+                    hardware destruction fines are determined explicitly by
+                    office management evaluations.
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
           <p class="text-center text-muted small mt-3 mb-0">
             <i class="bi bi-patch-check-fill text-success"></i> Smart Media
-            Trusted Partner
+            Trusted Solution Partner
           </p>
         </div>
       </div>

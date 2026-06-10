@@ -44,7 +44,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   readonly deliveredCount = computed(() => this.stats()?.rentals?.delivered || 0);
   readonly cancelledOrdersCount = computed(() => this.stats()?.rentals?.cancelled || 0);
 
-  // UPDATED: Added 'payment' to displayed columns
+  // Layout Columns Config Table Mappings
   readonly displayedColumns: string[] = ['select', 'gear', 'client', 'payment', 'amount', 'status', 'complete', 'actions'];
 
   constructor() {
@@ -101,7 +101,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
               orders.map(o => o.id === orderId ? { ...o, status: normalizedStatus } : o)
             );
             this.triggerFlash(orderId);
-            if (normalizedStatus === 'delivered') this.playAlert();
+            if (normalizedStatus === 'delivered' || normalizedStatus === 'returned') {
+              this.playAlert();
+            }
           }
         }
       });
@@ -113,6 +115,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const s = status?.toLowerCase() || '';
     switch (s) {
       case 'delivered': return 'status-delivered';
+      case 'returned': return 'status-returned'; // Added Style Modifier mapping for returns
       case 'shipped': return 'status-shipped';
       case 'confirmed':
       case 'confirm': return 'status-confirmed';
@@ -122,7 +125,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // NEW: Helper for Payment Icons
   getPaymentIcon(method: string): string {
     const m = method?.toLowerCase() || '';
     switch (m) {
@@ -135,7 +137,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // NEW: Helper for Payment Labels
   getPaymentLabel(method: string): string {
     const m = method?.toLowerCase() || '';
     return m === 'cod' ? 'CASH' : m.toUpperCase().replace('_', ' ');
@@ -175,7 +176,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   exportToCSV(): void {
     const orders = this._ordersRaw();
-    // UPDATED: Added Payment to headers
     const headers = 'ID,Asset,Client,Payment,Price,Status,Date\n';
     const rows = orders.map(o =>
       `${o.id},"${o.Camera?.name}","${o.user?.name}","${o.paymentMethod?.toUpperCase()}",${o.totalPrice},${o.status.toUpperCase()},${o.createdAt}`

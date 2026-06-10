@@ -28,6 +28,9 @@ interface ImageItem {
   styleUrls: ['./edit-camera.component.scss']
 })
 export class EditCameraComponent implements OnInit {
+handleImageError($event: ErrorEvent) {
+throw new Error('Method not implemented.');
+}
   private fb = inject(FormBuilder);
   private cameraService = inject(CameraService);
   private toastr = inject(ToastrService);

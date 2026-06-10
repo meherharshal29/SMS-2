@@ -114,7 +114,19 @@ $accent-color: #a78bfa;
         }
 
         .phone-number {
-            font-size: 22px;
+            font-size: 20px;
+            text-decoration: none;
+            font-weight: 700;
+            color: $heading-color;
+            transition: color 0.3s;
+
+            &:hover {
+                color: $accent-color;
+            }
+        }
+
+        .phone-number-1 {
+            font-size: 20px;
             text-decoration: none;
             font-weight: 700;
             color: $heading-color;
@@ -128,14 +140,14 @@ $accent-color: #a78bfa;
 
     // Payment Grayscale to Color
     .grayscale-img {
-        filter: grayscale(100%);
-        opacity: 0.5;
+        // filter: grayscale(100%);
+        // opacity: 0.5;
         transition: all 0.4s ease;
         cursor: pointer;
 
         &:hover {
-            filter: grayscale(0%);
-            opacity: 1;
+            //     filter: grayscale(0%);
+            //     opacity: 1;
             transform: scale(1.1);
         }
     }
