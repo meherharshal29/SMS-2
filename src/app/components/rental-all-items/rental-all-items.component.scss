@@ -335,12 +335,17 @@ $spacing-xxl: 64px;
     }
 
     @include respond-to($breakpoint-xl) {
-        gap: $spacing-lg;
+        grid-template-columns: repeat(5, 1fr); // 5 product items inline
+        gap: $spacing-sm; // Tighter layout space handling
+    }
+
+    @include respond-to($breakpoint-xxl) {
+        gap: $spacing-md;
     }
 
     .grid-item {
         width: 100%;
-        min-width: 0; // Prevents grid blowout
+        min-width: 0;
     }
 }
 
@@ -532,7 +537,11 @@ $spacing-xxl: 64px;
             }
 
             @include respond-to($breakpoint-xl) {
-                font-size: 1.2rem;
+                font-size: 1.02rem; // Slightly balanced sizing down for clean 5-column space setup
+            }
+
+            @include respond-to($breakpoint-xxl) {
+                font-size: 1.1rem;
             }
 
             &:hover {
@@ -564,6 +573,10 @@ $spacing-xxl: 64px;
                     @include respond-to($breakpoint-md) {
                         font-size: 1.1rem;
                     }
+
+                    @include respond-to($breakpoint-xl) {
+                        font-size: 0.95rem;
+                    }
                 }
 
                 .amount {
@@ -584,7 +597,11 @@ $spacing-xxl: 64px;
                     }
 
                     @include respond-to($breakpoint-xl) {
-                        font-size: 1.4rem;
+                        font-size: 1.12rem; // Prevents the long pricing currency values from splitting lines
+                    }
+
+                    @include respond-to($breakpoint-xxl) {
+                        font-size: 1.3rem;
                     }
                 }
 
@@ -600,6 +617,10 @@ $spacing-xxl: 64px;
                     @include respond-to($breakpoint-md) {
                         font-size: 0.85rem;
                         margin-left: 4px;
+                    }
+
+                    @include respond-to($breakpoint-xl) {
+                        font-size: 0.75rem;
                     }
                 }
             }
@@ -628,11 +649,25 @@ $spacing-xxl: 64px;
                     height: 42px;
                 }
 
+                @include respond-to($breakpoint-xl) {
+                    width: 34px;
+                    height: 34px;
+                }
+
+                @include respond-to($breakpoint-xxl) {
+                    width: 38px;
+                    height: 38px;
+                }
+
                 i {
                     font-size: 1rem;
 
                     @include respond-to($breakpoint-md) {
                         font-size: 1.1rem;
+                    }
+
+                    @include respond-to($breakpoint-xl) {
+                        font-size: 0.95rem;
                     }
                 }
 
@@ -756,6 +791,11 @@ $spacing-xxl: 64px;
             @include respond-to($breakpoint-md) {
                 width: 42px;
                 height: 42px;
+            }
+
+            @include respond-to($breakpoint-xl) {
+                width: 34px;
+                height: 34px;
             }
         }
     }

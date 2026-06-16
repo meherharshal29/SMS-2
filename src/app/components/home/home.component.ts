@@ -25,7 +25,7 @@ import { PromoComponent } from "../promo/promo.component";
 import { RentalComponent } from "../rental/rental.component";
 import { FooterComponent } from "../../common/footer/footer.component";
 import { ReviewsComponent } from "../reviews/reviews.component";
-import { RequestCallModalComponent } from '../request-call-modal/request-call-modal.component'; // Adjust path
+import { RequestCallModalComponent } from '../request-call-modal/request-call-modal.component';
 
 @Component({
   selector: 'app-home',
